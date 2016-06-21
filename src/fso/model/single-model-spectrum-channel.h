@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2016
+ * Copyright (c) 2009 CTTC
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,11 +15,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Michael Di Perna <diperna.michael@gmail.com>
+ * Author: Nicola Baldo <nbaldo@cttc.es>
  */
 
-#ifndef FSO_SPECTRUM_CHANNEL_H
-#define FSO_SPECTRUM_CHANNEL_H
+#ifndef SINGLE_MODEL_SPECTRUM_CHANNEL_H
+#define SINGLE_MODEL_SPECTRUM_CHANNEL_H
 
 
 #include <ns3/spectrum-channel.h>
@@ -37,11 +37,11 @@ namespace ns3 {
  *
  * All SpectrumPhy layers attached to this SpectrumChannel
  */
-class FsoSpectrumChannel : public SpectrumChannel
+class SingleModelSpectrumChannel : public SpectrumChannel
 {
 
 public:
-  FsoSpectrumChannel ();
+  SingleModelSpectrumChannel ();
 
   /**
    * \brief Get the type ID.
@@ -130,4 +130,4 @@ private:
 
 
 
-#endif /* FSO_SPECTRUM_CHANNEL_H */
+#endif /* SINGLE_MODEL_SPECTRUM_CHANNEL_H */

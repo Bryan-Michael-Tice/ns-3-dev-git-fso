@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2016
+ * Copyright (c) 2009 CTTC
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Michael Di Perna <diperna.michael@gmail.com>
+ * Author: Nicola Baldo <nbaldo@cttc.es>
  */
 
 #include <ns3/object.h>
@@ -35,22 +35,22 @@
 #include <ns3/angles.h>
 
 
-#include "fso-spectrum-channel.h"
+#include "single-model-spectrum-channel.h"
 
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("FsoSpectrumChannel");
+NS_LOG_COMPONENT_DEFINE ("SingleModelSpectrumChannel");
 
-NS_OBJECT_ENSURE_REGISTERED (FsoSpectrumChannel);
+NS_OBJECT_ENSURE_REGISTERED (SingleModelSpectrumChannel);
 
-FsoSpectrumChannel::FsoSpectrumChannel ()
+SingleModelSpectrumChannel::SingleModelSpectrumChannel ()
 {
   NS_LOG_FUNCTION (this);
 }
 
 void
-FsoSpectrumChannel::DoDispose ()
+SingleModelSpectrumChannel::DoDispose ()
 {
   NS_LOG_FUNCTION (this);
   m_phyList.clear ();
@@ -62,13 +62,13 @@ FsoSpectrumChannel::DoDispose ()
 }
 
 TypeId
-FsoSpectrumChannel::GetTypeId (void)
+SingleModelSpectrumChannel::GetTypeId (void)
 {
   NS_LOG_FUNCTION_NOARGS ();
-  static TypeId tid = TypeId ("ns3::FsoSpectrumChannel")
+  static TypeId tid = TypeId ("ns3::SingleModelSpectrumChannel")
     .SetParent<SpectrumChannel> ()
     .SetGroupName ("Spectrum")
-    .AddConstructor<FsoSpectrumChannel> ()
+    .AddConstructor<SingleModelSpectrumChannel> ()
     .AddAttribute ("MaxLossDb",
                    "If a single-frequency PropagationLossModel is used, "
                    "this value represents the maximum loss in dB for which "
@@ -81,7 +81,7 @@ FsoSpectrumChannel::GetTypeId (void)
                    "the default value corresponds to considering all signals "
                    "for reception. Tune this value with care. ",
                    DoubleValue (1.0e9),
-                   MakeDoubleAccessor (&FsoSpectrumChannel::m_maxLossDb),
+                   MakeDoubleAccessor (&SingleModelSpectrumChannel::m_maxLossDb),
                    MakeDoubleChecker<double> ())
     .AddTraceSource ("PathLoss",
                      "This trace is fired whenever a new path loss value "
@@ -95,7 +95,7 @@ FsoSpectrumChannel::GetTypeId (void)
                      "In particular, note that SpectrumPropagationLossModel "
                      "(even if present) is never used to evaluate the "
                      "loss value reported in this trace. ",
-                     MakeTraceSourceAccessor (&FsoSpectrumChannel::m_pathLossTrace),
+                     MakeTraceSourceAccessor (&SingleModelSpectrumChannel::m_pathLossTrace),
                      "ns3::SpectrumChannel::LossTracedCallback")
   ;
   return tid;
@@ -103,7 +103,7 @@ FsoSpectrumChannel::GetTypeId (void)
 
 
 void
-FsoSpectrumChannel::AddRx (Ptr<SpectrumPhy> phy)
+SingleModelSpectrumChannel::AddRx (Ptr<SpectrumPhy> phy)
 {
   NS_LOG_FUNCTION (this << phy);
   m_phyList.push_back (phy);
@@ -111,7 +111,7 @@ FsoSpectrumChannel::AddRx (Ptr<SpectrumPhy> phy)
 
 
 void
-FsoSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
+SingleModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
 {
   NS_LOG_FUNCTION (this << txParams->psd << txParams->duration << txParams->txPhy);
   NS_ASSERT_MSG (txParams->psd, "NULL txPsd");
@@ -197,12 +197,12 @@ FsoSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
             {
               // the receiver has a NetDevice, so we expect that it is attached to a Node
               uint32_t dstNode =  netDev->GetNode ()->GetId ();
-              Simulator::ScheduleWithContext (dstNode, delay, &FsoSpectrumChannel::StartRx, this, rxParams, *rxPhyIterator);
+              Simulator::ScheduleWithContext (dstNode, delay, &SingleModelSpectrumChannel::StartRx, this, rxParams, *rxPhyIterator);
             }
           else
             {
               // the receiver is not attached to a NetDevice, so we cannot assume that it is attached to a node
-              Simulator::Schedule (delay, &FsoSpectrumChannel::StartRx, this,
+              Simulator::Schedule (delay, &SingleModelSpectrumChannel::StartRx, this,
                                    rxParams, *rxPhyIterator);
             }
         }
@@ -211,7 +211,7 @@ FsoSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
 }
 
 void
-FsoSpectrumChannel::StartRx (Ptr<SpectrumSignalParameters> params, Ptr<SpectrumPhy> receiver)
+SingleModelSpectrumChannel::StartRx (Ptr<SpectrumSignalParameters> params, Ptr<SpectrumPhy> receiver)
 {
   NS_LOG_FUNCTION (this << params);
   receiver->StartRx (params);
@@ -220,7 +220,7 @@ FsoSpectrumChannel::StartRx (Ptr<SpectrumSignalParameters> params, Ptr<SpectrumP
 
 
 uint32_t
-FsoSpectrumChannel::GetNDevices (void) const
+SingleModelSpectrumChannel::GetNDevices (void) const
 {
   NS_LOG_FUNCTION (this);
   return m_phyList.size ();
@@ -228,7 +228,7 @@ FsoSpectrumChannel::GetNDevices (void) const
 
 
 Ptr<NetDevice>
-FsoSpectrumChannel::GetDevice (uint32_t i) const
+SingleModelSpectrumChannel::GetDevice (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_phyList.at (i)->GetDevice ()->GetObject<NetDevice> ();
@@ -236,7 +236,7 @@ FsoSpectrumChannel::GetDevice (uint32_t i) const
 
 
 void
-FsoSpectrumChannel::AddPropagationLossModel (Ptr<PropagationLossModel> loss)
+SingleModelSpectrumChannel::AddPropagationLossModel (Ptr<PropagationLossModel> loss)
 {
   NS_LOG_FUNCTION (this << loss);
   NS_ASSERT (m_propagationLoss == 0);
@@ -245,7 +245,7 @@ FsoSpectrumChannel::AddPropagationLossModel (Ptr<PropagationLossModel> loss)
 
 
 void
-FsoSpectrumChannel::AddSpectrumPropagationLossModel (Ptr<SpectrumPropagationLossModel> loss)
+SingleModelSpectrumChannel::AddSpectrumPropagationLossModel (Ptr<SpectrumPropagationLossModel> loss)
 {
   NS_LOG_FUNCTION (this << loss);
   NS_ASSERT (m_spectrumPropagationLoss == 0);
@@ -253,7 +253,7 @@ FsoSpectrumChannel::AddSpectrumPropagationLossModel (Ptr<SpectrumPropagationLoss
 }
 
 void
-FsoSpectrumChannel::SetPropagationDelayModel (Ptr<PropagationDelayModel> delay)
+SingleModelSpectrumChannel::SetPropagationDelayModel (Ptr<PropagationDelayModel> delay)
 {
   NS_LOG_FUNCTION (this << delay);
   NS_ASSERT (m_propagationDelay == 0);
@@ -262,7 +262,7 @@ FsoSpectrumChannel::SetPropagationDelayModel (Ptr<PropagationDelayModel> delay)
 
 
 Ptr<SpectrumPropagationLossModel>
-FsoSpectrumChannel::GetSpectrumPropagationLossModel (void)
+SingleModelSpectrumChannel::GetSpectrumPropagationLossModel (void)
 {
   NS_LOG_FUNCTION (this);
   return m_spectrumPropagationLoss;
