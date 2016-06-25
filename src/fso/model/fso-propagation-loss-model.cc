@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2016
+ * Copyright (c) 2009 CTTC
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,7 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Michael Di Perna <diperna.michael@gmail.com>
+ * Author: Nicola Baldo <nbaldo@cttc.es>
+ *
+ * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
 
@@ -48,13 +50,13 @@ FsoPropagationLossModel::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::FsoPropagationLossModel")
     .SetParent<Object> ()
-    .SetGroupName ("Fso")//MDP - What should this be changed to? Was "Spectrum"
+    .SetGroupName ("Fso")
   ;
   return tid;
 }
 
 void 
-FsoPropagationLossModel::CalculateScintillationIdx(double f, double hGS, double hSat, double e) const
+FsoPropagationLossModel::CalculateScintillationIdx (double f, double hGS, double hSat, double e) const
 {
   double k = (2*PI)/(DoubleValue(3e8)/f);//Wave number - 2*pi/wavelength
    
@@ -62,7 +64,7 @@ FsoPropagationLossModel::CalculateScintillationIdx(double f, double hGS, double 
 }
 
 void 
-FsoPropagationLossModel::CalculateMeanIrradiance(double txBeamRadius)
+FsoPropagationLossModel::CalculateMeanIrradiance (double txBeamRadius)
 {
   double effectiveSpotSize = m_rxDiffractiveBeamRadius;//This is an approximation which is only valid for downlink, high elevation path
   double r = 0.0;//This is the distance in the xy plane from the optical axis (propagation along z-axis)
@@ -70,7 +72,7 @@ FsoPropagationLossModel::CalculateMeanIrradiance(double txBeamRadius)
 }
 
 void
-FsoPropagationLossModel::CalculateDiffractiveBeamRadius(double f, double d, double txBeamRadius, double txPhaseFrontRadius)
+FsoPropagationLossModel::CalculateDiffractiveBeamRadius (double f, double d, double txBeamRadius, double txPhaseFrontRadius)
 {
   double theta0 = 1 - (d/phaseFrontRadius);
   double waveLength = (DoubleValue (3e8))/f;//wavelength = speed of light/frequency

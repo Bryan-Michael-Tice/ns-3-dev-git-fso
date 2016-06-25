@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2016
+ * Copyright (c) 2009 CTTC
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,7 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Michael Di Perna <diperna.michael@gmail.com>
+ * Author: Nicola Baldo <nbaldo@cttc.es>
+ *
+ * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
 #ifndef FSO_PROPAGATION_LOSS_MODEL_H
@@ -83,7 +85,7 @@ protected:
    * @param e elevation in radians
    *
    */
-  void CalculateScintillationIdx(double f, double hGS, double hSat, double e) const;
+  void CalculateScintillationIdx (double f, double hGS, double hSat, double e) const;
   
   /**
    * Calculate the mean irradiance
@@ -91,7 +93,7 @@ protected:
    * @param txBeamRadius the beam width radius at the transmitter at tx output aperture
    *
    */
-  void CalculateMeanIrradiance(double txBeamRadius);
+  void CalculateMeanIrradiance (double txBeamRadius);
 
   /**
    * Calculate the diffractive beam radius at the receiver
@@ -102,7 +104,7 @@ protected:
    * @param txPhaseFrontRadius phase front radius of curvature at tx output aperture
    *
    */
-  void CalculateDiffractiveBeamRadius(double f, double d, double txBeamRadius, double txPhaseFrontRadius);
+  void CalculateDiffractiveBeamRadius (double f, double d, double txBeamRadius, double txPhaseFrontRadius);
 
 private:
   double m_rmsWindSpeed;
