@@ -51,35 +51,11 @@ FsoPropagationLossModel::GetTypeId (void)
   static TypeId tid = TypeId ("ns3::FsoPropagationLossModel")
     .SetParent<Object> ()
     .SetGroupName ("Fso")
-  ;
+    .AddConstructor<FsoPropagationLossModel> ();
+
   return tid;
 }
 
-void 
-FsoPropagationLossModel::CalculateScintillationIdx (double f, double hGS, double hSat, double e) const
-{
-  double k = (2*PI)/(DoubleValue(3e8)/f);//Wave number - 2*pi/wavelength
-   
-  m_scintIdx = 2.25*pow(k,7.0/6.0)*(1/pow(cos(e),11.0/6.0));//*integral();//MDP - get solved expression of the integral
-}
-
-void 
-FsoPropagationLossModel::CalculateMeanIrradiance (double txBeamRadius)
-{
-  double effectiveSpotSize = m_rxDiffractiveBeamRadius;//This is an approximation which is only valid for downlink, high elevation path
-  double r = 0.0;//This is the distance in the xy plane from the optical axis (propagation along z-axis)
-  m_meanIrradiance = (pow(txBeamRadius, 2.0)/pow(effectiveSpotSize, 2.0))*exp((-2*r)/(pow(effectiveSpotSize, 2.0)));
-}
-
-void
-FsoPropagationLossModel::CalculateDiffractiveBeamRadius (double f, double d, double txBeamRadius, double txPhaseFrontRadius)
-{
-  double theta0 = 1 - (d/phaseFrontRadius);
-  double waveLength = (DoubleValue (3e8))/f;//wavelength = speed of light/frequency
-  double lambda0 = (2*d)/((2*PI/waveLength)*pow(txBeamRadius, 2.0));
-
-  m_rxDiffractiveBeamRadius = txBeamRadius*sqrt(pow(theta0, 2.0) + pow(lambda0, 2.0));
-}
 
 
 

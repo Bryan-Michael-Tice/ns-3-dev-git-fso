@@ -20,12 +20,13 @@
  * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
-#ifndef FSO_PROPAGATION_LOSS_MODEL_H
-#define FSO_PROPAGATION_LOSS_MODEL_H
+#ifndef FSO_MEAN_IRRADIANCE_MODEL_H
+#define FSO_MEAN_IRRADIANCE_MODEL_H
 
 
 #include <ns3/object.h>
 #include <ns3/mobility-model.h>
+#include "fso-signal-parameters.h"
 
 namespace ns3 {
 
@@ -42,11 +43,11 @@ namespace ns3 {
  * the SpectrumValue class.
  *
  */
-class FsoPropagationLossModel : public Object
+class FsoMeanIrradianceModel : public FsoPropagationLossModel
 {
 public:
-  FsoPropagationLossModel ();
-  virtual ~FsoPropagationLossModel ();
+  FsoMeanIrradianceModel ();
+  virtual ~FsoMeanIrradianceModel ();
 
   /**
    * \brief Get the type ID.
@@ -54,20 +55,34 @@ public:
    */
   static TypeId GetTypeId ();
 
-  /**
-   * This purely virtual function updates the signal parameters according to the implementation in
-   * the child class
-   *
-   * @param fsoSignalParams is the signal parameters for the optical beam
-   * @param a sender mobility
-   * @param b receiver mobility
-   *
-   */
-  virtual void UpdateSignalParams (FsoSignalParameters& fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b) = 0;
+  //Inherited from FsoPropagationLossModel
+  virtual void UpdateSignalParams (FsoSignalParameters& fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b);
+
 
 protected:
   //Inherited from Object
   virtual void DoDispose ();
+  
+  /**
+   * Calculate the mean irradiance
+   *
+   * @param txBeamRadius the beamwidth radius at the transmitter aperture
+   * @param rxDiffractiveBeamRadius the diffractive beam radius at the receiver
+   *
+   */
+  double CalculateMeanIrradiance (double txBeamRadius, double rxDiffractiveBeamRadius);
+
+  /**
+   * Calculate the diffractive beam radius at the receiver
+   *
+   * @param f frequency in Hz
+   * @param d distance from tx to rx in m
+   * @param txBeamRadius beam width radius at the transmitter at tx output aperture
+   * @param txPhaseFrontRadius phase front radius of curvature at tx output aperture
+   *
+   */
+  double CalculateDiffractiveBeamRadius (double d, double f, double txBeamRadius, double txPhaseFrontRadius);
+
 
 };
 
@@ -78,4 +93,4 @@ protected:
 
 } // namespace ns3
 
-#endif /* FSO_PROPAGATION_LOSS_MODEL_H */
+#endif /* FSO_MEAN_IRRADIANCE_MODEL_H */

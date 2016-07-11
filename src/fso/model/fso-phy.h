@@ -29,11 +29,13 @@
 
 namespace ns3 {
 
-//class PacketBurst;
+class PacketBurst;
 class FsoChannel;
 class MobilityModel;
 class LaserModel;
 class NetDevice;
+class SpectrumValue;
+struct SpectrumSignalParameters;
 
 /**
  * \ingroup fso
@@ -88,6 +90,28 @@ public:
    * @param c the channel
    */
   virtual void SetChannel (Ptr<FsoChannel> c) = 0;
+
+  /**
+   * Get the AntennaModel used by the NetDevice for reception
+   *
+   * @return a Ptr to the AntennaModel used by the NetDevice for reception
+   */
+  virtual Ptr<AntennaModel> GetRxAntenna () = 0;
+
+  /**
+   *
+   * @return returns the SpectrumModel that this SpectrumPhy expects to be used
+   * for all SpectrumValues that are passed to StartRx. If 0 is
+   * returned, it means that any model will be accepted.
+   */
+  virtual Ptr<const SpectrumModel> GetRxSpectrumModel () const = 0;
+
+  /**
+   * Notify the SpectrumPhy instance of an incoming signal
+   *
+   * @param params the parameters of the signals being received
+   */
+  virtual void StartRx (Ptr<SpectrumSignalParameters> params) = 0;
 
 private:
   /**

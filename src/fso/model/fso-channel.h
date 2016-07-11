@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2009 CTTC
+ * Copyright (c) 2006,2007 INRIA
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,82 +15,90 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Nicola Baldo <nbaldo@cttc.es>
+ * Author: Mathieu Lacage, <mathieu.lacage@sophia.inria.fr>
  *
  * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
-
 #ifndef FSO_CHANNEL_H
 #define FSO_CHANNEL_H
 
-#include <ns3/object.h>
-#include <ns3/nstime.h>
-#include <ns3/channel.h>
-#include <ns3/fso-signal-parameters.h>
+#include <vector>
+#include <stdint.h>
+#include "ns3/packet.h"
+#include "ns3/channel.h"
+#include "fso-signal-parameters.h"
+#include "fso-phy.h"
+#include "ns3/nstime.h"
 
 namespace ns3 {
 
-
-class PacketBurst;
-class FsoPhy;
+class NetDevice;
 class FsoPropagationLossModel;
 class PropagationDelayModel;
 
 /**
+ * \brief A Free space optical channel
  * \ingroup fso
  *
- * Defines the interface for free-space optical channel implementations
+ * This fso channel implements the propagation model described in...
+ * 
  *
+ * This class is expected to be used in tandem with the ns3::FsoPhy
+ * class and contains a list of ns3::FsoPropagationLossModel and a single ns3::PropagationDelayModel.
+ * By default, no propagation models are set so, it is the caller's responsability
+ * to set them before using the channel.
  */
 class FsoChannel : public Channel
 {
 public:
-  virtual ~FsoChannel ();
-
-  /**
-   * \brief Get the type ID.
-   * \return the object TypeId
-   */
   static TypeId GetTypeId (void);
 
-  /**
-   * Set the frequency-dependent propagation loss model to be used
-   * \param loss a pointer to the propagation loss model to be used.
-   */
-  virtual void AddFsoPropagationLossModel (Ptr<FsoPropagationLossModel> loss) = 0;
+  FsoChannel ();
+  virtual ~FsoChannel ();
+
+  //inherited from Channel.
+  virtual uint32_t GetNDevices (void) const;
+  virtual Ptr<NetDevice> GetDevice (uint32_t i) const;
 
   /**
-   * Set the  propagation delay model to be used
-   * \param delay Ptr to the propagation delay model to be used.
+   * Adds the given FsoPhy to the PHY list
+   *
+   * \param phy the FsoPhy to be added to the PHY list
    */
-  virtual void SetPropagationDelayModel (Ptr<PropagationDelayModel> delay) = 0;
-
+  void Add (Ptr<FsoPhy> phy);
 
   /**
-   * Used by attached PHY instances to transmit signals on the channel
-   *
-   * @param params the parameters of the signals being transmitted
+   * \param loss the new propagation loss model.
    */
-  virtual void StartTx (Ptr<FsoSignalParameters> params) = 0;
+  void AddFsoPropagationLossModel (Ptr<FsoPropagationLossModel> loss);
+  /**
+   * \param delay the new propagation delay model.
+   */
+  void SetPropagationDelayModel (Ptr<PropagationDelayModel> delay);
 
   /**
-   * @brief Add a FsoPhy to a channel, so it can receive packets
-   *
-   * This method is used to attach a FsoPhy instance to a
-   * FsoChannel instance, so that the FsoPhy can receive
-   * packets sent on that channel. Note that a FsoPhy that only
-   * transmits (without receiveing ever) does not need to be added to
-   * the channel.
-   *
-   * This method is to be implemented by all classes inheriting from
-   * Fsohannel.
-   *
-   * @param phy the FsoPhy instance to be added to the channel as
-   * a receiver.
+   * \param sender the device from which the packet is originating.
+   * \param packet the packet to send
+   * \param txPowerDbm the tx power associated to the packet
+   * \param fsoSignalParams the struct containing all the signal parameters
+   * \param duration the transmission duration associated to the packet
    */
-  virtual void AddRx (Ptr<FsoPhy> phy) = 0;
+  void Send (Ptr<FsoPhy> sender, Ptr<const Packet> packet,
+             FsoSignalParameters fsoSignalParams, Time duration);
 
+  /**
+   * Assign a fixed random variable stream number to the random variables
+   * used by this model.  Return the number of streams (possibly zero) that
+   * have been assigned.
+   *
+   * \param stream first stream index to use
+   *
+   * \return the number of stream indices assigned by this model
+   */
+  int64_t AssignStreams (int64_t stream);
+
+  //MDP - is this needed? came from copy of FsoChannel
   /**
    * TracedCallback signature for path loss calculation events.
    *
@@ -101,13 +109,33 @@ public:
   typedef void (* LossTracedCallback)
     (Ptr<FsoPhy> txPhy, Ptr<FsoPhy> rxPhy,
      double lossDb);
-  
+
+
+private:
+  /**
+   * A vector of pointers to YansWifiPhy.
+   */
+  typedef std::vector<Ptr<FsoPhy> > PhyList;
+  typedef std::vector<Ptr<FsoPropagationLossModel> > LossList;
+
+  /**
+   * This method is scheduled by Send for each associated YansWifiPhy.
+   * The method then calls the corresponding YansWifiPhy that the first
+   * bit of the packet has arrived.
+   *
+   * \param i index of the corresponding FsoPhy in the PHY list
+   * \param packet the packet being sent
+   * \param fsoSignalParams the struct containing all the signal parameters
+   */
+  void Receive (uint32_t i, Ptr<Packet> packet, FsoSignalParameters fsoSignalParams) const;
+
+  PhyList m_phyList;                   //!< List of FsoPhys connected to this FsoChannel
+  LossList m_lossList;    //!< Propagation loss model
+  Ptr<PropagationDelayModel> m_delay;  //!< Propagation delay model
 };
 
 
 
-}
-
-
+} //namespace ns3
 
 #endif /* FSO_CHANNEL_H */

@@ -72,13 +72,13 @@ void
 LaserAntennaModel::SetBeamwidth (double beamwidthMeters)
 { 
   NS_LOG_FUNCTION (this << beamwidthMeters);
-  m_beamwidthRadians = beamwidthMeters;
+  m_beamwidthMeters = beamwidthMeters;
 }
 
 double
 LaserAntennaModel::GetBeamwidth () const
 {
-  return RadiansToDegrees (m_beamwidthMeters);
+  return m_beamwidthMeters;
 }
 
 void 
