@@ -24,6 +24,7 @@
 #include "fso-mean-irradiance-model.h"
 #include <ns3/math.h>
 #include <ns3/log.h>
+#include "ns3/double.h"
 
 namespace ns3 {
 
@@ -60,7 +61,7 @@ void
 FsoMeanIrradianceModel::UpdateSignalParams(FsoSignalParameters& fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
 {
   double distance = a->GetDistanceFrom (b);
-  double rxDiffractiveBeamRadius = CalcDiffractiveBeamRadius(distance, fsoSignalParams.frequency, fsoSignalParams.txBeamwidth, fsoSignalParams.txPhaseFrontRadius);
+  double rxDiffractiveBeamRadius = CalculateDiffractiveBeamRadius(distance, fsoSignalParams.frequency, fsoSignalParams.txBeamwidth, fsoSignalParams.txPhaseFrontRadius);
 
 fsoSignalParams.meanIrradiance = CalculateMeanIrradiance(fsoSignalParams.txBeamwidth, rxDiffractiveBeamRadius);
 }
@@ -76,9 +77,9 @@ FsoMeanIrradianceModel::CalculateMeanIrradiance (double txBeamRadius, double rxD
 double
 FsoMeanIrradianceModel::CalculateDiffractiveBeamRadius (double d, double f, double txBeamRadius, double txPhaseFrontRadius)
 {
-  double theta0 = 1 - (d/phaseFrontRadius);
-  double waveLength = (DoubleValue (3e8))/f;//wavelength = speed of light/frequency
-  double lambda0 = (2*d)/((2*PI/waveLength)*pow(txBeamRadius, 2.0));
+  double theta0 = 1 - (d/txPhaseFrontRadius);
+  double waveLength = (3e8)/f;//wavelength = speed of light/frequency
+  double lambda0 = (2*d)/((2*M_PI/waveLength)*pow(txBeamRadius, 2.0));
 
   return (txBeamRadius*sqrt(pow(theta0, 2.0) + pow(lambda0, 2.0)));
 }

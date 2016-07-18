@@ -27,6 +27,13 @@
 #include <ns3/object.h>
 #include <ns3/mobility-model.h>
 #include "fso-signal-parameters.h"
+#include "fso-propagation-loss-model.h"
+#ifdef HAVE_GSL
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_integration.h>
+#include <gsl/gsl_cdf.h>
+#endif
+
 
 namespace ns3 {
 
@@ -56,10 +63,6 @@ public:
   //Inherited from FsoPropagationLossModel
   virtual void UpdateSignalParams (FsoSignalParameters& fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b);
 
-protected:
-  //Inherited from Object
-  virtual void DoDispose ();
-
   /**
    * Calculate the scintillation index for the channel, valid for
    * downlink scenario under weak turbulent conditions
@@ -71,13 +74,16 @@ protected:
    *
    */
   double CalculateScintillationIdx (double f, double hTx, double hRx, double e) const;
-  
 
   void SetRmsWindSpeed (double rmsWindSpeed);
   double GetRmsWindSpeed ();
 
   void SetGndRefractiveIdx (double gndRefractiveIdx);
   double GetGndRefractiveIdx ();
+
+protected:
+  //Inherited from Object
+  virtual void DoDispose ();
   
 
 private:

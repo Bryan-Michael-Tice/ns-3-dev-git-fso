@@ -33,6 +33,7 @@ This document is written in `reStructuredText <http://docutils.sourceforge.net/r
    energy
    fd-net-device
    flow-monitor
+   fso
    internet-models
    lr-wpan
    lte

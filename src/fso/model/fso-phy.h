@@ -31,10 +31,10 @@ namespace ns3 {
 
 class PacketBurst;
 class FsoChannel;
+class AntennaModel;
 class MobilityModel;
 class LaserModel;
 class NetDevice;
-class SpectrumValue;
 struct SpectrumSignalParameters;
 
 /**
@@ -104,7 +104,7 @@ public:
    * for all SpectrumValues that are passed to StartRx. If 0 is
    * returned, it means that any model will be accepted.
    */
-  virtual Ptr<const SpectrumModel> GetRxSpectrumModel () const = 0;
+  //virtual Ptr<const SpectrumModel> GetRxSpectrumModel () const = 0;
 
   /**
    * Notify the SpectrumPhy instance of an incoming signal

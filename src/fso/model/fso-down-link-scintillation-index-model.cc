@@ -22,6 +22,7 @@
 
 
 #include "fso-down-link-scintillation-index-model.h"
+#include "ns3/double.h"
 #include <ns3/math.h>
 #include <ns3/log.h>
 #include <utility>
@@ -53,7 +54,7 @@ FsoDownLinkScintillationIndexModel::GetTypeId (void)
     .SetParent<Object> ()
     .SetGroupName ("Fso")
     .AddConstructor<FsoDownLinkScintillationIndexModel> ()
-    .AddAttribute ("WindSpeed",
+    /*.AddAttribute ("WindSpeed",
                    "The rms windspeed (meters/second)",
                    DoubleValue (21),
                    MakeDoubleAccessor (&FsoDownLinkScintillationIndexModel::SetRmsWindSpeed,
@@ -65,7 +66,7 @@ FsoDownLinkScintillationIndexModel::GetTypeId (void)
                    DoubleValue (1.7e-14),
                    MakeDoubleAccessor (&FsoDownLinkScintillationIndexModel::SetGndRefractiveIdx,
                                        &FsoDownLinkScintillationIndexModel::GetGndRefractiveIdx),
-                   MakeDoubleChecker<double> (0, 1))
+                   MakeDoubleChecker<double> (0, 1))*/
   ;
   return tid;
 }
@@ -77,10 +78,10 @@ FsoDownLinkScintillationIndexModel::UpdateSignalParams (FsoSignalParameters& fso
 
   double heightTx = 0.0;
   double heightRx = 0.0;
-  double elevation = 30.0*(PI/180.0);//MDP - This is fixed for now, Satellite mobility model should provide an elevation
+  double elevation = 30.0*(M_PI/180.0);//MDP - This is fixed for now, Satellite mobility model should provide an elevation
  
   //Determine which mobility model is the tx,rx for downlink
-  NS_ASSERT (a.DoGetPosition().z >= a.DoGetPosition().z)
+  NS_ASSERT (a->GetPosition().z >= a->GetPosition().z);
 
   fsoSignalParams.scintillationIndex = CalculateScintillationIdx (fsoSignalParams.frequency, heightTx, heightRx, elevation);
 
@@ -91,7 +92,7 @@ FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double 
 {
   NS_LOG_FUNCTION (this);
 
-  double k = (2*PI)/(DoubleValue(3e8)/f);//Wave number - 2*pi/wavelength
+  double k = (2*M_PI)/((3e8)/f);//Wave number - 2*pi/wavelength
    
   return (2.25*pow(k,7.0/6.0)*(1/pow(cos(e),11.0/6.0)));//*integral();//MDP - need numerical solver or look-up table for integral
 }

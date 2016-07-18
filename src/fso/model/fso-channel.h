@@ -28,13 +28,13 @@
 #include "ns3/packet.h"
 #include "ns3/channel.h"
 #include "fso-signal-parameters.h"
+#include "fso-propagation-loss-model.h"
 #include "fso-phy.h"
 #include "ns3/nstime.h"
 
 namespace ns3 {
 
 class NetDevice;
-class FsoPropagationLossModel;
 class PropagationDelayModel;
 
 /**

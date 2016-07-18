@@ -23,7 +23,6 @@
 #include <ns3/double.h>
 #include <cmath>
 
-#include "antenna-model.h"
 #include "laser-antenna-model.h"
 
 
@@ -111,6 +110,7 @@ double
 LaserAntennaModel::GetGainDb (Angles a)
 {
   NS_LOG_FUNCTION (this << a);
+  /*
   // azimuth angle w.r.t. the reference system of the antenna
   double phi = a.phi - m_orientationRadians;
 
@@ -130,6 +130,8 @@ LaserAntennaModel::GetGainDb (Angles a)
 
   NS_LOG_LOGIC ("gain = " << gainDb);
   return gainDb;
+  */
+  return 0.0;
 }
 
 

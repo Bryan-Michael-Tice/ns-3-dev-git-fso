@@ -73,3 +73,4 @@ public:
 } // namespace ns3
 
 #endif // ANTENNA_MODEL_H
+

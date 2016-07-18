@@ -26,6 +26,7 @@
 
 #include <ns3/object.h>
 #include <ns3/mobility-model.h>
+#include "fso-signal-parameters.h"
 
 namespace ns3 {
 

@@ -60,6 +60,9 @@ public:
   void SetRxGain (double rxGain);
   double GetRxGain () const;
 
+  void SetOrientation (double orientationDegrees);
+  double GetOrientation () const;
+
 private:
 
   double m_apertureSize;

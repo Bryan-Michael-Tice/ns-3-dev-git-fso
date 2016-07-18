@@ -29,7 +29,6 @@
 #include "ns3/pointer.h"
 #include "ns3/object-factory.h"
 #include "fso-channel.h"
-#include "ns3/propagation-loss-model.h"
 #include "ns3/propagation-delay-model.h"
 
 namespace ns3 {
@@ -42,7 +41,7 @@ TypeId
 FsoChannel::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::FsoChannel")
-    .SetParent<WifiChannel> ()
+    .SetParent<Channel> ()
     .SetGroupName ("Fso")
     .AddConstructor<FsoChannel> ()
     .AddAttribute ("PropagationDelayModel", "A pointer to the propagation delay model attached to this channel.",
@@ -65,7 +64,7 @@ FsoChannel::~FsoChannel ()
 }
 
 void
-FsoChannel::AddPropagationLossModel (Ptr<PropagationLossModel> loss)
+FsoChannel::AddFsoPropagationLossModel (Ptr<FsoPropagationLossModel> loss)
 {
   NS_ASSERT (loss != 0);
   m_lossList.push_back (loss);
@@ -79,7 +78,7 @@ FsoChannel::SetPropagationDelayModel (Ptr<PropagationDelayModel> delay)
 }
 
 void
-FsoChannel::Send (Ptr<YansWifiPhy> sender, Ptr<const Packet> packet, double txPowerDbm,
+FsoChannel::Send (Ptr<FsoPhy> sender, Ptr<const Packet> packet,
                        FsoSignalParameters fsoSignalParams, Time duration)
 {
   Ptr<MobilityModel> senderMobility = sender->GetMobility ()->GetObject<MobilityModel> ();
@@ -132,7 +131,7 @@ FsoChannel::Send (Ptr<YansWifiPhy> sender, Ptr<const Packet> packet, double txPo
 }
 
 void
-FsoChannel::Receive (uint32_t i, Ptr<Packet> packet, struct Parameters parameters) const
+FsoChannel::Receive (uint32_t i, Ptr<Packet> packet, FsoSignalParameters fsoSignalParams/*struct Parameters parameters*/) const
 {
   //FsoPhy receive goes here
   //m_phyList[i]->StartReceivePreambleAndHeader (packet, parameters.rxPowerDbm, parameters.txVector, parameters.preamble, parameters.type, parameters.duration);
@@ -151,17 +150,18 @@ FsoChannel::GetDevice (uint32_t i) const
 }
 
 void
-FsoChannel::Add (Ptr<YansWifiPhy> phy)
+FsoChannel::Add (Ptr<FsoPhy> phy)
 {
   m_phyList.push_back (phy);
 }
 
 int64_t
-FsoChannel::AssignStreams (int64_t stream)
+FsoChannel::AssignStreams (int64_t stream) //MDP - what is this for?
 {
-  int64_t currentStream = stream;
-  currentStream += m_loss->AssignStreams (stream);
-  return (currentStream - stream);
+  //int64_t currentStream = stream;
+  //currentStream += m_loss->AssignStreams (stream);
+  //return (currentStream - stream);
+  return stream;
 }
 
 } //namespace ns3

@@ -7,9 +7,17 @@
 #     conf.check_nonfatal(header_name='stdint.h', define_name='HAVE_STDINT_H')
 
 def build(bld):
-    module = bld.create_ns3_module('fso', ['core'])
+    module = bld.create_ns3_module('fso', ['mobility', 'propagation', 'antenna'])
     module.source = [
         'model/fso.cc',
+        'model/fso-channel.cc',
+        'model/fso-phy.cc',
+        'model/fso-propagation-loss-model.cc',
+        'model/fso-signal-parameters.cc',
+        'model/fso-down-link-scintillation-index-model.cc',
+        'model/fso-mean-irradiance-model.cc',
+        'model/laser-antenna-model.cc',
+        'model/optical-rx-antenna-model.cc',
         'helper/fso-helper.cc',
         ]
 
@@ -22,8 +30,20 @@ def build(bld):
     headers.module = 'fso'
     headers.source = [
         'model/fso.h',
+        'model/fso-channel.h',
+        'model/fso-phy.h',
+        'model/fso-propagation-loss-model.h',
+        'model/fso-signal-parameters.h',
+        'model/fso-down-link-scintillation-index-model.h',
+        'model/fso-mean-irradiance-model.h',
+        'model/laser-antenna-model.h',
+        'model/optical-rx-antenna-model.h',
         'helper/fso-helper.h',
         ]
+
+    if bld.env['ENABLE_GSL']:
+        module.use.extend(['GSL', 'GSLCBLAS', 'M'])
+        module_test.use.extend(['GSL', 'GSLCBLAS', 'M'])
 
     if bld.env.ENABLE_EXAMPLES:
         bld.recurse('examples')

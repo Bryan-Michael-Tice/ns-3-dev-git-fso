@@ -50,9 +50,7 @@ FsoPropagationLossModel::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::FsoPropagationLossModel")
     .SetParent<Object> ()
-    .SetGroupName ("Fso")
-    .AddConstructor<FsoPropagationLossModel> ();
-
+  ;
   return tid;
 }
 
