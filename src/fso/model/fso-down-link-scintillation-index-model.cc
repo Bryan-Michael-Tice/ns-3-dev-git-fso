@@ -54,7 +54,7 @@ FsoDownLinkScintillationIndexModel::GetTypeId (void)
     .SetParent<Object> ()
     .SetGroupName ("Fso")
     .AddConstructor<FsoDownLinkScintillationIndexModel> ()
-    /*.AddAttribute ("WindSpeed",
+    .AddAttribute ("WindSpeed",
                    "The rms windspeed (meters/second)",
                    DoubleValue (21),
                    MakeDoubleAccessor (&FsoDownLinkScintillationIndexModel::SetRmsWindSpeed,
@@ -66,7 +66,7 @@ FsoDownLinkScintillationIndexModel::GetTypeId (void)
                    DoubleValue (1.7e-14),
                    MakeDoubleAccessor (&FsoDownLinkScintillationIndexModel::SetGndRefractiveIdx,
                                        &FsoDownLinkScintillationIndexModel::GetGndRefractiveIdx),
-                   MakeDoubleChecker<double> (0, 1))*/
+                   MakeDoubleChecker<double> (0, 1))
   ;
   return tid;
 }
@@ -92,11 +92,66 @@ FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double 
 {
   NS_LOG_FUNCTION (this);
 
+  double result;
+  double error;
+
+  FunctionParameters params;
+  params.A = m_groundRefractiveIdx;
+  params.v = m_rmsWindSpeed;
+  params.hgs = hRx;
+
+  gsl_integration_workspace * w = gsl_integration_workspace_alloc (1000);
+
+  gsl_function F;
+  F.function = &IntegralFunction;
+  F.params = &params;
+
+  gsl_integration_qagiu (&F, hRx, hTx, 1e-7, 1000, w, &result, &error);
+
   double k = (2*M_PI)/((3e8)/f);//Wave number - 2*pi/wavelength
    
-  return (2.25*pow(k,7.0/6.0)*(1/pow(cos(e),11.0/6.0)));//*integral();//MDP - need numerical solver or look-up table for integral
+  gsl_integration_workspace_free (w);
+  
+  return (2.25*pow(k,7.0/6.0)*(1/pow(cos(e),11.0/6.0)))*result;//*integral();//MDP - need numerical solver or look-up table for integral
 }
 
+void 
+FsoDownLinkScintillationIndexModel::SetRmsWindSpeed (double rmsWindSpeed)
+{
+  NS_LOG_FUNCTION (this);
+  m_rmsWindSpeed = rmsWindSpeed;
+}
 
+double 
+FsoDownLinkScintillationIndexModel::GetRmsWindSpeed () const
+{
+  return m_rmsWindSpeed;
+}
+
+void 
+FsoDownLinkScintillationIndexModel::SetGndRefractiveIdx (double gndRefractiveIdx)
+{
+  NS_LOG_FUNCTION (this);
+  m_groundRefractiveIdx = gndRefractiveIdx;
+}
+
+double 
+FsoDownLinkScintillationIndexModel::GetGndRefractiveIdx () const
+{
+  return m_groundRefractiveIdx;
+}
+
+#ifdef HAVE_GSL
+double
+IntegralFunction (double h, void *params)
+{
+  double A = ((FunctionParameters *) params)->A;
+  double v = ((FunctionParameters *) params)->v;
+  double hgs = ((FunctionParameters *) params)->hgs;
+  double IntegralFunction = (A*std::exp(-hgs/700)*std::exp(-(h-hgs)/1000) + (1/(27*27))*std::pow(v,2)*(std::pow(h,10))*(std::pow(5.94*10,-53))*(std::exp(-h/1000))+(std::pow(2.7*10,-16))*std::exp(-h/1500))*(std::pow(h-hgs,5/6));
+
+  return IntegralFunction;
+}
+#endif
 
 } // namespace ns3

@@ -37,8 +37,16 @@
 
 namespace ns3 {
 
+#ifdef HAVE_GSL
+typedef struct FunctionParameterType
+{
+  double A;
+  double v;
+  double hgs;
+} FunctionParameters;
 
-
+double IntegralFunction (double x, void *params);
+#endif
 
 /**
  * \ingroup fso
@@ -76,10 +84,10 @@ public:
   double CalculateScintillationIdx (double f, double hTx, double hRx, double e) const;
 
   void SetRmsWindSpeed (double rmsWindSpeed);
-  double GetRmsWindSpeed ();
+  double GetRmsWindSpeed () const;
 
   void SetGndRefractiveIdx (double gndRefractiveIdx);
-  double GetGndRefractiveIdx ();
+  double GetGndRefractiveIdx () const;
 
 protected:
   //Inherited from Object
