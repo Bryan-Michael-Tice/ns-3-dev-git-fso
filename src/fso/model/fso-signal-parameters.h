@@ -123,6 +123,11 @@ struct FsoSignalParameters : public SimpleRefCount<FsoSignalParameters>
    * The mean irradiance of the signal at the receiver (Watts/m^2).
    */
   double meanIrradiance;
+  
+  /**
+   * The path loss (free space) from the RX to TX (dB).
+   */
+  double pathLoss;
 
 };
 

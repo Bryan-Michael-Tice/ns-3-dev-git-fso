@@ -367,7 +367,7 @@ public:
 };
 
 PropagationLossModelsTestSuite::PropagationLossModelsTestSuite ()
-  : TestSuite ("propagation-loss-model", UNIT)
+  : TestSuite ("propagation-loss-model", UNIT)d
 {
   AddTestCase (new FriisPropagationLossModelTestCase, TestCase::QUICK);
   AddTestCase (new FsoDownLinkScintillationIndexModel, TestCase::QUICK);

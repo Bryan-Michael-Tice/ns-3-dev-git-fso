@@ -52,6 +52,7 @@ FsoSignalParameters::FsoSignalParameters (const FsoSignalParameters& p)
   txBeamwidth = p.txBeamwidth;
   scintillationIndex = p.scintillationIndex;
   meanIrradiance = p.meanIrradiance;
+  pathLoss = p.pathLoss;
 }
 
 Ptr<FsoSignalParameters>

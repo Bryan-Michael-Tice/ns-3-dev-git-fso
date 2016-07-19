@@ -112,7 +112,7 @@ FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double 
    
   gsl_integration_workspace_free (w);
   
-  return (2.25*pow(k,7.0/6.0)*(1/pow(cos(e),11.0/6.0)))*result;//*integral();//MDP - need numerical solver or look-up table for integral
+  return (2.25*std::pow(k,7.0/6.0)*(1/std::pow(cos(e),11.0/6.0)))*result;//*integral();//MDP - need numerical solver or look-up table for integral
 }
 
 void 
@@ -148,7 +148,7 @@ IntegralFunction (double h, void *params)
   double A = ((FunctionParameters *) params)->A;
   double v = ((FunctionParameters *) params)->v;
   double hgs = ((FunctionParameters *) params)->hgs;
-  double IntegralFunction = (A*std::exp(-hgs/700)*std::exp(-(h-hgs)/1000) + (1/(27*27))*std::pow(v,2)*(std::pow(h,10))*(std::pow(5.94*10,-53))*(std::exp(-h/1000))+(std::pow(2.7*10,-16))*std::exp(-h/1500))*(std::pow(h-hgs,5/6));
+  double IntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/1000.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(std::pow(5.94*10,-53.0))*(std::exp(-h/1000.0))+(std::pow(2.7*10,-16.0))*std::exp(-h/1500.0))*(std::pow(h-hgs,5.0/6.0));
 
   return IntegralFunction;
 }
