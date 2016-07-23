@@ -29,13 +29,11 @@
 
 namespace ns3 {
 
-class PacketBurst;
 class FsoChannel;
 class AntennaModel;
 class MobilityModel;
-class LaserModel;
 class NetDevice;
-struct SpectrumSignalParameters;
+struct FsoSignalParameters;
 
 /**
  * \ingroup fso
@@ -47,6 +45,7 @@ class FsoPhy  : public Object
 {
 
 public:
+  
   FsoPhy ();
   virtual ~FsoPhy ();
 
@@ -92,26 +91,41 @@ public:
   virtual void SetChannel (Ptr<FsoChannel> c) = 0;
 
   /**
+   * Return the WifiChannel this WifiPhy is connected to.
+   *
+   * \return the WifiChannel this WifiPhy is connected to
+   */
+  virtual Ptr<FsoChannel> GetChannel () const = 0;
+
+  /**
    * Get the AntennaModel used by the NetDevice for reception
    *
    * @return a Ptr to the AntennaModel used by the NetDevice for reception
    */
   virtual Ptr<AntennaModel> GetRxAntenna () = 0;
 
-  /**
-   *
-   * @return returns the SpectrumModel that this SpectrumPhy expects to be used
-   * for all SpectrumValues that are passed to StartRx. If 0 is
-   * returned, it means that any model will be accepted.
-   */
-  //virtual Ptr<const SpectrumModel> GetRxSpectrumModel () const = 0;
 
   /**
-   * Notify the SpectrumPhy instance of an incoming signal
-   *
-   * @param params the parameters of the signals being received
+   * \param packet the packet to send
+   * \param FsoSignalParameters contains the signal parameters
    */
-  virtual void StartRx (Ptr<SpectrumSignalParameters> params) = 0;
+  virtual void SendPacket (Ptr<const Packet> packet, FsoSignalParameters fsoSignalParams) = 0;
+
+
+  /**
+   * Starting receiving the payload of a packet (i.e. the first bit of the packet has arrived).
+   *
+   * \param packet the arriving packet
+   * \param FsoSignalParameters contains the signal parameters
+   */
+  virtual void ReceivePacket (Ptr<Packet> packet, FsoSignalParameters fsoSignalParams) = 0;
+
+
+  /**
+
+   */
+  virtual Time CalculateTxDuration (uint32_t size, FsoSignalParameters fsoSignalParams) = 0;
+
 
 private:
   /**
@@ -133,14 +147,7 @@ private:
 
 
 
-
-
-
-
 } // namespace ns3
-
-
-
 
 
 #endif /* FSO_PHY_H */

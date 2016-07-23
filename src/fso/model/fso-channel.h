@@ -119,8 +119,8 @@ private:
   typedef std::vector<Ptr<FsoPropagationLossModel> > LossList;
 
   /**
-   * This method is scheduled by Send for each associated YansWifiPhy.
-   * The method then calls the corresponding YansWifiPhy that the first
+   * This method is scheduled by Send for each associated FsoPhy.
+   * The method then calls the corresponding FsoPhy that the first
    * bit of the packet has arrived.
    *
    * \param i index of the corresponding FsoPhy in the PHY list
@@ -130,7 +130,7 @@ private:
   void Receive (uint32_t i, Ptr<Packet> packet, FsoSignalParameters fsoSignalParams) const;
 
   PhyList m_phyList;                   //!< List of FsoPhys connected to this FsoChannel
-  LossList m_lossList;    //!< Propagation loss model
+  LossList m_lossList;    //!< List of propagation loss models
   Ptr<PropagationDelayModel> m_delay;  //!< Propagation delay model
 };
 

@@ -134,7 +134,7 @@ void
 FsoChannel::Receive (uint32_t i, Ptr<Packet> packet, FsoSignalParameters fsoSignalParams/*struct Parameters parameters*/) const
 {
   //FsoPhy receive goes here
-  //m_phyList[i]->StartReceivePreambleAndHeader (packet, parameters.rxPowerDbm, parameters.txVector, parameters.preamble, parameters.type, parameters.duration);
+          //m_phyList[i]->StartReceivePreambleAndHeader (packet, parameters.rxPowerDbm, parameters.txVector, parameters.preamble, parameters.type, parameters.duration);
 }
 
 uint32_t
@@ -156,7 +156,7 @@ FsoChannel::Add (Ptr<FsoPhy> phy)
 }
 
 int64_t
-FsoChannel::AssignStreams (int64_t stream) //MDP - what is this for?
+FsoChannel::AssignStreams (int64_t stream) //MDP - for random variables, see header file
 {
   //int64_t currentStream = stream;
   //currentStream += m_loss->AssignStreams (stream);

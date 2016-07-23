@@ -95,7 +95,7 @@ struct FsoSignalParameters : public SimpleRefCount<FsoSignalParameters>
   double wavelength;
 
   /**
-   * The wavelength of the signal (m).
+   * The frequency of the signal (Hz).
    */
   double frequency;
 
