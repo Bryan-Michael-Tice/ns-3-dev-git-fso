@@ -122,7 +122,7 @@ FsoChannel::Send (Ptr<FsoPhy> sender, Ptr<const Packet> packet,
           Simulator::ScheduleWithContext (dstNode,
                                           delay, &FsoChannel::Receive, this,
                                           j, copy, parameters);*/
-
+          NS_LOG_DEBUG ("Scheduling Packet: " << packet->GetSize());
           Simulator::ScheduleWithContext (dstNode,
                                           delay, &FsoChannel::Receive, this,
                                           j, copy, fsoSignalParams);          
@@ -135,6 +135,8 @@ FsoChannel::Receive (uint32_t i, Ptr<Packet> packet, FsoSignalParameters fsoSign
 {
   //FsoPhy receive goes here
           //m_phyList[i]->StartReceivePreambleAndHeader (packet, parameters.rxPowerDbm, parameters.txVector, parameters.preamble, parameters.type, parameters.duration);
+  NS_LOG_INFO ("Channel is forwarding packet...");
+  m_phyList[i]->ReceivePacket (packet, fsoSignalParams);
 }
 
 uint32_t

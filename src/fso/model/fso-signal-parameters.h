@@ -100,6 +100,11 @@ struct FsoSignalParameters : public SimpleRefCount<FsoSignalParameters>
   double frequency;
 
   /**
+   * The symbol period (ns)
+   */
+  double symbolPeriod;
+
+  /**
    * The power of the signal (dB).
    */
   double power;

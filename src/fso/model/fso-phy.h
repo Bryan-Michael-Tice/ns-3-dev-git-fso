@@ -26,6 +26,7 @@
 
 #include <ns3/object.h>
 #include <ns3/nstime.h>
+#include <ns3/packet.h>
 
 namespace ns3 {
 
@@ -46,7 +47,6 @@ class FsoPhy  : public Object
 
 public:
   
-  FsoPhy ();
   virtual ~FsoPhy ();
 
   /**
@@ -81,7 +81,7 @@ public:
    *
    * @return a Ptr to the associated MobilityModel instance
    */
-  virtual Ptr<MobilityModel> GetMobility () = 0;
+  virtual Ptr<MobilityModel> GetMobility () const = 0;
 
   /**
    * Set the channel attached to this device.
@@ -102,7 +102,7 @@ public:
    *
    * @return a Ptr to the AntennaModel used by the NetDevice for reception
    */
-  virtual Ptr<AntennaModel> GetRxAntenna () = 0;
+  virtual Ptr<AntennaModel> GetRxAntenna () const = 0;
 
 
   /**
@@ -127,20 +127,10 @@ public:
   virtual Time CalculateTxDuration (uint32_t size, FsoSignalParameters fsoSignalParams) = 0;
 
 
-private:
-  /**
-   * \brief Copy constructor
-   *
-   * Defined and unimplemented to avoid misuse
-   */
-  FsoPhy (FsoPhy const &);
-  /**
-   * \brief Copy constructor
-   *
-   * Defined and unimplemented to avoid misuse
-   * \returns
-   */
-  FsoPhy& operator= (FsoPhy const &);
+protected:
+  //Inherited from Object
+  virtual void DoDispose ();
+
 };
 
 

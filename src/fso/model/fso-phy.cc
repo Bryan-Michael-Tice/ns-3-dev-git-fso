@@ -43,14 +43,16 @@ FsoPhy::GetTypeId (void)
   return tid;
 }
 
-FsoPhy::FsoPhy ()
-{
-  NS_LOG_FUNCTION (this);
-}
 
 FsoPhy::~FsoPhy ()
 {
   NS_LOG_FUNCTION (this);
+}
+
+void 
+FsoPhy::DoDispose ()
+{
+
 }
 
 
