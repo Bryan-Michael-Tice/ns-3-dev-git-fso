@@ -17,6 +17,14 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE ("FsoChannelExample");
 
+
+
+  /*
+   * The RX/TX and link parameters can be found in:
+   * "Preliminary Results of Terabit-per-second Long-Range Free-Space Optical Transmission Experiment THRUST"
+   * and
+   * "Overview of the Laser Communication System for the NICT Optical Ground Station and Laser Communication Experiments on Ground-to-Satellite Links"
+   */
 int 
 main (int argc, char *argv[])
 {
@@ -27,21 +35,9 @@ main (int argc, char *argv[])
 
   cmd.Parse (argc,argv);
 
-    LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
-  
-  /*
-  NodeContainer c;
-  c.Create (2);
-
-  MobilityHelper mobility;
-  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-  positionAlloc->Add (Vector (0.0, 0.0, 0.0));//OGS
-  positionAlloc->Add (Vector (0.0, 0.0, 36000000.0));//GEO satellite
-  mobility.SetPositionAllocator (positionAlloc);
-  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-
-  mobility.Install (c);
-  */
+  LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoDownLinkPhy", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO);
 
   std::cout << "Starting Fso Channel Test..." << std::endl;
 
@@ -104,16 +100,19 @@ main (int argc, char *argv[])
   //Setup Packet and Signal Params
   uint32_t size = 1024;//Packet size
   double wavelength = 1550e-9; //1550 nm 
+  double speedOfLight = 3e8;
   Ptr<Packet> packet = Create<Packet> (size);
   FsoSignalParameters params;
   params.wavelength = wavelength;
-  params.frequency = 3e8/wavelength;
-  params.symbolPeriod = 1/(1.8e9);//1.8 Gbps 
+  params.frequency = speedOfLight/wavelength;
+  params.symbolPeriod = 1/(49.3724e6);//49.3724 Mbps 
   params.power = 0.0;
   params.txPhy = txPhy;
   params.txAntenna = laser;
   params.txBeamwidth = 0.120;
-  
+   
+  std::cout << "Frequency: " << params.frequency << std::endl;
+
   txPhy->SendPacket (packet, params);
   
 

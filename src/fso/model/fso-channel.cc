@@ -91,14 +91,14 @@ FsoChannel::Send (Ptr<FsoPhy> sender, Ptr<const Packet> packet,
 
           Ptr<MobilityModel> receiverMobility = (*i)->GetMobility ()->GetObject<MobilityModel> ();
           Time delay = m_delay->GetDelay (senderMobility, receiverMobility);
+          double txPower = fsoSignalParams.power;
 
           for (LossList::const_iterator u = m_lossList.begin (); u != m_lossList.end (); u++)
             {
               (*u)->UpdateSignalParams (fsoSignalParams, senderMobility, receiverMobility);  
             }
 
-          /*NS_LOG_DEBUG ("propagation: txPower=" << txPowerDbm << "dbm, rxPower=" << rxPowerDbm << "dbm, " <<
-                        "distance=" << senderMobility->GetDistanceFrom (receiverMobility) << "m, delay=" << delay);*/
+          NS_LOG_DEBUG ("Signal: txPower=" << txPower << "dbm, rxPower=" << fsoSignalParams.power << "dbm, " << "distance=" << senderMobility->GetDistanceFrom (receiverMobility) << "m, delay=" << delay << ", Scint Index=" << fsoSignalParams.scintillationIndex << ", mean irradiance=" << fsoSignalParams.meanIrradiance << "W/m^2, path loss=" << fsoSignalParams.pathLoss <<"db");
           Ptr<Packet> copy = packet->Copy ();
           Ptr<Object> dstNetDevice = m_phyList[j]->GetDevice ();
           uint32_t dstNode;
@@ -111,17 +111,6 @@ FsoChannel::Send (Ptr<FsoPhy> sender, Ptr<const Packet> packet,
               dstNode = dstNetDevice->GetObject<NetDevice> ()->GetNode ()->GetId ();
             }
 
-          /*
-          struct Parameters parameters;
-          parameters.rxPowerDbm = rxPowerDbm;
-          parameters.type = mpdutype;
-          parameters.duration = duration;
-          parameters.txVector = txVector;
-          parameters.preamble = preamble;
-
-          Simulator::ScheduleWithContext (dstNode,
-                                          delay, &FsoChannel::Receive, this,
-                                          j, copy, parameters);*/
           NS_LOG_DEBUG ("Scheduling Packet: " << packet->GetSize());
           Simulator::ScheduleWithContext (dstNode,
                                           delay, &FsoChannel::Receive, this,
@@ -135,7 +124,7 @@ FsoChannel::Receive (uint32_t i, Ptr<Packet> packet, FsoSignalParameters fsoSign
 {
   //FsoPhy receive goes here
           //m_phyList[i]->StartReceivePreambleAndHeader (packet, parameters.rxPowerDbm, parameters.txVector, parameters.preamble, parameters.type, parameters.duration);
-  NS_LOG_INFO ("Channel is forwarding packet...");
+  //NS_LOG_INFO ("Channel is forwarding packet...");
   m_phyList[i]->ReceivePacket (packet, fsoSignalParams);
 }
 
