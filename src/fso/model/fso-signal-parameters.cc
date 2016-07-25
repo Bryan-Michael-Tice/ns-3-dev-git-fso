@@ -45,14 +45,18 @@ FsoSignalParameters::FsoSignalParameters (const FsoSignalParameters& p)
 {
   NS_LOG_FUNCTION (this << &p);
   duration = p.duration;
-  txPhy = p.txPhy;
-  txAntenna = p.txAntenna;
+  frequency = p.frequency;
   wavelength = p.wavelength;
+  symbolPeriod = p.symbolPeriod;
   power = p.power;
   txBeamwidth = p.txBeamwidth;
+  txPhaseFrontRadius = p.txPhaseFrontRadius;
   scintillationIndex = p.scintillationIndex;
   meanIrradiance = p.meanIrradiance;
   pathLoss = p.pathLoss;
+
+  txPhy = p.txPhy;
+  txAntenna = p.txAntenna;
 }
 
 Ptr<FsoSignalParameters>

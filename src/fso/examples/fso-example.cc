@@ -38,6 +38,7 @@ main (int argc, char *argv[])
   LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoDownLinkPhy", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoMeanIrradianceModel", LOG_LEVEL_INFO);
 
   std::cout << "Starting Fso Channel Test..." << std::endl;
 
@@ -68,7 +69,7 @@ main (int argc, char *argv[])
 
   Ptr<FsoDownLinkScintillationIndexModel> scintIndexModel = CreateObject<FsoDownLinkScintillationIndexModel> ();
   scintIndexModel->SetRmsWindSpeed (21.0);
-  scintIndexModel->SetGndRefractiveIdx (10e-7);
+  scintIndexModel->SetGndRefractiveIdx (1.7*10e-14);
   
   Ptr<FsoMeanIrradianceModel> meanIrradianceModel = CreateObject<FsoMeanIrradianceModel> ();
 
@@ -100,8 +101,9 @@ main (int argc, char *argv[])
   //Setup Packet and Signal Params
   uint32_t size = 1024;//Packet size
   double wavelength = 1550e-9; //1550 nm 
-  double speedOfLight = 3e8;
+  double speedOfLight = 3e8;//m/s
   Ptr<Packet> packet = Create<Packet> (size);
+
   FsoSignalParameters params;
   params.wavelength = wavelength;
   params.frequency = speedOfLight/wavelength;
@@ -110,8 +112,7 @@ main (int argc, char *argv[])
   params.txPhy = txPhy;
   params.txAntenna = laser;
   params.txBeamwidth = 0.120;
-   
-  std::cout << "Frequency: " << params.frequency << std::endl;
+  params.txPhaseFrontRadius = 10e8;
 
   txPhy->SendPacket (packet, params);
   

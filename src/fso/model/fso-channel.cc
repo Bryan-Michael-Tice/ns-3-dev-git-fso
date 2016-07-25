@@ -99,6 +99,7 @@ FsoChannel::Send (Ptr<FsoPhy> sender, Ptr<const Packet> packet,
             }
 
           NS_LOG_DEBUG ("Signal: txPower=" << txPower << "dbm, rxPower=" << fsoSignalParams.power << "dbm, " << "distance=" << senderMobility->GetDistanceFrom (receiverMobility) << "m, delay=" << delay << ", Scint Index=" << fsoSignalParams.scintillationIndex << ", mean irradiance=" << fsoSignalParams.meanIrradiance << "W/m^2, path loss=" << fsoSignalParams.pathLoss <<"db");
+
           Ptr<Packet> copy = packet->Copy ();
           Ptr<Object> dstNetDevice = m_phyList[j]->GetDevice ();
           uint32_t dstNode;
@@ -111,7 +112,7 @@ FsoChannel::Send (Ptr<FsoPhy> sender, Ptr<const Packet> packet,
               dstNode = dstNetDevice->GetObject<NetDevice> ()->GetNode ()->GetId ();
             }
 
-          NS_LOG_DEBUG ("Scheduling Packet: " << packet->GetSize());
+          NS_LOG_DEBUG ("Scheduling Packet: " << packet->GetSize() << " bits");
           Simulator::ScheduleWithContext (dstNode,
                                           delay, &FsoChannel::Receive, this,
                                           j, copy, fsoSignalParams);          

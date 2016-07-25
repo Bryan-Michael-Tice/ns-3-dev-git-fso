@@ -75,13 +75,12 @@ void
 FsoDownLinkScintillationIndexModel::UpdateSignalParams (FsoSignalParameters& fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
 {
   NS_LOG_FUNCTION (this);
+  NS_ASSERT (a->GetPosition().z >= b->GetPosition().z);
+  
+  double heightTx = (a->GetPosition().z)/1000.0;//in km
+  double heightRx = (b->GetPosition().z)/1000.0;//in km  
 
-  double heightTx = 0.0;
-  double heightRx = 0.0;
-  double elevation = 30.0*(M_PI/180.0);//MDP - This is fixed for now, Satellite mobility model should provide an elevation
- 
-  //Determine which mobility model is the tx,rx for downlink
-  NS_ASSERT (a->GetPosition().z >= a->GetPosition().z);
+  double elevation = 10.0*(M_PI/180.0);//MDP - This is fixed for now, Satellite mobility model should provide an elevation
 
   fsoSignalParams.scintillationIndex = CalculateScintillationIdx (fsoSignalParams.frequency, heightTx, heightRx, elevation);
 
@@ -112,7 +111,7 @@ FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double 
    
   gsl_integration_workspace_free (w);
   
-  return (2.25*std::pow(k,7.0/6.0)*(1/std::pow(cos(e),11.0/6.0)))*result;//*integral();//MDP - need numerical solver or look-up table for integral
+  return (2.25*std::pow(k,7.0/6.0)*(1/std::pow(cos(e),11.0/6.0)))*result;
 }
 
 void 
@@ -148,7 +147,7 @@ IntegralFunction (double h, void *params)
   double A = ((FunctionParameters *) params)->A;
   double v = ((FunctionParameters *) params)->v;
   double hgs = ((FunctionParameters *) params)->hgs;
-  double IntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/1000.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(std::pow(5.94*10,-53.0))*(std::exp(-h/1000.0))+(std::pow(2.7*10,-16.0))*std::exp(-h/1500.0))*(std::pow(h-hgs,5.0/6.0));
+  double IntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/100.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(std::pow(5.94*10,-53.0))*(std::exp(-h/1000.0))+(std::pow(2.7*10,-16.0))*std::exp(-h/1500.0))*(std::pow(h-hgs,5.0/6.0));
 
   return IntegralFunction;
 }

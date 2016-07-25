@@ -1,5 +1,5 @@
 wavelength = 1550*10^(-9);
-d = 35000;%distance of link
+d = 35000000;%distance of link (m)
 r = 0;%radial distance from optical axis
 rx_aperture_diameter = 0.2;
 

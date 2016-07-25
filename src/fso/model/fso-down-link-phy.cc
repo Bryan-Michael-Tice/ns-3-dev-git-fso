@@ -115,7 +115,7 @@ FsoDownLinkPhy::SendPacket (Ptr<const Packet> packet, FsoSignalParameters fsoSig
 {
 
   NS_LOG_FUNCTION (this << packet << fsoSignalParams.wavelength << fsoSignalParams.frequency);
-
+  NS_LOG_DEBUG ("PhySend: frequency=" << fsoSignalParams.frequency); 
   m_state = State::TX;
   Time txDuration = CalculateTxDuration (packet->GetSize (), fsoSignalParams);  
 

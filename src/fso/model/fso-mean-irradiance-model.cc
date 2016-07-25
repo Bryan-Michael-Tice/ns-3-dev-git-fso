@@ -61,6 +61,9 @@ void
 FsoMeanIrradianceModel::UpdateSignalParams(FsoSignalParameters& fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
 {
   double distance = a->GetDistanceFrom (b);
+
+  NS_LOG_DEBUG ("MeanIrradiance: distance=" << distance << "m, frequency=" << fsoSignalParams.frequency << "Hz, beamwidth=" << fsoSignalParams.txBeamwidth << "m, phase front radius=" << fsoSignalParams.txPhaseFrontRadius); 
+
   double rxDiffractiveBeamRadius = CalculateDiffractiveBeamRadius(distance, fsoSignalParams.frequency, fsoSignalParams.txBeamwidth, fsoSignalParams.txPhaseFrontRadius);
 
 fsoSignalParams.meanIrradiance = CalculateMeanIrradiance(fsoSignalParams.txBeamwidth, rxDiffractiveBeamRadius);
