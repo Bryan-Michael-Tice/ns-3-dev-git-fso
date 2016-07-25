@@ -60,12 +60,17 @@ public:
    *
    * \return probability of successfully receiving the chunk
    */
-  virtual double GetChunkSuccessRate (FsoSignalParameters fsoSignalParams, uint32_t nbits) const = 0;
+  virtual double GetChunkSuccessRate (FsoSignalParameters fsoSignalParams, uint32_t nbits) = 0;
 };
 
 class FsoDownLinkErrorModel : public FsoErrorModel
 {
 public:
+
+  static TypeId GetTypeId (void);
+
+  FsoDownLinkErrorModel ();
+  ~FsoDownLinkErrorModel ();
 
   /**
    * \param txVector a specific transmission vector including WifiMode
@@ -80,7 +85,7 @@ public:
   double CalculateRxIrradiance (double scintillationIndex, double meanIrradiance);
   
   //inherited from FsoErrorModel
-  virtual double GetChunkSuccessRate (FsoSignalParameters fsoSignalParams, uint32_t nbits) const;
+  virtual double GetChunkSuccessRate (FsoSignalParameters fsoSignalParams, uint32_t nbits);
 
 private:
   LogNormalRandomVariable m_logNormalDist;

@@ -19,19 +19,47 @@
  */
 
 #include "fso-error-model.h"
+#include <ns3/double.h>
+#include <ns3/log.h>
 #include <cmath>
 
 namespace ns3 {
 
+NS_LOG_COMPONENT_DEFINE ("FsoDownLinkErrorModel");
+
 NS_OBJECT_ENSURE_REGISTERED (FsoErrorModel);
+NS_OBJECT_ENSURE_REGISTERED (FsoDownLinkErrorModel);
+
+
 
 TypeId FsoErrorModel::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::FsoErrorModel")
     .SetParent<Object> ()
-    .SetGroupName ("Fsos")
+    .SetGroupName ("Fso")
   ;
   return tid;
+}
+
+TypeId 
+FsoDownLinkErrorModel::GetTypeId (void)
+{
+  static TypeId tid = TypeId ("ns3::FsoDownLinkErrorModel")
+    .SetParent<FsoErrorModel> ()
+    .SetGroupName ("Fso")
+    .AddConstructor<FsoDownLinkErrorModel> ()
+  ;
+  return tid;
+}
+
+FsoDownLinkErrorModel::FsoDownLinkErrorModel ()
+{
+  NS_LOG_FUNCTION (this);
+}
+
+FsoDownLinkErrorModel::~FsoDownLinkErrorModel ()
+{
+  NS_LOG_FUNCTION (this);
 }
 
 double
@@ -47,15 +75,25 @@ FsoDownLinkErrorModel::CalculateMeanBer () const
 }
 
 double 
-FsoDownLinkErrorModel::GetChunkSuccessRate (FsoSignalParameters fsoSignalParams, uint32_t nbits) const
+FsoDownLinkErrorModel::GetChunkSuccessRate (FsoSignalParameters fsoSignalParams, uint32_t nbits)
 {
-  return 0.0;
+  NS_LOG_DEBUG ("ErrorModel: packet size=" << nbits << " bits, scintIndex=" << fsoSignalParams.scintillationIndex << ", meanIrradiance=" << fsoSignalParams.meanIrradiance); 
+  return CalculateRxIrradiance(fsoSignalParams.scintillationIndex, fsoSignalParams.meanIrradiance);
 }
 
 double 
 FsoDownLinkErrorModel::CalculateRxIrradiance (double scintillationIndex, double meanIrradiance)
 {
-  double normalizedIrradiance = m_logNormalDist.GetValue(-0.5*scintillationIndex, std::sqrt(scintillationIndex));
+  double mu = -0.5*scintillationIndex;
+  double sigma = std::sqrt(scintillationIndex);
+  Ptr<LogNormalRandomVariable> x = CreateObject<LogNormalRandomVariable> ();
+  x->SetAttribute ("Mu", DoubleValue (mu));
+  x->SetAttribute ("Sigma", DoubleValue (sigma));
+
+  double normalizedIrradiance = x->GetValue ();
+  //double normalizedIrradiance = m_logNormalDist.GetValue(-0.5*scintillationIndex, std::sqrt(scintillationIndex));
+  
+  NS_LOG_DEBUG ("ErrorModel: Normalized Irradiance=" << normalizedIrradiance);  
 
   return normalizedIrradiance*meanIrradiance;
 }

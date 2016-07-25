@@ -39,6 +39,7 @@ main (int argc, char *argv[])
   LogComponentEnable ("FsoDownLinkPhy", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoMeanIrradianceModel", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoDownLinkErrorModel", LOG_LEVEL_INFO);
 
   std::cout << "Starting Fso Channel Test..." << std::endl;
 
@@ -77,6 +78,9 @@ main (int argc, char *argv[])
   Ptr<FsoChannel> channel = CreateObject<FsoChannel> ();
   channel->SetPropagationDelayModel(delayModel);
 
+  //Error Model
+  Ptr<FsoDownLinkErrorModel> errorModel = CreateObject<FsoDownLinkErrorModel> ();
+
   //Phy
   Ptr<FsoDownLinkPhy> txPhy = CreateObject<FsoDownLinkPhy> ();
   txPhy->SetMobility (txMobility);
@@ -89,6 +93,7 @@ main (int argc, char *argv[])
   rxPhy->SetChannel (channel);
   rxPhy->SetAntenna (receiver);
   rxPhy->SetDevice (0);
+  rxPhy->SetErrorModel (errorModel);
   
   //Channel Setup
   channel->SetPropagationDelayModel (delayModel);

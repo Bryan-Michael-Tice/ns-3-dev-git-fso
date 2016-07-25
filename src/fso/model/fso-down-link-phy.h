@@ -82,6 +82,8 @@ public:
 
   virtual void SetAntenna (Ptr<AntennaModel> antenna);
   virtual Ptr<AntennaModel> GetAntenna () const;
+  virtual void SetErrorModel (Ptr<FsoErrorModel> errModel);
+  
 
 private:
   Ptr<FsoChannel>      m_channel;        //!< FsoChannel that this FsoPhy is connected to

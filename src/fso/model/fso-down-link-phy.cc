@@ -51,6 +51,7 @@ FsoDownLinkPhy::DoDispose (void)
   m_channel = 0;
   m_device = 0;
   m_mobility = 0;
+  m_errorModel = 0;
   //m_state = 0;
 }
 
@@ -111,6 +112,12 @@ FsoDownLinkPhy::GetAntenna () const
 }
 
 void 
+FsoDownLinkPhy::SetErrorModel (Ptr<FsoErrorModel> errModel)
+{
+  m_errorModel = errModel;
+}
+
+void 
 FsoDownLinkPhy::SendPacket (Ptr<const Packet> packet, FsoSignalParameters fsoSignalParams)
 {
 
@@ -128,7 +135,11 @@ FsoDownLinkPhy::SendPacket (Ptr<const Packet> packet, FsoSignalParameters fsoSig
 void 
 FsoDownLinkPhy::ReceivePacket (Ptr<Packet> packet, FsoSignalParameters fsoSignalParams)
 {
-  //Error model here
+  //Error model here, currently just returning the irradiance at the receiver
+  NS_ASSERT (m_errorModel != 0);
+  double rxIrradiance = m_errorModel->GetChunkSuccessRate(fsoSignalParams, packet->GetSize());
+
+  NS_LOG_DEBUG ("PhyReceive: irradiance=" << rxIrradiance);  
 }
 
 Time 
