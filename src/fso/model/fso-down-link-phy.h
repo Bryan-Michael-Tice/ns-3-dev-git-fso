@@ -29,12 +29,13 @@
 #include <ns3/net-device.h>
 #include <ns3/data-rate.h>
 #include <ns3/event-id.h>
-#include <ns3/antenna-model.h>
 
 #include "fso-phy.h"
 #include "fso-error-model.h"
 #include "fso-signal-parameters.h"
 #include "fso-channel.h"
+#include "optical-rx-antenna-model.h"
+#include "laser-antenna-model.h"
 
 namespace ns3 {
 
@@ -75,23 +76,56 @@ public:
   virtual Ptr<MobilityModel> GetMobility () const;
   virtual void SetChannel (Ptr<FsoChannel> c);
   virtual Ptr<FsoChannel> GetChannel () const;
-  virtual Ptr<AntennaModel> GetRxAntenna () const;
+  virtual Ptr<OpticalRxAntennaModel> GetRxAntenna () const;
+  virtual Ptr<LaserAntennaModel> GetTxAntenna () const;
   virtual void SendPacket (Ptr<const Packet> packet, FsoSignalParameters fsoSignalParams);
   virtual void ReceivePacket (Ptr<Packet> packet, FsoSignalParameters fsoSignalParams);
   virtual Time CalculateTxDuration (uint32_t size, FsoSignalParameters fsoSignalParams);
+  
+  /**
+   * Assign the receiver and transmitter antennas to this Phy
+   *
+   * \param txAnntenna the transmitter antenna
+   * \param txAnntenna the receiver antenna
+   */
+  virtual void SetAntennas (Ptr<LaserAntennaModel> txAntenna, Ptr<OpticalRxAntennaModel> rxAntenna);
 
-  virtual void SetAntenna (Ptr<AntennaModel> antenna);
-  virtual Ptr<AntennaModel> GetAntenna () const;
+  /**
+   * Assign the error model to be used by this Phy
+   *
+   * \param errModel pointer the error model
+   */
   virtual void SetErrorModel (Ptr<FsoErrorModel> errModel);
+
+
+  /**
+   * Assign the bit rate to be used by this Phy
+   *
+   * \param bitRate the bit rate
+   */
+  virtual void SetBitRate (double bitRate);
+
+
+  /**
+   * Return the bit rate used by this Phy
+   *
+   * @return the bit rate
+   */
+  virtual double GetBitRate () const;
+
+
   
 
 private:
-  Ptr<FsoChannel>      m_channel;        //!< FsoChannel that this FsoPhy is connected to
-  Ptr<NetDevice>       m_device;         //!< Pointer to the device
-  Ptr<MobilityModel>   m_mobility;       //!< Pointer to the mobility model
-  Ptr<AntennaModel>    m_antenna;        //!< Pointer to the antenna model
-  Ptr<FsoErrorModel>   m_errorModel;     //!< Pointer to the error model
-  State                m_state;          //!< state of the Phy
+  Ptr<FsoChannel>               m_channel;        //!< FsoChannel that this FsoPhy is connected to
+  Ptr<NetDevice>                m_device;         //!< Pointer to the device
+  Ptr<MobilityModel>            m_mobility;       //!< Pointer to the mobility model
+  Ptr<LaserAntennaModel>        m_txAntenna;      //!< Pointer to the TX antenna model
+  Ptr<OpticalRxAntennaModel>    m_rxAntenna;      //!< Pointer to the RX antenna model
+  Ptr<FsoErrorModel>            m_errorModel;     //!< Pointer to the error model
+  State                         m_state;          //!< state of the Phy
+  
+  double                        m_bitRate;        //!< bit rate associated to the Phy
 
 protected:
   //Inherited from Object

@@ -54,8 +54,8 @@ public:
 
 
   // attribute getters/setters
-  void SetApertureSize (double apertureSize);
-  double GetApertureSize () const;
+  void SetApertureDiameter (double apertureDiameter);
+  double GetApertureDiameter () const;
 
   void SetRxGain (double rxGain);
   double GetRxGain () const;
@@ -65,7 +65,7 @@ public:
 
 private:
 
-  double m_apertureSize;
+  double m_apertureDiameter;
 
   double m_orientationRadians;
 

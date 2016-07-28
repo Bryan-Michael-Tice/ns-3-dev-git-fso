@@ -67,7 +67,7 @@ public:
    * @param d distance from tx to rx in m
    *
    */
-  double CalculateFreeSpaceLoss (double d, double f);
+  double CalculateFreeSpaceLoss (double d, double wavelength);
 
 
 protected:

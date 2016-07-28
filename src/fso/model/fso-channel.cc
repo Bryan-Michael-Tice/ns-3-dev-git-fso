@@ -98,7 +98,7 @@ FsoChannel::Send (Ptr<FsoPhy> sender, Ptr<const Packet> packet,
               (*u)->UpdateSignalParams (fsoSignalParams, senderMobility, receiverMobility);  
             }
 
-          NS_LOG_DEBUG ("Signal: txPower=" << txPower << "dbm, rxPower=" << fsoSignalParams.power << "dbm, " << "distance=" << senderMobility->GetDistanceFrom (receiverMobility) << "m, delay=" << delay << ", Scint Index=" << fsoSignalParams.scintillationIndex << ", mean irradiance=" << fsoSignalParams.meanIrradiance << "W/m^2, path loss=" << fsoSignalParams.pathLoss <<"db");
+          NS_LOG_DEBUG ("Signal Channel: txPower=" << txPower << "db, distance=" << senderMobility->GetDistanceFrom (receiverMobility) << "m, delay=" << delay << ", Scint Index=" << fsoSignalParams.scintillationIndex << ", mean irradiance=" << fsoSignalParams.meanIrradiance << "W/m^2, path loss=" << fsoSignalParams.pathLoss <<"db, power after FSPL" << fsoSignalParams.power << "dB");
 
           Ptr<Packet> copy = packet->Copy ();
           Ptr<Object> dstNetDevice = m_phyList[j]->GetDevice ();

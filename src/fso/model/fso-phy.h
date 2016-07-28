@@ -31,7 +31,8 @@
 namespace ns3 {
 
 class FsoChannel;
-class AntennaModel;
+class LaserAntennaModel;
+class OpticalRxAntennaModel;
 class MobilityModel;
 class NetDevice;
 struct FsoSignalParameters;
@@ -91,9 +92,9 @@ public:
   virtual void SetChannel (Ptr<FsoChannel> c) = 0;
 
   /**
-   * Return the WifiChannel this WifiPhy is connected to.
+   * Return the FsoChannel this FsoPhy is connected to.
    *
-   * \return the WifiChannel this WifiPhy is connected to
+   * @return the FsoChannel this FsoPhy is connected to
    */
   virtual Ptr<FsoChannel> GetChannel () const = 0;
 
@@ -102,8 +103,14 @@ public:
    *
    * @return a Ptr to the AntennaModel used by the NetDevice for reception
    */
-  virtual Ptr<AntennaModel> GetRxAntenna () const = 0;
+  virtual Ptr<OpticalRxAntennaModel> GetRxAntenna () const = 0;
 
+  /**
+   * Get the AntennaModel used by the NetDevice for transmission
+   *
+   * @return a Ptr to the AntennaModel used by the NetDevice for transmission
+   */
+  virtual Ptr<LaserAntennaModel> GetTxAntenna () const = 0;
 
   /**
    * \param packet the packet to send
@@ -122,7 +129,10 @@ public:
 
 
   /**
-
+   * Calculate how long the transmit time will be (size * symbol period)
+   *
+   * \param size the size of the packet in bits
+   * \param FsoSignalParameters contains the signal parameters
    */
   virtual Time CalculateTxDuration (uint32_t size, FsoSignalParameters fsoSignalParams) = 0;
 

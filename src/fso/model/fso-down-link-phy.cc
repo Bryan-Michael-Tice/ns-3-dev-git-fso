@@ -92,23 +92,25 @@ FsoDownLinkPhy::GetChannel () const
 {
   return m_channel;
 }
-   
-Ptr<AntennaModel> 
+ 
+
+Ptr<LaserAntennaModel> 
+FsoDownLinkPhy::GetTxAntenna () const
+{
+  return m_txAntenna;
+}
+  
+Ptr<OpticalRxAntennaModel> 
 FsoDownLinkPhy::GetRxAntenna () const
 {
-  return m_antenna;
+  return m_rxAntenna;
 }
 
 void 
-FsoDownLinkPhy::SetAntenna (Ptr<AntennaModel> antenna)
+FsoDownLinkPhy::SetAntennas (Ptr<LaserAntennaModel> txAntenna, Ptr<OpticalRxAntennaModel> rxAntenna)
 {
-  m_antenna = antenna;
-}
-
-Ptr<AntennaModel> 
-FsoDownLinkPhy::GetAntenna () const
-{
-  return m_antenna;
+  m_txAntenna = txAntenna;
+  m_rxAntenna = rxAntenna;
 }
 
 void 
@@ -118,16 +120,29 @@ FsoDownLinkPhy::SetErrorModel (Ptr<FsoErrorModel> errModel)
 }
 
 void 
+FsoDownLinkPhy::SetBitRate (double bitRate)
+{
+  m_bitRate = bitRate;
+}
+
+double 
+FsoDownLinkPhy::GetBitRate () const
+{
+  return m_bitRate;
+}
+
+void 
 FsoDownLinkPhy::SendPacket (Ptr<const Packet> packet, FsoSignalParameters fsoSignalParams)
 {
 
   NS_LOG_FUNCTION (this << packet << fsoSignalParams.wavelength << fsoSignalParams.frequency);
-  NS_LOG_DEBUG ("PhySend: frequency=" << fsoSignalParams.frequency); 
   m_state = State::TX;
-  Time txDuration = CalculateTxDuration (packet->GetSize (), fsoSignalParams);  
+  Time txDuration = CalculateTxDuration (packet->GetSize (), fsoSignalParams);
+  fsoSignalParams.power = 10*std::log10(GetTxAntenna ()->GetTxPower ()) + GetTxAntenna ()->GetGain ();  
 
     //m_state->SwitchToTx (txDuration, packet, GetPowerDbm (txVector.GetTxPowerLevel ()), txVector, preamble);
-
+  
+  NS_LOG_DEBUG ("PhySend: power=" << fsoSignalParams.power << "dB"); 
   m_channel->Send (this, packet, fsoSignalParams, txDuration);
 
 }
@@ -138,8 +153,18 @@ FsoDownLinkPhy::ReceivePacket (Ptr<Packet> packet, FsoSignalParameters fsoSignal
   //Error model here, currently just returning the irradiance at the receiver
   NS_ASSERT (m_errorModel != 0);
   double rxIrradiance = m_errorModel->GetChunkSuccessRate(fsoSignalParams, packet->GetSize());
+  double rxApertureDiameter = GetRxAntenna ()->GetApertureDiameter ();
+  double rxGain = GetRxAntenna ()->GetRxGain ();
+    
+  double rxMeanPowerMilliWatts = (0.125*M_PI*std::pow(rxApertureDiameter,2.0)*fsoSignalParams.meanIrradiance)*1000.0;
 
-  NS_LOG_DEBUG ("PhyReceive: irradiance=" << rxIrradiance);  
+  double rxMeanPower = 10*std::log10(0.125*M_PI*std::pow(rxApertureDiameter,2.0)*fsoSignalParams.meanIrradiance);//rxIrradiance; //This is the mean RX power now, not the instantaneous (dB)
+
+  NS_LOG_DEBUG ("PhyReceive: incoming signal power=" << fsoSignalParams.power << "dB"); 
+  NS_LOG_DEBUG ("PhyReceive: rx gain=" << rxGain << "dB");
+  NS_LOG_DEBUG ("PhyReceive: mean power=" << rxMeanPower << "dB");
+  
+  NS_LOG_DEBUG ("PhyReceive: irradiance=" << rxIrradiance << "W/m^2, mean RX=" << rxMeanPowerMilliWatts << "mW, total RX mean power=" << (fsoSignalParams.power + rxMeanPower + rxGain) << "dB");  
 }
 
 Time 

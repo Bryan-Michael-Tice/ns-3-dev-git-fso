@@ -60,6 +60,10 @@ public:
   double GetOrientation () const;
   void SetPhaseFrontRadius (double phaseFrontRadius);
   double GetPhaseFrontRadius () const;
+  void SetTxPower (double txPower);
+  double GetTxPower () const;
+  void SetGain (double gain);
+  double GetGain () const;
 
 private:
 
@@ -69,7 +73,9 @@ private:
 
   double m_phaseFrontRadius;
 
-  double m_maxAttenuation;
+  double m_txPower; //Transmit power in Watts
+
+  double m_gain; //Gain in dB
 };
 
 

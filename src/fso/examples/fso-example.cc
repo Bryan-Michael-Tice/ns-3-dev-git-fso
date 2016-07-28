@@ -45,20 +45,23 @@ main (int argc, char *argv[])
 
   //Mobility Models
   Ptr<MobilityModel> txMobility = CreateObject<ConstantPositionMobilityModel> ();
-  txMobility->SetPosition (Vector (0.0, 0.0, 36000000.0));
+  //txMobility->SetPosition (Vector (0.0, 0.0, 36000000.0));
+  txMobility->SetPosition (Vector (0.0, 0.0, 707000));
 
   Ptr<MobilityModel> rxMobility = CreateObject<ConstantPositionMobilityModel> ();
   rxMobility->SetPosition (Vector (0.0, 0.0, 0.0));
 
   //Antennas
   Ptr<LaserAntennaModel> laser = CreateObject<LaserAntennaModel> ();
-  laser->SetBeamwidth (0.120);
+  laser->SetBeamwidth (0.120); //meters
   laser->SetPhaseFrontRadius (10e8);
   laser->SetOrientation (0.0);
+  laser->SetTxPower (0.1);//Watts
+  laser->SetGain (116.0);//dB
 
   Ptr<OpticalRxAntennaModel> receiver = CreateObject<OpticalRxAntennaModel> ();
-  receiver->SetApertureSize (0.2);
-  receiver->SetRxGain (0.0);
+  receiver->SetApertureDiameter (0.318);
+  receiver->SetRxGain (121.4);//dB
   receiver->SetOrientation (0.0);  
 
   //Delay Model
@@ -82,18 +85,21 @@ main (int argc, char *argv[])
   Ptr<FsoDownLinkErrorModel> errorModel = CreateObject<FsoDownLinkErrorModel> ();
 
   //Phy
+  double bitRate = 49.3724e6;
   Ptr<FsoDownLinkPhy> txPhy = CreateObject<FsoDownLinkPhy> ();
   txPhy->SetMobility (txMobility);
   txPhy->SetChannel (channel);
-  txPhy->SetAntenna (laser);
+  txPhy->SetAntennas (laser, 0);
   txPhy->SetDevice (0);
+  txPhy->SetBitRate (bitRate);
  
   Ptr<FsoDownLinkPhy> rxPhy = CreateObject<FsoDownLinkPhy> ();
   rxPhy->SetMobility (rxMobility);
   rxPhy->SetChannel (channel);
-  rxPhy->SetAntenna (receiver);
+  rxPhy->SetAntennas (0, receiver);
   rxPhy->SetDevice (0);
   rxPhy->SetErrorModel (errorModel);
+  rxPhy->SetBitRate (bitRate);
   
   //Channel Setup
   channel->SetPropagationDelayModel (delayModel);
@@ -105,20 +111,21 @@ main (int argc, char *argv[])
 
   //Setup Packet and Signal Params
   uint32_t size = 1024;//Packet size
-  double wavelength = 1550e-9; //1550 nm 
+  double wavelength = 847e-9;//1550e-9; //1550 nm 
   double speedOfLight = 3e8;//m/s
   Ptr<Packet> packet = Create<Packet> (size);
 
   FsoSignalParameters params;
   params.wavelength = wavelength;
   params.frequency = speedOfLight/wavelength;
-  params.symbolPeriod = 1/(49.3724e6);//49.3724 Mbps 
+  params.symbolPeriod = 1/bitRate;//49.3724 Mbps
   params.power = 0.0;
   params.txPhy = txPhy;
   params.txAntenna = laser;
   params.txBeamwidth = 0.120;
   params.txPhaseFrontRadius = 10e8;
 
+  //Send packet from transmitter Phy
   txPhy->SendPacket (packet, params);
   
 

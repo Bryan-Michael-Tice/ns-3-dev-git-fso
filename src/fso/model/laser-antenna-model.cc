@@ -52,11 +52,6 @@ LaserAntennaModel::GetTypeId ()
                    MakeDoubleAccessor (&LaserAntennaModel::SetOrientation,
                                        &LaserAntennaModel::GetOrientation),
                    MakeDoubleChecker<double> (-360, 360))
-    .AddAttribute ("MaxAttenuation",
-                   "The maximum attenuation (dB) of the antenna radiation pattern.",
-                   DoubleValue (20.0),
-                   MakeDoubleAccessor (&LaserAntennaModel::m_maxAttenuation),
-                   MakeDoubleChecker<double> ())
      
     .AddAttribute ("PhaseFrontRadius",
                    "The phase front radius of curvature (meters) of the beam.",
@@ -104,6 +99,30 @@ double
 LaserAntennaModel::GetPhaseFrontRadius () const
 {
   return m_phaseFrontRadius;
+}
+
+void 
+LaserAntennaModel::SetTxPower (double txPower)
+{
+  m_txPower = txPower;
+}
+
+double 
+LaserAntennaModel::GetTxPower () const
+{
+  return m_txPower;
+}
+
+void 
+LaserAntennaModel::SetGain (double gain)
+{
+  m_gain = gain;
+}
+  
+double 
+LaserAntennaModel::GetGain () const
+{
+  return m_gain;
 }
 
 double 

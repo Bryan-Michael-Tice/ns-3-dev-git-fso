@@ -52,26 +52,26 @@ OpticalRxAntennaModel::GetTypeId ()
                    MakeDoubleAccessor (&OpticalRxAntennaModel::m_rxGain),
                    MakeDoubleChecker<double> ())
      
-    .AddAttribute ("ApertureSize",
+    .AddAttribute ("ApertureDiameter",
                    "The aperture size (meters^2) of the receiver.",
                    DoubleValue (0.25),
-                   MakeDoubleAccessor (&OpticalRxAntennaModel::m_apertureSize),
-                   MakeDoubleChecker<double> (0,100))
+                   MakeDoubleAccessor (&OpticalRxAntennaModel::m_apertureDiameter),
+                   MakeDoubleChecker<double> (0,1000))
   ;
   return tid;
 }
 
 void 
-OpticalRxAntennaModel::SetApertureSize (double apertureSize)
+OpticalRxAntennaModel::SetApertureDiameter (double apertureDiameter)
 { 
-  NS_LOG_FUNCTION (this << apertureSize);
-  m_apertureSize = apertureSize;
+  NS_LOG_FUNCTION (this << apertureDiameter);
+  m_apertureDiameter = apertureDiameter;
 }
 
 double
-OpticalRxAntennaModel::GetApertureSize () const
+OpticalRxAntennaModel::GetApertureDiameter () const
 {
-  return m_apertureSize;
+  return m_apertureDiameter;
 }
 
 void 
