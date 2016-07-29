@@ -137,8 +137,12 @@ FsoDownLinkPhy::SendPacket (Ptr<const Packet> packet, FsoSignalParameters fsoSig
 
   NS_LOG_FUNCTION (this << packet << fsoSignalParams.wavelength << fsoSignalParams.frequency);
   m_state = State::TX;
+  
+  Ptr<LaserAntennaModel> laser = GetTxAntenna();
+
   Time txDuration = CalculateTxDuration (packet->GetSize (), fsoSignalParams);
-  fsoSignalParams.power = 10*std::log10(GetTxAntenna ()->GetTxPower ()) + GetTxAntenna ()->GetGain ();  
+  fsoSignalParams.power = 10*std::log10(laser->GetTxPower ()) + laser->GetGain ();  
+  fsoSignalParams.txPhaseFrontRadius = laser->GetPhaseFrontRadius ();
 
     //m_state->SwitchToTx (txDuration, packet, GetPowerDbm (txVector.GetTxPowerLevel ()), txVector, preamble);
   
@@ -164,7 +168,7 @@ FsoDownLinkPhy::ReceivePacket (Ptr<Packet> packet, FsoSignalParameters fsoSignal
   NS_LOG_DEBUG ("PhyReceive: rx gain=" << rxGain << "dB");
   NS_LOG_DEBUG ("PhyReceive: mean power=" << rxMeanPower << "dB");
   
-  NS_LOG_DEBUG ("PhyReceive: irradiance=" << rxIrradiance << "W/m^2, mean RX=" << rxMeanPowerMilliWatts << "mW, total RX mean power=" << (fsoSignalParams.power + rxMeanPower + rxGain) << "dB");  
+  NS_LOG_DEBUG ("PhyReceive: irradiance=" << rxIrradiance << "W/m^2, mean RX=" << rxMeanPowerMilliWatts << "mW, total RX mean power=" << (fsoSignalParams.power + rxMeanPower + rxGain) << "dB");
 }
 
 Time 

@@ -67,6 +67,8 @@ FsoMeanIrradianceModel::UpdateSignalParams(FsoSignalParameters& fsoSignalParams,
   double rxDiffractiveBeamRadius = CalculateDiffractiveBeamRadius(distance, fsoSignalParams.frequency, fsoSignalParams.txBeamwidth, fsoSignalParams.txPhaseFrontRadius);
 
 fsoSignalParams.meanIrradiance = CalculateMeanIrradiance(fsoSignalParams.txBeamwidth, rxDiffractiveBeamRadius);
+
+NS_LOG_DEBUG ("MeanIrradiance: result=" << fsoSignalParams.meanIrradiance);
 }
 
 double 
@@ -83,6 +85,10 @@ FsoMeanIrradianceModel::CalculateDiffractiveBeamRadius (double d, double f, doub
   double theta0 = 1 - (d/txPhaseFrontRadius);
   double waveLength = (3e8)/f;//wavelength = speed of light/frequency
   double lambda0 = (2*d)/((2*M_PI/waveLength)*pow(txBeamRadius, 2.0));
+
+  NS_LOG_DEBUG ("MeanIrradiance: theta0=" << theta0);
+  NS_LOG_DEBUG ("MeanIrradiance: lambda0=" << lambda0);
+  NS_LOG_DEBUG ("MeanIrradiance: W=" << txBeamRadius*sqrt(pow(theta0, 2.0) + pow(lambda0, 2.0)));    
 
   return (txBeamRadius*sqrt(pow(theta0, 2.0) + pow(lambda0, 2.0)));
 }
