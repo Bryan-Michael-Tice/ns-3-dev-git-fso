@@ -77,14 +77,14 @@ main (int argc, char *argv[])
 
   //Mobility Models
   Ptr<MobilityModel> txMobility = CreateObject<ConstantPositionMobilityModel> ();
-  txMobility->SetPosition (Vector (0.0, 0.0, 707000));//707,000 meters above the Earth
+  txMobility->SetPosition (Vector (0.0, 0.0, 707000));//Satellite at 707,000 meters above the Earth
 
   Ptr<MobilityModel> rxMobility = CreateObject<ConstantPositionMobilityModel> ();
   rxMobility->SetPosition (Vector (0.0, 0.0, 0.0));// Ground station at 0 meters 
 
   //Antennas
   Ptr<LaserAntennaModel> laser = CreateObject<LaserAntennaModel> ();
-  laser->SetBeamwidth (0.120); //meters
+  laser->SetBeamwidth (0.06); //meters
   laser->SetPhaseFrontRadius (707000); //meters - is approximately the link distance when r >> r0
   laser->SetOrientation (0.0);
   laser->SetTxPower (0.1);//Watts
@@ -141,8 +141,8 @@ main (int argc, char *argv[])
   channel->Add(rxPhy);
 
   //Setup Packet and Signal Params
-  uint32_t size = 1024;//Packet size
-  double wavelength = 847e-9;//nm 
+  uint32_t size = 1024;//Packet size in bytes
+  double wavelength = 847e-9;//meters 
   double speedOfLight = 3e8;//m/s
   Ptr<Packet> packet = Create<Packet> (size);
 

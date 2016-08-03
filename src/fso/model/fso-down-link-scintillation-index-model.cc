@@ -87,7 +87,7 @@ FsoDownLinkScintillationIndexModel::UpdateSignalParams (FsoSignalParameters& fso
 }
 
 double
-FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double hTx, double hRx, double e) const
+FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double hTx, double hRx, double zenith) const
 {
   NS_LOG_FUNCTION (this);
 
@@ -111,7 +111,7 @@ FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double 
    
   gsl_integration_workspace_free (w);
   
-  return (2.25*std::pow(k,7.0/6.0)*(1/std::pow(cos(e),11.0/6.0)))*result;
+  return (2.25*std::pow(k,7.0/6.0)*(1/std::pow(cos(zenith),11.0/6.0)))*result;
 }
 
 void 

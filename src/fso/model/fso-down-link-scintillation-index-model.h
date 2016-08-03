@@ -81,7 +81,7 @@ public:
    * @param e elevation in radians
    *
    */
-  double CalculateScintillationIdx (double f, double hTx, double hRx, double e) const;
+  double CalculateScintillationIdx (double f, double hTx, double hRx, double zenith) const;
 
   void SetRmsWindSpeed (double rmsWindSpeed);
   double GetRmsWindSpeed () const;
