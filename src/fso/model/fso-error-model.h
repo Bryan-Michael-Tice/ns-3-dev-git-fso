@@ -16,17 +16,39 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
+ *
+ * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
 #ifndef ERROR_RATE_MODEL_H
 #define ERROR_RATE_MODEL_H
 
 #include <stdint.h>
+#include "fso-phy.h"
 #include "ns3/object.h"
+#include "ns3/timer.h"
 #include "ns3/random-variable-stream.h"
+#include "ns3/mobility-model.h"
 #include "fso-signal-parameters.h"
+#ifdef HAVE_GSL
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_integration.h>
+#include <gsl/gsl_cdf.h>
+#endif
 
 namespace ns3 {
+
+#ifdef HAVE_GSL
+typedef struct GWFunctionParameterType
+{
+  double A;
+  double v;
+  double hgs;
+} GWFunctionParameters;
+
+double GWIntegralFunction (double x, void *params);
+#endif
+
 /**
  * \ingroup wifi
  * \brief the interface for Wifi's error models
@@ -72,23 +94,35 @@ public:
   FsoDownLinkErrorModel ();
   ~FsoDownLinkErrorModel ();
 
+  void SetPhy (Ptr<FsoPhy> phy);
+
   /**
-   * \param txVector a specific transmission vector including WifiMode
-   * \param ber a target ber
-   *
-   * \return the snr which corresponds to the requested ber
+   * \return the snr
    */
   double CalculateMeanSnr () const;
 
+    /**
+   * \return the ber
+   */
   double CalculateMeanBer () const;
 
-  double CalculateRxIrradiance (double scintillationIndex, double meanIrradiance);
+  void CalculateNormRxIrradiance (FsoSignalParameters fsoSignalParams);
+
+  double CalculateTurbulenceTimeConstant(double hTx, double hRx, double wavelength, double elevation);
   
   //inherited from FsoErrorModel
   virtual double GetChunkSuccessRate (FsoSignalParameters fsoSignalParams, uint32_t nbits);
 
 private:
-  LogNormalRandomVariable m_logNormalDist;
+  Ptr<LogNormalRandomVariable> m_logNormalDist;
+  Ptr<FsoPhy> m_phy;
+
+  double m_groundRefractiveIdx;
+  double m_rmsWindSpeed;
+  double m_normalizedIrradiance;
+
+  bool m_updateIrradiance;
+  Timer m_turbulenceTimer;
 };
 
 } //namespace ns3

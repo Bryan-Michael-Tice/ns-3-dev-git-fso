@@ -38,14 +38,14 @@
 namespace ns3 {
 
 #ifdef HAVE_GSL
-typedef struct FunctionParameterType
+typedef struct HVFunctionParameterType
 {
   double A;
   double v;
   double hgs;
-} FunctionParameters;
+} HVFunctionParameters;
 
-double IntegralFunction (double x, void *params);
+double HVIntegralFunction (double x, void *params);
 #endif
 
 /**

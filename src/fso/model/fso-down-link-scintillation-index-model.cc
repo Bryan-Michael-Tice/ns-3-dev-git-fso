@@ -94,7 +94,7 @@ FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double 
   double result;
   double error;
 
-  FunctionParameters params;
+  HVFunctionParameters params;
   params.A = m_groundRefractiveIdx;
   params.v = m_rmsWindSpeed;
   params.hgs = hRx;
@@ -102,7 +102,7 @@ FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double 
   gsl_integration_workspace * w = gsl_integration_workspace_alloc (1000);
 
   gsl_function F;
-  F.function = &IntegralFunction;
+  F.function = &HVIntegralFunction;
   F.params = &params;
 
   gsl_integration_qagiu (&F, hRx, hTx, 1e-7, 1000, w, &result, &error);
@@ -142,11 +142,11 @@ FsoDownLinkScintillationIndexModel::GetGndRefractiveIdx () const
 
 #ifdef HAVE_GSL
 double
-IntegralFunction (double h, void *params)
+HVIntegralFunction (double h, void *params)
 {
-  double A = ((FunctionParameters *) params)->A;
-  double v = ((FunctionParameters *) params)->v;
-  double hgs = ((FunctionParameters *) params)->hgs;
+  double A = ((HVFunctionParameters *) params)->A;
+  double v = ((HVFunctionParameters *) params)->v;
+  double hgs = ((HVFunctionParameters *) params)->hgs;
   double IntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/100.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(std::pow(5.94*10,-53.0))*(std::exp(-h/1000.0))+(std::pow(2.7*10,-16.0))*std::exp(-h/1500.0))*(std::pow(h-hgs,5.0/6.0));
 
   return IntegralFunction;
