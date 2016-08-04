@@ -25,7 +25,7 @@ def build(bld):
 
     module_test = bld.create_ns3_module_test_library('fso')
     module_test.source = [
-        'test/fso-test-suite.cc',
+        'test/fso-propagation-loss-model-test-suite.cc',
         ]
 
     headers = bld(features='ns3header')
