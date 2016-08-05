@@ -144,6 +144,18 @@ LaserAntennaModel::GetGain () const
   return m_gain;
 }
 
+void 
+LaserAntennaModel::SetWavelength (double wavelength)
+{
+  m_wavelength = wavelength;
+}
+  
+double 
+LaserAntennaModel::GetWavelength () const
+{
+  return m_wavelength;
+}
+
 double 
 LaserAntennaModel::GetGainDb (Angles a)
 {

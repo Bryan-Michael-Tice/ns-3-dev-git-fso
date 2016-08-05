@@ -35,13 +35,12 @@ namespace ns3 {
 
 
 /**
- * \ingroup spectrum
+ * \ingroup fso
  *
- * \brief spectrum-aware propagation loss model
+ * \brief free space propagation loss model
  *
- * Interface for propagation loss models to be adopted when
- * transmissions are modeled with a power spectral density by means of
- * the SpectrumValue class.
+ * Based on the equation for free space path loss for electromagnetic waves
+ * 20*log(4*PI*distance/wavelength)
  *
  */
 class FsoFreeSpaceLossModel : public FsoPropagationLossModel
@@ -60,7 +59,7 @@ public:
   virtual void UpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b);
 
   /**
-   * Calculate the free space loss (assuming far field) in dB
+   * Calculate the free space path loss (assuming far field) in dB
    * 
    *
    * @param f frequency in Hz
