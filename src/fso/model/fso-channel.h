@@ -78,14 +78,16 @@ public:
   void SetPropagationDelayModel (Ptr<PropagationDelayModel> delay);
 
   /**
+   * Sends a packet to all the FsoPhys attached to the channel and schedules the
+   * receive. 
+   *
    * \param sender the device from which the packet is originating.
    * \param packet the packet to send
-   * \param txPowerDbm the tx power associated to the packet
    * \param fsoSignalParams the struct containing all the signal parameters
    * \param duration the transmission duration associated to the packet
    */
   void Send (Ptr<FsoPhy> sender, Ptr<const Packet> packet,
-             FsoSignalParameters fsoSignalParams, Time duration);
+             Ptr<FsoSignalParameters> fsoSignalParams, Time duration);
 
   /**
    * Assign a fixed random variable stream number to the random variables
@@ -117,17 +119,6 @@ private:
    */
   typedef std::vector<Ptr<FsoPhy> > PhyList;
   typedef std::vector<Ptr<FsoPropagationLossModel> > LossList;
-
-  /**
-   * This method is scheduled by Send for each associated FsoPhy.
-   * The method then calls the corresponding FsoPhy that the first
-   * bit of the packet has arrived.
-   *
-   * \param i index of the corresponding FsoPhy in the PHY list
-   * \param packet the packet being sent
-   * \param fsoSignalParams the struct containing all the signal parameters
-   */
-  void Receive (uint32_t i, Ptr<Packet> packet, FsoSignalParameters fsoSignalParams) const;
 
   PhyList m_phyList;                   //!< List of FsoPhys connected to this FsoChannel
   LossList m_lossList;    //!< List of propagation loss models

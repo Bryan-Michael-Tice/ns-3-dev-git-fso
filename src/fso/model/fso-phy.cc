@@ -21,10 +21,19 @@
  */
 
 #include "fso-phy.h"
-#include <ns3/net-device.h>
-#include <ns3/mobility-model.h>
-#include <ns3/fso-channel.h>
-#include <ns3/log.h>
+#include "ns3/simulator.h"
+#include "ns3/packet.h"
+#include "ns3/assert.h"
+#include "ns3/log.h"
+#include "ns3/double.h"
+#include "ns3/uinteger.h"
+#include "ns3/enum.h"
+#include "ns3/pointer.h"
+#include "ns3/net-device.h"
+#include "ns3/trace-source-accessor.h"
+#include "ns3/boolean.h"
+#include "ns3/node.h"
+#include <cmath>
 
 namespace ns3 {
 
@@ -32,28 +41,173 @@ NS_LOG_COMPONENT_DEFINE ("FsoPhy");
 
 NS_OBJECT_ENSURE_REGISTERED (FsoPhy);
 
-
 TypeId
 FsoPhy::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::FsoPhy")
     .SetParent<Object> ()
     .SetGroupName ("Fso")
+    .AddConstructor<FsoPhy> ()
+    .AddAttribute ("BitRate",
+                   "Phy bit rate in bps.",
+                   DoubleValue (49.3724e6),
+                   MakeDoubleAccessor (&FsoPhy::SetBitRate,
+                                       &FsoPhy::GetBitRate),
+                   MakeDoubleChecker<double> ())
   ;
   return tid;
 }
 
+FsoPhy::FsoPhy ()
+{
+  NS_LOG_FUNCTION (this);
+}
 
 FsoPhy::~FsoPhy ()
 {
   NS_LOG_FUNCTION (this);
 }
 
-void 
-FsoPhy::DoDispose ()
+void
+FsoPhy::DoDispose (void)
 {
-
+  NS_LOG_FUNCTION (this);
+  m_channel = 0;
+  m_device = 0;
+  m_mobility = 0;
+  m_errorModel = 0;
+  //m_state = 0;
 }
 
 
-} // namespace
+void 
+FsoPhy::SetDevice (Ptr<NetDevice> d)
+{
+  //NS_ASSERT (d != 0);
+  m_device = d;
+}
+
+Ptr<NetDevice> 
+FsoPhy::GetDevice () const
+{
+  return m_device;
+}
+   
+void 
+FsoPhy::SetMobility (Ptr<MobilityModel> m)
+{
+  m_mobility = m;
+}
+   
+Ptr<MobilityModel> 
+FsoPhy::GetMobility () const
+{
+  return m_mobility;
+}
+   
+void 
+FsoPhy::SetChannel (Ptr<FsoChannel> c)
+{
+  m_channel = c;
+}
+   
+Ptr<FsoChannel> 
+FsoPhy::GetChannel () const
+{
+  return m_channel;
+}
+ 
+
+Ptr<LaserAntennaModel> 
+FsoPhy::GetTxAntenna () const
+{
+  return m_txAntenna;
+}
+  
+Ptr<OpticalRxAntennaModel> 
+FsoPhy::GetRxAntenna () const
+{
+  return m_rxAntenna;
+}
+
+void 
+FsoPhy::SetAntennas (Ptr<LaserAntennaModel> txAntenna, Ptr<OpticalRxAntennaModel> rxAntenna)
+{
+  m_txAntenna = txAntenna;
+  m_rxAntenna = rxAntenna;
+}
+
+void 
+FsoPhy::SetErrorModel (Ptr<FsoErrorModel> errModel)
+{
+  m_errorModel = errModel;
+}
+
+void 
+FsoPhy::SetBitRate (double bitRate)
+{
+  m_bitRate = bitRate;
+}
+
+double 
+FsoPhy::GetBitRate () const
+{
+  return m_bitRate;
+}
+
+void 
+FsoPhy::Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
+{
+
+  NS_LOG_FUNCTION (this << packet << fsoSignalParams->wavelength << fsoSignalParams->frequency);
+  m_state = State::TX;
+  
+  Ptr<LaserAntennaModel> laser = GetTxAntenna();
+
+  Time txDuration = CalculateTxDuration (packet->GetSize (), fsoSignalParams);
+
+  fsoSignalParams->power                = laser->GetTxPower () + laser->GetGain ();  
+  fsoSignalParams->txPhaseFrontRadius   = laser->GetPhaseFrontRadius ();
+  fsoSignalParams->txBeamwidth          = laser->GetBeamwidth ();
+  fsoSignalParams->txPhy                = this;
+  fsoSignalParams->txAntenna            = laser;
+  fsoSignalParams->symbolPeriod         = 1/m_bitRate;
+  fsoSignalParams->wavelength           = laser->GetWavelength ();
+  fsoSignalParams->frequency            = 3e8/(laser->GetWavelength ());
+
+    //m_state->SwitchToTx (txDuration, packet, GetPowerDbm (txVector.GetTxPowerLevel ()), txVector, preamble);
+  
+  NS_LOG_DEBUG ("PhySend: power=" << fsoSignalParams->power << "dB"); 
+  m_channel->Send (this, packet, fsoSignalParams, txDuration);
+
+}
+   
+void 
+FsoPhy::Receive (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
+{
+  //Error model here, currently just returning the irradiance at the receiver
+  NS_ASSERT (m_errorModel != 0);
+  double rxIrradiance = m_errorModel->GetPacketSuccessRate(fsoSignalParams, packet->GetSize ());
+  double rxApertureDiameter = GetRxAntenna ()->GetApertureDiameter ();
+  double rxGain = GetRxAntenna ()->GetRxGain ();
+    
+  double rxMeanPowerMilliWatts = (0.125*M_PI*std::pow(rxApertureDiameter,2.0)*fsoSignalParams->meanIrradiance)*1000.0;
+
+  double rxMeanPower = 10*std::log10(0.125*M_PI*std::pow(rxApertureDiameter,2.0)*fsoSignalParams->meanIrradiance);//rxIrradiance; //This is the mean RX power now, not the instantaneous (dB)
+
+  NS_LOG_DEBUG ("PhyReceive: incoming signal power=" << fsoSignalParams->power << "dB"); 
+  NS_LOG_DEBUG ("PhyReceive: rx gain=" << rxGain << "dB");
+  NS_LOG_DEBUG ("PhyReceive: mean power=" << rxMeanPower << "dB");
+  
+  NS_LOG_DEBUG ("PhyReceive: irradiance=" << rxIrradiance << "W/m^2, mean RX=" << rxMeanPowerMilliWatts << "mW, total RX mean power=" << (fsoSignalParams->power + rxMeanPower + rxGain) << "dB");
+}
+
+Time 
+FsoPhy::CalculateTxDuration (uint32_t size, Ptr<FsoSignalParameters> fsoSignalParams)
+{
+  NS_ASSERT (fsoSignalParams->symbolPeriod > 0.0);
+  return NanoSeconds (size * 8 * fsoSignalParams->symbolPeriod);
+}
+
+
+}//namespace

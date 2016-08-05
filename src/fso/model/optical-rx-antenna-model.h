@@ -16,6 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
+ *
+ * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
 #ifndef OPTICAL_RX_ANTENNA_MODEL_H

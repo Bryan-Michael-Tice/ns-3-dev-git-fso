@@ -31,6 +31,7 @@ namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("FsoSignalParameters");
 
+
 FsoSignalParameters::FsoSignalParameters ()
 {
   NS_LOG_FUNCTION (this);

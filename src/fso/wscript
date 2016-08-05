@@ -11,7 +11,6 @@ def build(bld):
     module.source = [
         'model/fso-channel.cc',
         'model/fso-phy.cc',
-        'model/fso-down-link-phy.cc',
         'model/fso-error-model.cc',
         'model/fso-propagation-loss-model.cc',
         'model/fso-signal-parameters.cc',
@@ -33,7 +32,6 @@ def build(bld):
     headers.source = [
         'model/fso-channel.h',
         'model/fso-phy.h',
-        'model/fso-down-link-phy.h',
         'model/fso-error-model.h',
         'model/fso-propagation-loss-model.h',
         'model/fso-signal-parameters.h',

@@ -64,7 +64,7 @@ public:
    * @param b receiver mobility
    *
    */
-  virtual void UpdateSignalParams (FsoSignalParameters& fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b) = 0;
+  virtual void UpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b) = 0;
 
 protected:
   //Inherited from Object

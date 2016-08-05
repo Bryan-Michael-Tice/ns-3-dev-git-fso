@@ -120,24 +120,24 @@ FsoDownLinkErrorModel::CalculateTurbulenceTimeConstant (double hTx, double hRx, 
 }
 
 double 
-FsoDownLinkErrorModel::GetChunkSuccessRate (FsoSignalParameters fsoSignalParams, uint32_t nbits)
+FsoDownLinkErrorModel::GetPacketSuccessRate (Ptr<FsoSignalParameters> fsoSignalParams, uint32_t nbits)
 {
-  NS_LOG_DEBUG ("ErrorModel: packet size=" << nbits << " bits, scintIndex=" << fsoSignalParams.scintillationIndex << ", meanIrradiance=" << fsoSignalParams.meanIrradiance); 
+  NS_LOG_DEBUG ("ErrorModel: packet size=" << nbits << " bits, scintIndex=" << fsoSignalParams->scintillationIndex << ", meanIrradiance=" << fsoSignalParams->meanIrradiance); 
   CalculateNormRxIrradiance(fsoSignalParams);
 
-  double rxIrradiance = fsoSignalParams.meanIrradiance*m_normalizedIrradiance;
+  double rxIrradiance = fsoSignalParams->meanIrradiance*m_normalizedIrradiance;
 
   return rxIrradiance;
 }
 
 void 
-FsoDownLinkErrorModel::CalculateNormRxIrradiance (FsoSignalParameters fsoSignalParams)
+FsoDownLinkErrorModel::CalculateNormRxIrradiance (Ptr<FsoSignalParameters> fsoSignalParams)
 {
   if (m_updateIrradiance)
    {
-     m_normalizedIrradiance = m_logNormalDist->GetValue(-0.5*fsoSignalParams.scintillationIndex, std::sqrt(fsoSignalParams.scintillationIndex));
+     m_normalizedIrradiance = m_logNormalDist->GetValue(-0.5*fsoSignalParams->scintillationIndex, std::sqrt(fsoSignalParams->scintillationIndex));
 
-     double greenwoodTimeConstant = CalculateTurbulenceTimeConstant(fsoSignalParams.txPhy->GetMobility()->GetPosition().z, m_phy->GetMobility()->GetPosition().z, fsoSignalParams.wavelength, 60.0*M_PI/180.0);
+     double greenwoodTimeConstant = CalculateTurbulenceTimeConstant(fsoSignalParams->txPhy->GetMobility()->GetPosition().z, m_phy->GetMobility()->GetPosition().z, fsoSignalParams->wavelength, 60.0*M_PI/180.0);
      NS_LOG_DEBUG ("ErrorModel: Greenwood Time Constant=" << greenwoodTimeConstant << "s");  
      m_turbulenceTimer.SetDelay (Seconds (greenwoodTimeConstant));
      m_turbulenceTimer.Schedule ();

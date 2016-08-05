@@ -16,6 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
+ *
+ * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
 #ifndef LASER_ANTENNA_MODEL_H
@@ -29,17 +31,7 @@ namespace ns3 {
 
 /**
  * 
- * \brief  Antenna model based on a parabolic approximation of the main lobe radiation pattern.
- *
- * This class implements the parabolic model as described in some 3GPP document, e.g., R4-092042
- *
- * A similar model appears in 
- *
- * George Calcev and Matt Dillon, "Antenna Tilt Control in CDMA Networks"
- * in Proc. of the 2nd Annual International Wireless Internet Conference (WICON), 2006
- *
- * though the latter addresses also the elevation plane, which the present model doesn't.
- *
+ * \brief  Laser model based on the parameters needed for the optical signal
  *
  */
 class LaserAntennaModel : public AntennaModel
@@ -64,18 +56,22 @@ public:
   double GetTxPower () const;
   void SetGain (double gain);
   double GetGain () const;
+  void SetWavelength (double wavelength);
+  double GetWavelength () const;
 
 private:
 
-  double m_beamwidthMeters;
+  double m_beamwidthMeters; //diameter of the beam in meters
 
   double m_orientationRadians;
 
-  double m_phaseFrontRadius;
+  double m_phaseFrontRadius; //MDP - this needs to be removed. Not a property of the laser.
 
-  double m_txPower; //Transmit power in Watts
+  double m_txPower; //Transmit power in dB
 
   double m_gain; //Gain in dB
+
+  double m_wavelength; //wavelength of light in meters
 };
 
 

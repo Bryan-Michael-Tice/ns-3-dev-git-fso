@@ -58,12 +58,12 @@ FsoFreeSpaceLossModel::GetTypeId (void)
 }
 
 void
-FsoFreeSpaceLossModel::UpdateSignalParams(FsoSignalParameters& fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
+FsoFreeSpaceLossModel::UpdateSignalParams(Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
 {
   double distance = a->GetDistanceFrom (b);
-  fsoSignalParams.pathLoss = CalculateFreeSpaceLoss(distance, fsoSignalParams.wavelength);
-  fsoSignalParams.power -= fsoSignalParams.pathLoss;
-  NS_LOG_DEBUG ("FreeSpaceLoss: distance=" << distance << "m, frequency=" << fsoSignalParams.frequency << "Hz, loss=" << fsoSignalParams.pathLoss << "dB");
+  fsoSignalParams->pathLoss = CalculateFreeSpaceLoss(distance, fsoSignalParams->wavelength);
+  fsoSignalParams->power -= fsoSignalParams->pathLoss;
+  NS_LOG_DEBUG ("FreeSpaceLoss: distance=" << distance << "m, frequency=" << fsoSignalParams->frequency << "Hz, loss=" << fsoSignalParams->pathLoss << "dB");
 }
 
 

@@ -72,7 +72,7 @@ FsoDownLinkScintillationIndexModel::GetTypeId (void)
 }
 
 void 
-FsoDownLinkScintillationIndexModel::UpdateSignalParams (FsoSignalParameters& fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
+FsoDownLinkScintillationIndexModel::UpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
 {
   NS_LOG_FUNCTION (this);
   NS_ASSERT (a->GetPosition().z >= b->GetPosition().z);
@@ -82,7 +82,7 @@ FsoDownLinkScintillationIndexModel::UpdateSignalParams (FsoSignalParameters& fso
 
   double elevation = 10.0*(M_PI/180.0);//MDP - This is fixed for now, Satellite mobility model should provide an elevation
 
-  fsoSignalParams.scintillationIndex = CalculateScintillationIdx (fsoSignalParams.frequency, heightTx, heightRx, elevation);
+  fsoSignalParams->scintillationIndex = CalculateScintillationIdx (fsoSignalParams->frequency, heightTx, heightRx, elevation);
 
 }
 

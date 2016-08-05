@@ -82,7 +82,7 @@ public:
    *
    * \return probability of successfully receiving the chunk
    */
-  virtual double GetChunkSuccessRate (FsoSignalParameters fsoSignalParams, uint32_t nbits) = 0;
+  virtual double GetPacketSuccessRate (Ptr<FsoSignalParameters> fsoSignalParams, uint32_t nbits) = 0;
 };
 
 class FsoDownLinkErrorModel : public FsoErrorModel
@@ -106,12 +106,12 @@ public:
    */
   double CalculateMeanBer () const;
 
-  void CalculateNormRxIrradiance (FsoSignalParameters fsoSignalParams);
+  void CalculateNormRxIrradiance (Ptr<FsoSignalParameters> fsoSignalParams);
 
   double CalculateTurbulenceTimeConstant(double hTx, double hRx, double wavelength, double elevation);
   
   //inherited from FsoErrorModel
-  virtual double GetChunkSuccessRate (FsoSignalParameters fsoSignalParams, uint32_t nbits);
+  virtual double GetPacketSuccessRate (Ptr<FsoSignalParameters> fsoSignalParams, uint32_t nbits);
 
 private:
   Ptr<LogNormalRandomVariable> m_logNormalDist;

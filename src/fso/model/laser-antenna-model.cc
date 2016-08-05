@@ -16,6 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
+ *
+ * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
 
@@ -52,11 +54,28 @@ LaserAntennaModel::GetTypeId ()
                    MakeDoubleAccessor (&LaserAntennaModel::SetOrientation,
                                        &LaserAntennaModel::GetOrientation),
                    MakeDoubleChecker<double> (-360, 360))
-     
-    .AddAttribute ("PhaseFrontRadius",
+    .AddAttribute ("PhaseFrontRadius", //MDP - to be removed
                    "The phase front radius of curvature (meters) of the beam.",
                    DoubleValue (1.0),
                    MakeDoubleAccessor (&LaserAntennaModel::m_phaseFrontRadius),
+                   MakeDoubleChecker<double> ())
+    .AddAttribute ("Wavelength",
+                   "The wavelength (meters) of the light.",
+                   DoubleValue (847e-9),
+                   MakeDoubleAccessor (&LaserAntennaModel::SetWavelength,
+                                       &LaserAntennaModel::GetWavelength),
+                   MakeDoubleChecker<double> (0.0, 1e-5))
+    .AddAttribute ("TxPower",
+                   "The transmit power (dB) of the laser.",
+                   DoubleValue (0.0),
+                   MakeDoubleAccessor (&LaserAntennaModel::SetTxPower,
+                                       &LaserAntennaModel::GetTxPower),
+                   MakeDoubleChecker<double> ())
+    .AddAttribute ("Gain",
+                   "The gain (dB) of the transmitter.",
+                   DoubleValue (0.0),
+                   MakeDoubleAccessor (&LaserAntennaModel::SetGain,
+                                       &LaserAntennaModel::GetGain),
                    MakeDoubleChecker<double> ())
   ;
   return tid;

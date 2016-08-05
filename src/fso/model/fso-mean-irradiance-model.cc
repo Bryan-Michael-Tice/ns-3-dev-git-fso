@@ -58,17 +58,17 @@ FsoMeanIrradianceModel::GetTypeId (void)
 }
 
 void
-FsoMeanIrradianceModel::UpdateSignalParams(FsoSignalParameters& fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
+FsoMeanIrradianceModel::UpdateSignalParams(Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
 {
   double distance = a->GetDistanceFrom (b);
 
-  NS_LOG_DEBUG ("MeanIrradiance: distance=" << distance << "m, frequency=" << fsoSignalParams.frequency << "Hz, beamwidth=" << fsoSignalParams.txBeamwidth << "m, phase front radius=" << fsoSignalParams.txPhaseFrontRadius); 
+  NS_LOG_DEBUG ("MeanIrradiance: distance=" << distance << "m, frequency=" << fsoSignalParams->frequency << "Hz, beamwidth=" << fsoSignalParams->txBeamwidth << "m, phase front radius=" << fsoSignalParams->txPhaseFrontRadius); 
 
-  double rxDiffractiveBeamRadius = CalculateDiffractiveBeamRadius(distance, fsoSignalParams.frequency, fsoSignalParams.txBeamwidth, fsoSignalParams.txPhaseFrontRadius);
+  double rxDiffractiveBeamRadius = CalculateDiffractiveBeamRadius(distance, fsoSignalParams->frequency, fsoSignalParams->txBeamwidth, fsoSignalParams->txPhaseFrontRadius);
 
-fsoSignalParams.meanIrradiance = CalculateMeanIrradiance(fsoSignalParams.txBeamwidth, rxDiffractiveBeamRadius);
+fsoSignalParams->meanIrradiance = CalculateMeanIrradiance(fsoSignalParams->txBeamwidth, rxDiffractiveBeamRadius);
 
-NS_LOG_DEBUG ("MeanIrradiance: result=" << fsoSignalParams.meanIrradiance);
+NS_LOG_DEBUG ("MeanIrradiance: result=" << fsoSignalParams->meanIrradiance);
 }
 
 double 

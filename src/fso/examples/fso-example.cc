@@ -23,7 +23,7 @@
 #include "ns3/optical-rx-antenna-model.h"
 #include "ns3/propagation-delay-model.h"
 #include "ns3/fso-channel.h"
-#include "ns3/fso-down-link-phy.h"
+#include "ns3/fso-phy.h"
 #include "ns3/fso-propagation-loss-model.h"
 #include "ns3/fso-free-space-loss-model.h"
 #include "ns3/fso-down-link-scintillation-index-model.h"
@@ -70,7 +70,7 @@ main (int argc, char *argv[])
   cmd.Parse (argc,argv);
 
   LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
-  LogComponentEnable ("FsoDownLinkPhy", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoPhy", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoMeanIrradianceModel", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoDownLinkErrorModel", LOG_LEVEL_INFO);
@@ -116,14 +116,14 @@ main (int argc, char *argv[])
 
   //Phy
   double bitRate = 49.3724e6;
-  Ptr<FsoDownLinkPhy> txPhy = CreateObject<FsoDownLinkPhy> ();
+  Ptr<FsoPhy> txPhy = CreateObject<FsoPhy> ();
   txPhy->SetMobility (txMobility);
   txPhy->SetChannel (channel);
   txPhy->SetAntennas (laser, 0);
   txPhy->SetDevice (0);
   txPhy->SetBitRate (bitRate);
  
-  Ptr<FsoDownLinkPhy> rxPhy = CreateObject<FsoDownLinkPhy> ();
+  Ptr<FsoPhy> rxPhy = CreateObject<FsoPhy> ();
   rxPhy->SetMobility (rxMobility);
   rxPhy->SetChannel (channel);
   rxPhy->SetAntennas (0, receiver);
@@ -142,22 +142,12 @@ main (int argc, char *argv[])
 
   //Setup Packet and Signal Params
   uint32_t size = 1024;//Packet size in bytes
-  double wavelength = 847e-9;//meters 
-  double speedOfLight = 3e8;//m/s
   Ptr<Packet> packet = Create<Packet> (size);
 
-  FsoSignalParameters params;
-  params.wavelength = wavelength;
-  params.frequency = speedOfLight/wavelength;
-  params.symbolPeriod = 1/bitRate;// 1/49.3724 Mbps
-  params.power = 0.0;
-  params.txPhy = txPhy;
-  params.txAntenna = laser;
-  params.txBeamwidth = 0.120/2.0;//meters - half the diameter
-  params.txPhaseFrontRadius = 0.0;
+  Ptr<FsoSignalParameters> params = Create<FsoSignalParameters> ();
 
   //Send packet from transmitter Phy
-  txPhy->SendPacket (packet, params);
+  txPhy->Transmit (packet, params);
   
 
   Simulator::Run ();
