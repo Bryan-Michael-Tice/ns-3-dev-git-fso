@@ -100,6 +100,7 @@ FsoDownLinkErrorModel::CalculateTurbulenceTimeConstant (double hTx, double hRx, 
 {
   double result;
   double error;
+  double hTurbulence = 20000.0;//Effective height of turbulence in meters (20 km)
 
   GWFunctionParameters params;
   params.A = m_groundRefractiveIdx;
@@ -112,11 +113,11 @@ FsoDownLinkErrorModel::CalculateTurbulenceTimeConstant (double hTx, double hRx, 
   F.function = &GWIntegralFunction;
   F.params = &params;
 
-  gsl_integration_qagiu (&F, hRx, hTx, 1e-7, 1000, w, &result, &error);
+  gsl_integration_qagiu (&F, hRx, hTurbulence, 1e-7, 1000, w, &result, &error);
    
   gsl_integration_workspace_free (w);
-
-  return (2.729e-8)*std::pow(wavelength, 1.2)*std::pow(std::sin(elevation),0.6)/std::pow(result,0.6);//Should this be stored in a member variable?
+  
+  return ((2.729*std::pow(10.0,-8.0))*std::pow(wavelength*(1e6), 1.2)*std::pow(std::sin(elevation),0.6))/std::pow(result,0.6);//Should this be stored in a member variable?
 }
 
 double 
@@ -137,7 +138,7 @@ FsoDownLinkErrorModel::CalculateNormRxIrradiance (Ptr<FsoSignalParameters> fsoSi
    {
      m_normalizedIrradiance = m_logNormalDist->GetValue(-0.5*fsoSignalParams->scintillationIndex, std::sqrt(fsoSignalParams->scintillationIndex));
 
-     double greenwoodTimeConstant = CalculateTurbulenceTimeConstant(fsoSignalParams->txPhy->GetMobility()->GetPosition().z, m_phy->GetMobility()->GetPosition().z, fsoSignalParams->wavelength, 60.0*M_PI/180.0);
+     double greenwoodTimeConstant = CalculateTurbulenceTimeConstant(fsoSignalParams->txPhy->GetMobility()->GetPosition().z, m_phy->GetMobility()->GetPosition().z, fsoSignalParams->wavelength, (60.0*M_PI)/180.0);
      NS_LOG_DEBUG ("ErrorModel: Greenwood Time Constant=" << greenwoodTimeConstant << "s");  
      m_turbulenceTimer.SetDelay (Seconds (greenwoodTimeConstant));
      m_turbulenceTimer.Schedule ();
@@ -154,9 +155,10 @@ GWIntegralFunction (double h, void *params)
   double A = ((GWFunctionParameters *) params)->A;
   double v = ((GWFunctionParameters *) params)->v;
   double hgs = ((GWFunctionParameters *) params)->hgs;
-  double IntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/100.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(std::pow(5.94*10,-53.0))*(std::exp(-h/1000.0))+(std::pow(2.7*10,-16.0))*std::exp(-h/1500.0))*std::pow((2.8 + 30*std::exp(-std::pow((h - 9400.0)/4800.0,2.0))),5.0/3.0);
 
-  return IntegralFunction;
+  double GWIntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/100.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(5.94*std::pow(10.0,-53.0))*(std::exp(-h/1000.0))+(2.7*std::pow(10.0,-16.0))*std::exp(-h/1500.0))*(std::pow((2.8 + 30*std::exp(-1*std::pow((h - 9400.0)/4800.0,2.0))),5.0/3.0));
+
+  return GWIntegralFunction;
 }
 #endif
 

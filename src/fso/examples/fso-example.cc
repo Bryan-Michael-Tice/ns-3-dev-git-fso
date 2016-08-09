@@ -74,6 +74,7 @@ main (int argc, char *argv[])
   LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoMeanIrradianceModel", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoDownLinkErrorModel", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoDownLinkScintillationIndexModel", LOG_LEVEL_INFO);
 
   //Mobility Models
   Ptr<MobilityModel> txMobility = CreateObject<ConstantPositionMobilityModel> ();
@@ -102,7 +103,7 @@ main (int argc, char *argv[])
 
   Ptr<FsoDownLinkScintillationIndexModel> scintIndexModel = CreateObject<FsoDownLinkScintillationIndexModel> ();
   scintIndexModel->SetRmsWindSpeed (21.0); //From the Hufnagel-Valley 5/7 model
-  scintIndexModel->SetGndRefractiveIdx (1.7*10e-14); //From the Hufnagel-Valley 5/7 model
+  scintIndexModel->SetGndRefractiveIdx (1.7e-14); //From the Hufnagel-Valley 5/7 model
   
   Ptr<FsoMeanIrradianceModel> meanIrradianceModel = CreateObject<FsoMeanIrradianceModel> ();
 

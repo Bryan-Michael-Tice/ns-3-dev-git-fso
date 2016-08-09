@@ -80,9 +80,9 @@ FsoDownLinkScintillationIndexModel::UpdateSignalParams (Ptr<FsoSignalParameters>
   double heightTx = (a->GetPosition().z);
   double heightRx = (b->GetPosition().z);  
 
-  double elevation = 10.0*(M_PI/180.0);//MDP - This is fixed for now, Satellite mobility model should provide an elevation
+  double zenith = 30.0*(M_PI/180.0);//MDP - This is fixed for now, Satellite mobility model should provide an elevation or zenith angle
 
-  fsoSignalParams->scintillationIndex = CalculateScintillationIdx (fsoSignalParams->frequency, heightTx, heightRx, elevation);
+  fsoSignalParams->scintillationIndex = CalculateScintillationIdx (fsoSignalParams->frequency, heightTx, heightRx, zenith);
 
 }
 
@@ -107,7 +107,7 @@ FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double 
 
   gsl_integration_qagiu (&F, hRx, hTx, 1e-7, 1000, w, &result, &error);
 
-  double k = (2*M_PI)/((3e8)/f);//Wave number - 2*pi/wavelength
+  double k = (2*M_PI)/((3.0e8)/f);//Wave number - 2*pi/wavelength
    
   gsl_integration_workspace_free (w);
   
@@ -147,7 +147,7 @@ HVIntegralFunction (double h, void *params)
   double A = ((HVFunctionParameters *) params)->A;
   double v = ((HVFunctionParameters *) params)->v;
   double hgs = ((HVFunctionParameters *) params)->hgs;
-  double IntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/100.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(std::pow(5.94*10,-53.0))*(std::exp(-h/1000.0))+(std::pow(2.7*10,-16.0))*std::exp(-h/1500.0))*(std::pow(h-hgs,5.0/6.0));
+  double IntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/100.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(5.94*std::pow(10,-53.0))*(std::exp(-h/1000.0))+(2.7*std::pow(10,-16.0))*std::exp(-h/1500.0))*(std::pow(h-hgs,5.0/6.0));
 
   return IntegralFunction;
 }

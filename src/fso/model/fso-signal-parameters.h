@@ -24,11 +24,9 @@
 #ifndef FSO_SIGNAL_PARAMETERS_H
 #define FSO_SIGNAL_PARAMETERS_H
 
-
 #include <ns3/simple-ref-count.h>
 #include <ns3/ptr.h>
 #include <ns3/nstime.h>
-
 
 namespace ns3 {
 
@@ -48,7 +46,7 @@ struct FsoSignalParameters : public SimpleRefCount<FsoSignalParameters>
   /**
    * default constructor
    */
-  FsoSignalParameters (); //MDP - shouldn't some default values be set in this?
+  FsoSignalParameters ();
 
   /**
    * destructor

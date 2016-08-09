@@ -32,7 +32,7 @@ namespace ns3 {
 NS_LOG_COMPONENT_DEFINE ("FsoSignalParameters");
 
 
-FsoSignalParameters::FsoSignalParameters ()
+FsoSignalParameters::FsoSignalParameters () : duration (NanoSeconds (0.0)), txPhy (0), txAntenna (0), wavelength (0.0), frequency (0.0), symbolPeriod (0.0), power (0.0), txBeamwidth (0.0), rxPhaseFrontRadius (0.0), scintillationIndex (0.0), meanIrradiance (0.0), pathLoss (0.0)
 {
   NS_LOG_FUNCTION (this);
 }
