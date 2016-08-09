@@ -32,6 +32,7 @@ namespace ns3 {
 /**
  * 
  * \brief  Laser model based on the parameters needed for the optical signal
+ * to be transmitted
  *
  */
 class LaserAntennaModel : public AntennaModel

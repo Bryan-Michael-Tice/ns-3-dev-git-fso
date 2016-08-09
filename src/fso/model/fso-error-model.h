@@ -101,13 +101,29 @@ public:
    */
   double CalculateMeanSnr () const;
 
-    /**
+  /**
    * \return the ber
    */
   double CalculateMeanBer () const;
-
+  
+  /**
+   * \brief Calculate the normalized irradiance at the receiver
+   * 
+   *
+   * \param fsoSignalParams the signal parameters
+   * \return the normalized irradiance at the receiver
+   */
   void CalculateNormRxIrradiance (Ptr<FsoSignalParameters> fsoSignalParams);
 
+  /**
+   * \brief Calculate the greenwood time constant 
+   *
+   * \param hTx height of transmitter in meters
+   * \param hRx height of receiver in meters
+   * \param wavelength the wavelength in meters
+   * \param elevation the elevation in radians
+   * \return the time constant of the turbulence
+   */
   double CalculateTurbulenceTimeConstant(double hTx, double hRx, double wavelength, double elevation);
   
   //inherited from FsoErrorModel

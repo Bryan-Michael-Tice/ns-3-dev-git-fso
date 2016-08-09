@@ -35,13 +35,10 @@ namespace ns3 {
 
 
 /**
- * \ingroup spectrum
+ * \ingroup fso
  *
- * \brief spectrum-aware propagation loss model
+ * \brief Free space path loss for electromagnetic waves (far-field)
  *
- * Interface for propagation loss models to be adopted when
- * transmissions are modeled with a power spectral density by means of
- * the SpectrumValue class.
  *
  */
 class FsoMeanIrradianceModel : public FsoPropagationLossModel
@@ -60,21 +57,21 @@ public:
   virtual void UpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b);
 
   /**
-   * Calculate the mean irradiance
+   * \brief Calculate the mean irradiance
    *
-   * @param txBeamRadius the beamwidth radius at the transmitter aperture
-   * @param rxDiffractiveBeamRadius the diffractive beam radius at the receiver
+   * \param txBeamRadius the beamwidth radius at the transmitter aperture
+   * \param rxDiffractiveBeamRadius the diffractive beam radius at the receiver
    *
    */
   double CalculateMeanIrradiance (double txBeamRadius, double rxDiffractiveBeamRadius);
 
   /**
-   * Calculate the diffractive beam radius at the receiver
+   * \brief Calculate the diffractive beam radius at the receiver
    *
-   * @param f frequency in Hz
-   * @param d distance from tx to rx in m
-   * @param txBeamRadius beam width radius at the transmitter at tx output aperture
-   * @param txPhaseFrontRadius phase front radius of curvature at tx output aperture
+   * \param f frequency in Hz
+   * \param d distance from tx to rx in meters
+   * \param txBeamRadius beam width radius at the transmitter
+   * \param rxPhaseFrontRadius phase front radius of curvature at the receiver
    *
    */
   double CalculateDiffractiveBeamRadius (double d, double f, double txBeamRadius, double rxPhaseFrontRadius);
@@ -86,10 +83,6 @@ protected:
   
 
 };
-
-
-
-
 
 
 } // namespace ns3

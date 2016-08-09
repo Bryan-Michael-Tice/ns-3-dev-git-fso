@@ -61,7 +61,7 @@ struct FsoSignalParameters : public SimpleRefCount<FsoSignalParameters>
   /**
    * make a "virtual" copy of this class, where "virtual" refers to
    * the fact that if the actual object is a derived class of
-   * SpectrumSignalParameters, then the copy is also a derived class
+   * FsoSignalParameters, then the copy is also a derived class
    * of the same type.
    * Each class inheriting from
    * FsoSignalParameters should override this method and use it

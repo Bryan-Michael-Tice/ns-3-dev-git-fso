@@ -75,11 +75,11 @@ public:
    * Calculate the scintillation index for the channel, valid for
    * downlink scenario under weak turbulent conditions
    *
-   * @param f frequency in Hz
-   * @param hTx height of transmitter in km
-   * @param hRx height of receiver in km
-   * @param e elevation in radians
-   *
+   * \param f frequency in Hz
+   * \param hTx height of transmitter in km
+   * \param hRx height of receiver in km
+   * \param zenith elevation in radians
+   * \return the scintillation index
    */
   double CalculateScintillationIdx (double f, double hTx, double hRx, double zenith) const;
 

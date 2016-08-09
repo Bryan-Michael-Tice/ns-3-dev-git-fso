@@ -45,7 +45,7 @@ class NetDevice;
 /**
  * \ingroup fso
  *
- *  Base class for free-space optical PHY layers
+ *  Base class for free-space optical PHY layer
  *
  */
 class FsoPhy  : public Object
@@ -121,56 +121,56 @@ public:
   /**
    * Set the associated NetDevice instance
    *
-   * @param d the NetDevice instance
+   * \param d the NetDevice instance
    */
   virtual void SetDevice (Ptr<NetDevice> d);
 
   /**
    * Get the associated NetDevice instance
    *
-   * @return a Ptr to the associated NetDevice instance
+   * \return a Ptr to the associated NetDevice instance
    */
   virtual Ptr<NetDevice> GetDevice () const;
 
   /**
    * Set the mobility model associated with this device.
    *
-   * @param m the mobility model
+   * \param m the mobility model
    */
   virtual void SetMobility (Ptr<MobilityModel> m);
 
   /**
    * Get the associated MobilityModel instance
    *
-   * @return a Ptr to the associated MobilityModel instance
+   * \return a Ptr to the associated MobilityModel instance
    */
   virtual Ptr<MobilityModel> GetMobility () const;
 
   /**
    * Set the channel attached to this device.
    *
-   * @param c the channel
+   * \param c the channel
    */
   virtual void SetChannel (Ptr<FsoChannel> c);
 
   /**
    * Return the FsoChannel this FsoPhy is connected to.
    *
-   * @return the FsoChannel this FsoPhy is connected to
+   * \return the FsoChannel this FsoPhy is connected to
    */
   virtual Ptr<FsoChannel> GetChannel () const;
 
   /**
    * Get the AntennaModel used by the NetDevice for reception
    *
-   * @return a Ptr to the AntennaModel used by the NetDevice for reception
+   * \return a Ptr to the AntennaModel used by the NetDevice for reception
    */
   virtual Ptr<OpticalRxAntennaModel> GetRxAntenna () const;
 
   /**
    * Get the AntennaModel used by the NetDevice for transmission
    *
-   * @return a Ptr to the AntennaModel used by the NetDevice for transmission
+   * \return a Ptr to the AntennaModel used by the NetDevice for transmission
    */
   virtual Ptr<LaserAntennaModel> GetTxAntenna () const;
 
@@ -225,7 +225,7 @@ public:
   /**
    * Return the bit rate used by this Phy
    *
-   * @return the bit rate
+   * \return the bit rate
    */
   virtual double GetBitRate () const;
 

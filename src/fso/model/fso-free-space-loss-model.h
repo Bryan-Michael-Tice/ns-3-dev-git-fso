@@ -59,11 +59,11 @@ public:
   virtual void UpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b);
 
   /**
-   * Calculate the free space path loss (assuming far field) in dB
+   * \brief Calculate the free space path loss (assuming far field) in dB
    * 
    *
-   * @param f frequency in Hz
-   * @param d distance from tx to rx in m
+   * \param f frequency in Hz
+   * \param d distance from tx to rx in m
    *
    */
   double CalculateFreeSpaceLoss (double d, double wavelength);

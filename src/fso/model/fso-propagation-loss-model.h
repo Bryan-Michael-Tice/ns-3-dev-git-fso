@@ -34,13 +34,12 @@ namespace ns3 {
 
 
 /**
- * \ingroup spectrum
+ * \ingroup fso
  *
- * \brief spectrum-aware propagation loss model
+ * \brief base class for fso propagation loss models
  *
- * Interface for propagation loss models to be adopted when
- * transmissions are modeled with a power spectral density by means of
- * the SpectrumValue class.
+ * Interface for propagation loss models to be adopted for
+ * fso applications
  *
  */
 class FsoPropagationLossModel : public Object
@@ -56,12 +55,13 @@ public:
   static TypeId GetTypeId ();
 
   /**
-   * This purely virtual function updates the signal parameters according to the implementation in
-   * the child class
+   * \brief This purely virtual function that updates the signal parameters according to the        
+   * implementation in the child class
+   * 
    *
-   * @param fsoSignalParams is the signal parameters for the optical beam
-   * @param a sender mobility
-   * @param b receiver mobility
+   * \param fsoSignalParams is the signal parameters for the optical beam
+   * \param a sender mobility
+   * \param b receiver mobility
    *
    */
   virtual void UpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b) = 0;
