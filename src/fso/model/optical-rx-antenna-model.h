@@ -31,16 +31,7 @@ namespace ns3 {
 
 /**
  * 
- * \brief  Antenna model based on a parabolic approximation of the main lobe radiation pattern.
- *
- * This class implements the parabolic model as described in some 3GPP document, e.g., R4-092042
- *
- * A similar model appears in 
- *
- * George Calcev and Matt Dillon, "Antenna Tilt Control in CDMA Networks"
- * in Proc. of the 2nd Annual International Wireless Internet Conference (WICON), 2006
- *
- * though the latter addresses also the elevation plane, which the present model doesn't.
+ * \brief  Optical receiver antenna model which contains parameters required to compute the received power
  *
  *
  */
@@ -67,11 +58,11 @@ public:
 
 private:
 
-  double m_apertureDiameter;
+  double m_apertureDiameter;    //!< The diameter of the receiver in meters
 
-  double m_orientationRadians;
+  double m_orientationRadians;  //!< The orientation of the receiver in radians
 
-  double m_rxGain;
+  double m_rxGain;              //!< The receiver gain in dB
 };
 
 

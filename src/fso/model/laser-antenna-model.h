@@ -59,15 +59,15 @@ public:
 
 private:
 
-  double m_beamwidthMeters; //diameter of the beam in meters
+  double m_beamwidthMeters; //!< diameter of the beam in meters
 
   double m_orientationRadians;
 
-  double m_txPower; //Transmit power in dB
+  double m_txPower; //!< Transmit power in dB
 
-  double m_gain; //Gain in dB
+  double m_gain; //!< Gain in dB
 
-  double m_wavelength; //wavelength of light in meters
+  double m_wavelength; //!< wavelength of light in meters
 };
 
 

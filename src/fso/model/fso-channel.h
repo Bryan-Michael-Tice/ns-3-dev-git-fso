@@ -117,7 +117,7 @@ private:
   /**
    * A vector of pointers to YansWifiPhy.
    */
-  typedef std::vector<Ptr<FsoPhy> > PhyList;
+  typedef std::vector<Ptr<FsoPhy> > PhyList; 
   typedef std::vector<Ptr<FsoPropagationLossModel> > LossList;
 
   PhyList m_phyList;                   //!< List of FsoPhys connected to this FsoChannel

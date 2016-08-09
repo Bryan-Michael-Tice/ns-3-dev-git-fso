@@ -95,8 +95,8 @@ protected:
   
 
 private:
-  double m_rmsWindSpeed;
-  double m_groundRefractiveIdx;
+  double m_rmsWindSpeed;        //!< The RMS wind speed in m/s
+  double m_groundRefractiveIdx; //!< The index of refraction at ground level
 
 };
 

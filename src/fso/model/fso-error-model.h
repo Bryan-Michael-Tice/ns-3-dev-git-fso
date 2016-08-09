@@ -114,15 +114,15 @@ public:
   virtual double GetPacketSuccessRate (Ptr<FsoSignalParameters> fsoSignalParams, uint32_t nbits);
 
 private:
-  Ptr<LogNormalRandomVariable> m_logNormalDist;
-  Ptr<FsoPhy> m_phy;
+  Ptr<LogNormalRandomVariable> m_logNormalDist; //!< Pointer to the log normal random variable
+  Ptr<FsoPhy> m_phy; //!< Pointer to the Phy
 
-  double m_groundRefractiveIdx;
-  double m_rmsWindSpeed;
-  double m_normalizedIrradiance;
+  double m_groundRefractiveIdx; //!< Index of refraction at ground level
+  double m_rmsWindSpeed;        //!< The RMS wind speed in m/s
+  double m_normalizedIrradiance;//!< The normalized irradiance at the receiver (unitless) 
 
-  bool m_updateIrradiance;
-  Timer m_turbulenceTimer;
+  bool m_updateIrradiance;      //!< Denotes if the irradiance at the receiver should be updated
+  Timer m_turbulenceTimer;      //!< Timer related to the greenwood constant for irradiance calculation
 };
 
 } //namespace ns3
