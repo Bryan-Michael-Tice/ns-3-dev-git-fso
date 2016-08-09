@@ -77,7 +77,7 @@ public:
    * @param txPhaseFrontRadius phase front radius of curvature at tx output aperture
    *
    */
-  double CalculateDiffractiveBeamRadius (double d, double f, double txBeamRadius, double txPhaseFrontRadius);
+  double CalculateDiffractiveBeamRadius (double d, double f, double txBeamRadius, double rxPhaseFrontRadius);
 
 
 protected:

@@ -79,6 +79,46 @@ FsoPhy::DoDispose (void)
   //m_state = 0;
 }
 
+void 
+FsoPhy::SetReceiveOkCallback (RxOkCallback callback)
+{
+  m_rxOkCallback = callback; 
+}
+
+void 
+FsoPhy::SetReceiveErrorCallback (RxErrorCallback callback)
+{
+  m_rxErrorCallback = callback; 
+}
+
+void
+FsoPhy::SwitchFromRxEndOk (Ptr<Packet> packet, double snr, Ptr<FsoSignalParameters> params)
+{
+  //These commented functions are left for reference
+  //m_rxOkTrace (packet, snr, txVector.GetMode (), preamble);
+  //NotifyRxEndOk ();
+  //DoSwitchFromRx ();
+
+  if (!m_rxOkCallback.IsNull ())
+    {
+      m_rxOkCallback (packet, snr, params);
+    }
+
+}
+
+void
+FsoPhy::SwitchFromRxEndError (Ptr<Packet> packet, double snr)
+{
+  //These commented functions are left for reference
+  //m_rxErrorTrace (packet, snr);
+  //NotifyRxEndError ();
+  //DoSwitchFromRx ();
+
+  if (!m_rxErrorCallback.IsNull ())
+    {
+      m_rxErrorCallback (packet, snr);
+    }
+}
 
 void 
 FsoPhy::SetDevice (Ptr<NetDevice> d)
@@ -164,16 +204,15 @@ FsoPhy::Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalPa
   
   Ptr<LaserAntennaModel> laser = GetTxAntenna();
 
-  Time txDuration = CalculateTxDuration (packet->GetSize (), fsoSignalParams);
-
   fsoSignalParams->power                = laser->GetTxPower () + laser->GetGain ();  
-  fsoSignalParams->txPhaseFrontRadius   = laser->GetPhaseFrontRadius ();
   fsoSignalParams->txBeamwidth          = laser->GetBeamwidth ();
   fsoSignalParams->txPhy                = this;
   fsoSignalParams->txAntenna            = laser;
   fsoSignalParams->symbolPeriod         = 1/m_bitRate;
   fsoSignalParams->wavelength           = laser->GetWavelength ();
   fsoSignalParams->frequency            = 3e8/(laser->GetWavelength ());
+
+  Time txDuration = CalculateTxDuration (packet->GetSize (), fsoSignalParams);
 
     //m_state->SwitchToTx (txDuration, packet, GetPowerDbm (txVector.GetTxPowerLevel ()), txVector, preamble);
   
@@ -205,6 +244,7 @@ FsoPhy::Receive (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 Time 
 FsoPhy::CalculateTxDuration (uint32_t size, Ptr<FsoSignalParameters> fsoSignalParams)
 {
+  NS_LOG_DEBUG ("PhyTransmit: symbol period=" << fsoSignalParams->symbolPeriod << "s"); 
   NS_ASSERT (fsoSignalParams->symbolPeriod > 0.0);
   return NanoSeconds (size * 8 * fsoSignalParams->symbolPeriod);
 }

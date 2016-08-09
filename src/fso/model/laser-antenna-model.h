@@ -50,8 +50,6 @@ public:
   double GetBeamwidth () const;
   void SetOrientation (double orientationDegrees);
   double GetOrientation () const;
-  void SetPhaseFrontRadius (double phaseFrontRadius);
-  double GetPhaseFrontRadius () const;
   void SetTxPower (double txPower);
   double GetTxPower () const;
   void SetGain (double gain);
@@ -64,8 +62,6 @@ private:
   double m_beamwidthMeters; //diameter of the beam in meters
 
   double m_orientationRadians;
-
-  double m_phaseFrontRadius; //MDP - this needs to be removed. Not a property of the laser.
 
   double m_txPower; //Transmit power in dB
 

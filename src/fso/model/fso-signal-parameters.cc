@@ -51,7 +51,7 @@ FsoSignalParameters::FsoSignalParameters (const FsoSignalParameters& p)
   symbolPeriod = p.symbolPeriod;
   power = p.power;
   txBeamwidth = p.txBeamwidth;
-  txPhaseFrontRadius = p.txPhaseFrontRadius;
+  rxPhaseFrontRadius = p.rxPhaseFrontRadius;
   scintillationIndex = p.scintillationIndex;
   meanIrradiance = p.meanIrradiance;
   pathLoss = p.pathLoss;

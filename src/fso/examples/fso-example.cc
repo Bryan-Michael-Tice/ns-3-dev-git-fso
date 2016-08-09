@@ -85,7 +85,6 @@ main (int argc, char *argv[])
   //Antennas
   Ptr<LaserAntennaModel> laser = CreateObject<LaserAntennaModel> ();
   laser->SetBeamwidth (0.06); //meters
-  laser->SetPhaseFrontRadius (707000); //meters - is approximately the link distance when r >> r0
   laser->SetOrientation (0.0);
   laser->SetTxPower (0.1);//Watts
   laser->SetGain (116.0);//dB

@@ -79,6 +79,46 @@ public:
   };
 
   /**
+   * arg1: packet received successfully
+   * arg2: snr of packet 
+   * arg3: signal parameters of packet
+   */
+  typedef Callback<void, Ptr<Packet>, double, Ptr<FsoSignalParameters> > RxOkCallback;
+  /**
+   * arg1: packet received unsuccessfully
+   * arg2: snr of packet
+   */
+  typedef Callback<void, Ptr<Packet>, double> RxErrorCallback;
+
+  /**
+   * Switch from RX after the reception was successful.
+   *
+   * \param packet the successfully received packet
+   * \param snr the SNR of the received packet
+   * \param params signal parameters of the packet
+   */
+  virtual void SwitchFromRxEndOk (Ptr<Packet> packet, double snr, Ptr<FsoSignalParameters> params);
+
+  /**
+   * Switch from RX after the reception failed.
+   *
+   * \param packet the packet that we failed to received
+   * \param snr the SNR of the received packet
+   */
+  virtual void SwitchFromRxEndError (Ptr<Packet> packet, double snr);
+
+  /**
+   * \param callback the callback to invoke
+   *        upon successful packet reception.
+   */
+  virtual void SetReceiveOkCallback (RxOkCallback callback);
+  /**
+   * \param callback the callback to invoke
+   *        upon erroneous packet reception.
+   */
+  virtual void SetReceiveErrorCallback (RxErrorCallback callback);
+
+  /**
    * Set the associated NetDevice instance
    *
    * @param d the NetDevice instance
@@ -201,9 +241,13 @@ private:
   Ptr<LaserAntennaModel>        m_txAntenna;      //!< Pointer to the TX antenna model
   Ptr<OpticalRxAntennaModel>    m_rxAntenna;      //!< Pointer to the RX antenna model
   Ptr<FsoErrorModel>            m_errorModel;     //!< Pointer to the error model
-  State                         m_state;          //!< state of the Phy
   
-  double                        m_bitRate;        //!< bit rate associated to the Phy
+  State                         m_state;          //!< state of the Phy
+
+  RxOkCallback m_rxOkCallback;                    //!< Callback for received packet
+  RxErrorCallback m_rxErrorCallback;              //!< Callback for received packet with packet error
+  
+  double                        m_bitRate;        //!< bit rate associated with the Phy
 
 };
 

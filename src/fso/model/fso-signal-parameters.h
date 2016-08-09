@@ -114,9 +114,9 @@ struct FsoSignalParameters : public SimpleRefCount<FsoSignalParameters>
   double txBeamwidth;
 
   /**
-   * The phase front radius of curvature of the beam at the transmitter ().
+   * The phase front radius of curvature of the beam at the receiver (m).
    */
-  double txPhaseFrontRadius;
+  double rxPhaseFrontRadius;
 
   /**
    * The scintillation index due to atmospheric refraction.

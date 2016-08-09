@@ -54,11 +54,6 @@ LaserAntennaModel::GetTypeId ()
                    MakeDoubleAccessor (&LaserAntennaModel::SetOrientation,
                                        &LaserAntennaModel::GetOrientation),
                    MakeDoubleChecker<double> (-360, 360))
-    .AddAttribute ("PhaseFrontRadius", //MDP - to be removed
-                   "The phase front radius of curvature (meters) of the beam.",
-                   DoubleValue (1.0),
-                   MakeDoubleAccessor (&LaserAntennaModel::m_phaseFrontRadius),
-                   MakeDoubleChecker<double> ())
     .AddAttribute ("Wavelength",
                    "The wavelength (meters) of the light.",
                    DoubleValue (847e-9),
@@ -105,19 +100,6 @@ double
 LaserAntennaModel::GetOrientation () const
 {
   return RadiansToDegrees (m_orientationRadians);
-}
-
-void 
-LaserAntennaModel::SetPhaseFrontRadius (double phaseFrontRadius)
-{ 
-  NS_LOG_FUNCTION (this << phaseFrontRadius);
-  m_phaseFrontRadius = phaseFrontRadius;
-}
-
-double
-LaserAntennaModel::GetPhaseFrontRadius () const
-{
-  return m_phaseFrontRadius;
 }
 
 void 

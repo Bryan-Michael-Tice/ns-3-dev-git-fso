@@ -61,10 +61,12 @@ void
 FsoMeanIrradianceModel::UpdateSignalParams(Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
 {
   double distance = a->GetDistanceFrom (b);
+  fsoSignalParams->rxPhaseFrontRadius = distance;//The radius of curvature at the RX can be approximated by the distance for long links
 
-  NS_LOG_DEBUG ("MeanIrradiance: distance=" << distance << "m, frequency=" << fsoSignalParams->frequency << "Hz, beamwidth=" << fsoSignalParams->txBeamwidth << "m, phase front radius=" << fsoSignalParams->txPhaseFrontRadius); 
 
-  double rxDiffractiveBeamRadius = CalculateDiffractiveBeamRadius(distance, fsoSignalParams->frequency, fsoSignalParams->txBeamwidth, fsoSignalParams->txPhaseFrontRadius);
+  NS_LOG_DEBUG ("MeanIrradiance: distance=" << distance << "m, frequency=" << fsoSignalParams->frequency << "Hz, beamwidth=" << fsoSignalParams->txBeamwidth << "m, phase front radius=" << fsoSignalParams->rxPhaseFrontRadius); 
+
+  double rxDiffractiveBeamRadius = CalculateDiffractiveBeamRadius(distance, fsoSignalParams->frequency, fsoSignalParams->txBeamwidth, fsoSignalParams->rxPhaseFrontRadius);
 
 fsoSignalParams->meanIrradiance = CalculateMeanIrradiance(fsoSignalParams->txBeamwidth, rxDiffractiveBeamRadius);
 
@@ -80,9 +82,9 @@ FsoMeanIrradianceModel::CalculateMeanIrradiance (double txBeamRadius, double rxD
 }
 
 double
-FsoMeanIrradianceModel::CalculateDiffractiveBeamRadius (double d, double f, double txBeamRadius, double txPhaseFrontRadius)
+FsoMeanIrradianceModel::CalculateDiffractiveBeamRadius (double d, double f, double txBeamRadius, double rxPhaseFrontRadius)
 {
-  double theta0 = 1 - (d/txPhaseFrontRadius);
+  double theta0 = 1 - (d/rxPhaseFrontRadius);
   double waveLength = (3e8)/f;//wavelength = speed of light/frequency
   double lambda0 = (2*d)/((2*M_PI/waveLength)*pow(txBeamRadius, 2.0));
 
