@@ -40,26 +40,36 @@ NS_LOG_COMPONENT_DEFINE ("FsoPropagationLossTest");
 // See the chapter in the ns-3 testing and validation guide for more detail
 // ===========================================================================
 //
+
+/**
+ * \ingroup fso
+ *
+ * \brief Test case for the mean irradiance at the receiver
+ *
+ * The test cases are generated from the Matlab script in the test/references folder.
+ * The results from the Matlab script are compared with the result from the fso module.
+ *
+ */
 class FsoMeanIrradianceTestCase : public TestCase
 {
 public:
-  FsoMeanIrradianceTestCase ();
-  virtual ~FsoMeanIrradianceTestCase ();
+  FsoMeanIrradianceTestCase ();//!< default constructor
+  virtual ~FsoMeanIrradianceTestCase ();//!< virtual destructor
 
 private:
-  virtual void DoRun (void);
+  virtual void DoRun (void);//!< run test
 
   typedef struct {
     
-    double m_distance;  //meters
-    double m_frequency;  //Hz
-    double m_txBeamRadius; //meters
-    double m_txPhaseFrontRadius;// approximately equal to distance
-    double m_meanIrradiance;//Watts/meter^2 
-    double m_tolerance;
+    double m_distance;          //!< link distance in meters
+    double m_frequency;         //!< frequency of optical signal in Hertz
+    double m_txBeamRadius;      //!< the beam radius at the transmitter in meters
+    double m_rxPhaseFrontRadius;//!< the phase front radius of curvature in meters
+    double m_meanIrradiance;    //!< the mean irradiance at the receiver in Watts/meter^2 
+    double m_tolerance;         //!< the tolerance when comparing the calculated value to the sim
   } TestVector;
 
-  TestVectors<TestVector> m_testVectors;
+  TestVectors<TestVector> m_testVectors; //!< vector of tests
 };
 
 FsoMeanIrradianceTestCase::FsoMeanIrradianceTestCase ()
@@ -79,14 +89,14 @@ FsoMeanIrradianceTestCase::DoRun (void)
   // and compare the results to those we have manually calculated
   // according to the model documentation, within the specificed tolerance
   
-  double wavelength = 847e-9;//nm
-  double frequency = 3e8/wavelength;
+  double wavelength = 847e-9;//meters
+  double frequency = 3e8/wavelength;//Hertz
   TestVector testVector;
   
   testVector.m_distance = 707000;
   testVector.m_frequency = frequency;
   testVector.m_txBeamRadius = 0.06;
-  testVector.m_txPhaseFrontRadius = 707000;
+  testVector.m_rxPhaseFrontRadius = 707000;
   testVector.m_meanIrradiance = 3.56696705922e-4;
   testVector.m_tolerance = 1e-9;  
 
@@ -105,14 +115,22 @@ FsoMeanIrradianceTestCase::DoRun (void)
       b->SetPosition (Vector (0,0, testVector.m_distance));
 
 
-      double rxDiffractiveBeamRadius = lossModel->CalculateDiffractiveBeamRadius (testVector.m_distance, testVector.m_frequency, testVector.m_txBeamRadius, testVector.m_txPhaseFrontRadius);
+      double rxDiffractiveBeamRadius = lossModel->CalculateDiffractiveBeamRadius (testVector.m_distance, testVector.m_frequency, testVector.m_txBeamRadius, testVector.m_rxPhaseFrontRadius);
       double resultMeanIrradiance = lossModel->CalculateMeanIrradiance (testVector.m_txBeamRadius, rxDiffractiveBeamRadius);
 
       NS_TEST_EXPECT_MSG_EQ_TOL (resultMeanIrradiance, testVector.m_meanIrradiance, testVector.m_tolerance, "Got unexpected mean irradiance at the receiver");
     }
 }
 
-
+/**
+ * \ingroup fso
+ *
+ * \brief Test case for the downlink scintillation index of the atmosphere
+ *
+ * The test cases are generated from the Matlab script in the test/references folder.
+ * The results from the Matlab script are compared with the result from the fso module.
+ *
+ */
 class FsoDownLinkScintillationIndexTestCase : public TestCase
 {
 public:
@@ -124,15 +142,15 @@ private:
 
   typedef struct
   {
-    double m_txHeight;  //meters
-    double m_rxHeight;  //meters
-    double m_frequency;  //Hz
-    double m_zenith; //radians
-    double m_scintIndex;
-    double m_tolerance;
+    double m_txHeight;  //!< height of the transmitter in meters
+    double m_rxHeight;  //!< height of the receiver in meters
+    double m_frequency; //!< frequency of the optical signal in Hertz
+    double m_zenith;    //!< zenith angle in radians
+    double m_scintIndex;//!< scintillation index of the atmosphere
+    double m_tolerance; //!< the tolerance when comparing the calculated value to the sim
   } TestVector;
 
-  TestVectors<TestVector> m_testVectors;
+  TestVectors<TestVector> m_testVectors;//!< vector of tests
 };
 
 FsoDownLinkScintillationIndexTestCase::FsoDownLinkScintillationIndexTestCase ()
@@ -180,6 +198,15 @@ FsoDownLinkScintillationIndexTestCase::DoRun (void)
     }
 }
 
+/**
+ * \ingroup fso
+ *
+ * \brief Test case for the free space path loss
+ *
+ * The test cases are generated from the Matlab script in the test/references folder.
+ * The results from the Matlab script are compared with the result from the fso module.
+ *
+ */
 class FsoFreeSpaceLossTestCase : public TestCase
 {
 public:
@@ -192,13 +219,13 @@ private:
 
   typedef struct
   {
-    double m_distance;//meters 
-    double m_wavelength;//meters
-    double m_tolerance;
-    double m_loss;//dB
+    double m_distance;  //!< link distance in meters 
+    double m_wavelength;//!< wavelength of the optical signal in meters
+    double m_loss;      //!< free space path loss in dB
+    double m_tolerance; //!< the tolerance when comparing the calculated value to the sim
   } TestVector;
 
-  TestVectors<TestVector> m_testVectors;
+  TestVectors<TestVector> m_testVectors;//!< vector of tests
 };
 
 FsoFreeSpaceLossTestCase::FsoFreeSpaceLossTestCase ()

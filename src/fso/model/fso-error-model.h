@@ -50,8 +50,8 @@ double GWIntegralFunction (double x, void *params);
 #endif
 
 /**
- * \ingroup wifi
- * \brief the interface for Wifi's error models
+ * \ingroup fso
+ * \brief the interface for Fso's error models
  *
  */
 class FsoErrorModel : public Object
@@ -61,26 +61,14 @@ public:
 
   /**
    * A pure virtual method that must be implemented in the subclass.
-   * This method returns the probability that the given 'chunk' of the
-   * packet will be successfully received by the PHY.
+   * This method returns the probability that a packet will be
+   * successfully received by the PHY.
    *
-   * A chunk can be viewed as a part of a packet with equal SNR.
-   * The probability of successfully receiving the chunk depends on
-   * the mode, the SNR, and the size of the chunk.
    *
-   * Note that both a WifiMode and a WifiTxVector (which contains a WifiMode)
-   * are passed into this method.  The WifiTxVector may be from a signal that
-   * contains multiple modes (e.g. PLCP header sent differently from PLCP
-   * payload).  Consequently, the mode parameter is what the method uses
-   * to calculate the chunk error rate, and the txVector is used for 
-   * other information as needed.
-   *
-   * \param mode the Wi-Fi mode applicable to this chunk
-   * \param txvector TXVECTOR of the overall transmission
-   * \param snr the SNR of the chunk
+   * \param fsoSignalParams pointer to the optical signal parameters
    * \param nbits the number of bits in this chunk
    *
-   * \return probability of successfully receiving the chunk
+   * \return probability of successfully receiving the packet
    */
   virtual double GetPacketSuccessRate (Ptr<FsoSignalParameters> fsoSignalParams, uint32_t nbits) = 0;
 };

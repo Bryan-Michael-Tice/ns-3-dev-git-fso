@@ -149,7 +149,7 @@ public:
   /**
    * Set the channel attached to this device.
    *
-   * \param c the channel
+   * \param c pointer to the channel
    */
   virtual void SetChannel (Ptr<FsoChannel> c);
 
@@ -176,7 +176,7 @@ public:
 
   /**
    * \param packet the packet to send
-   * \param FsoSignalParameters contains the signal parameters
+   * \param fsoSignalParams pointer to the optical signal parameters
    */
   virtual void Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams);
 
@@ -185,7 +185,7 @@ public:
    * Starting receiving the payload of a packet (i.e. the first bit of the packet has arrived).
    *
    * \param packet the arriving packet
-   * \param FsoSignalParameters contains the signal parameters
+   * \param fsoSignalParams pointer to the optical signal parameters
    */
   virtual void Receive (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams);
 
@@ -194,15 +194,15 @@ public:
    * Calculate how long the transmit time will be (size * symbol period)
    *
    * \param size the size of the packet in bits
-   * \param FsoSignalParameters contains the signal parameters
+   * \param fsoSignalParams pointer to the optical signal parameters
    */
   virtual Time CalculateTxDuration (uint32_t size, Ptr<FsoSignalParameters> fsoSignalParams);
 
   /**
    * Assign the receiver and transmitter antennas to this Phy
    *
-   * \param txAnntenna the transmitter antenna
-   * \param txAnntenna the receiver antenna
+   * \param txAnntenna pointer to the transmitter antenna
+   * \param txAnntenna pointer to the receiver antenna
    */
   virtual void SetAntennas (Ptr<LaserAntennaModel> txAntenna, Ptr<OpticalRxAntennaModel> rxAntenna);
 
