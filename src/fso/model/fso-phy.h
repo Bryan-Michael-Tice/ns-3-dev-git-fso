@@ -26,6 +26,7 @@
 
 #include <ns3/object.h>
 #include <ns3/nstime.h>
+#include "ns3/timer.h"
 #include <ns3/packet.h>
 #include <ns3/net-device.h>
 
@@ -71,12 +72,10 @@ public:
     /**
      * The PHY layer is sending a packet.
      */
-    TX,
-    /**
-     * The PHY layer is receiving a packet.
-     */
-    RX
+    TX
   };
+
+  FsoPhy::State GetTxState ();
 
   /**
    * arg1: packet received successfully
@@ -242,12 +241,26 @@ private:
   Ptr<OpticalRxAntennaModel>    m_rxAntenna;      //!< Pointer to the RX antenna model
   Ptr<FsoErrorModel>            m_errorModel;     //!< Pointer to the error model
   
-  State                         m_state;          //!< state of the Phy
+  State                         m_txState;        //!< transmit state of the Phy
+  Timer                         m_txDurationTimer;//!< Timer for transmit transmit duration
 
-  RxOkCallback m_rxOkCallback;                    //!< Callback for received packet
-  RxErrorCallback m_rxErrorCallback;              //!< Callback for received packet with packet error
+  RxOkCallback                  m_rxOkCallback;   //!< Callback for received packet
+  RxErrorCallback               m_rxErrorCallback;//!< Callback for received packet with packet error
   
   double                        m_bitRate;        //!< bit rate associated with the Phy
+
+  /**
+   * Set Phy state to TX and schedule switch back to IDLE
+   *
+   * \param duration the transmit duration
+   */
+  virtual void SwitchToTx (double duration);
+
+  /**
+   * Set Phy state to IDLE
+   *
+   */  
+  virtual void SwitchToIdle ();
 
 };
 

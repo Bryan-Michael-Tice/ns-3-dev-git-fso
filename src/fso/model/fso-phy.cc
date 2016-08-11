@@ -58,9 +58,11 @@ FsoPhy::GetTypeId (void)
   return tid;
 }
 
-FsoPhy::FsoPhy ()
+FsoPhy::FsoPhy () : m_txState (State::IDLE)
 {
   NS_LOG_FUNCTION (this);
+  m_txDurationTimer.SetFunction (&FsoPhy::SwitchToIdle, this);
+  
 }
 
 FsoPhy::~FsoPhy ()
@@ -196,11 +198,34 @@ FsoPhy::GetBitRate () const
 }
 
 void 
+FsoPhy::SwitchToTx (double duration)
+{
+  NS_ASSERT (m_txState == State::IDLE);
+  m_txState = m_txState;
+  
+  //Schedule IDLE state change
+  m_txDurationTimer.SetDelay (Seconds (duration));
+  m_txDurationTimer.Schedule ();
+}
+
+void 
+FsoPhy::SwitchToIdle ()
+{
+  m_txState = State::IDLE;
+}
+
+FsoPhy::State
+FsoPhy::GetTxState ()
+{
+  return m_txState;
+}
+
+void 
 FsoPhy::Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 {
 
   NS_LOG_FUNCTION (this << packet << fsoSignalParams->wavelength << fsoSignalParams->frequency);
-  m_state = State::TX;
+  m_txState = State::TX;
   
   Ptr<LaserAntennaModel> laser = GetTxAntenna();
 
