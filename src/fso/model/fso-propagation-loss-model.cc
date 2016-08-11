@@ -22,16 +22,14 @@
 
 
 #include "fso-propagation-loss-model.h"
-#include <ns3/math.h>
-#include <ns3/log.h>
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("FsoPropagationLossModel");
+//NS_LOG_COMPONENT_DEFINE ("FsoPropagationLossModel");
 
 NS_OBJECT_ENSURE_REGISTERED (FsoPropagationLossModel);
 
-FsoPropagationLossModel::FsoPropagationLossModel ()
+FsoPropagationLossModel::FsoPropagationLossModel () : m_next (0)
 {
 }
 
@@ -54,7 +52,42 @@ FsoPropagationLossModel::GetTypeId (void)
   return tid;
 }
 
+void
+FsoPropagationLossModel::SetNext (Ptr<FsoPropagationLossModel> next)
+{
+  m_next = next;
+}
 
+Ptr<FsoPropagationLossModel>
+FsoPropagationLossModel::GetNext ()
+{
+  return m_next;
+}
+
+void
+FsoPropagationLossModel::UpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, 
+                           Ptr<const MobilityModel> a, 
+                           Ptr<const MobilityModel> b)
+{
+  DoUpdateSignalParams (fsoSignalParams, a, b);
+  if (m_next != 0)
+    {
+      m_next->UpdateSignalParams (fsoSignalParams, a, b);
+    }
+}
+
+
+int64_t
+FsoPropagationLossModel::AssignStreams (int64_t stream)
+{
+  int64_t currentStream = stream;
+  currentStream += DoAssignStreams (stream);
+  if (m_next != 0)
+    {
+      currentStream += m_next->AssignStreams (currentStream);
+    }
+  return (currentStream - stream);
+}
 
 
 } // namespace ns3

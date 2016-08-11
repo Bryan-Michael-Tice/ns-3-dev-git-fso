@@ -57,8 +57,14 @@ FsoFreeSpaceLossModel::GetTypeId (void)
   return tid;
 }
 
+int64_t 
+FsoFreeSpaceLossModel::DoAssignStreams (int64_t stream)
+{
+  return 0.0;
+}
+
 void
-FsoFreeSpaceLossModel::UpdateSignalParams(Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
+FsoFreeSpaceLossModel::DoUpdateSignalParams(Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
 {
   double distance = a->GetDistanceFrom (b);
   fsoSignalParams->pathLoss = CalculateFreeSpaceLoss(distance, fsoSignalParams->wavelength);

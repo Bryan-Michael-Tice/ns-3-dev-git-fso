@@ -226,7 +226,7 @@ FsoPhy::Receive (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 {
   //Error model here, currently just returning the irradiance at the receiver
   NS_ASSERT (m_errorModel != 0);
-  double rxIrradiance = m_errorModel->GetPacketSuccessRate(fsoSignalParams, packet->GetSize ());
+  double rxIrradiance = m_errorModel->GetPacketSuccessRate(packet, fsoSignalParams);
   double rxApertureDiameter = GetRxAntenna ()->GetApertureDiameter ();
   double rxGain = GetRxAntenna ()->GetRxGain ();
     

@@ -61,6 +61,9 @@ where :math:'k = 2\pi/\lambda' and :math:'\lambda' is the wavelength of the opti
 
 where :math:'A' is the refractive index structure parameter at ground level and :math:'v' is the root-mean-square wind speed.
 
+.. figure:: scintillation-index-1060nm.png
+   :align: center
+
 The FsoFreeSpaceLossModel provides the free space path loss in dB according to the following equation for electromagnetic waves:
 
 .. math::

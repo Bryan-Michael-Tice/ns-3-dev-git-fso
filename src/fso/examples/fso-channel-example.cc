@@ -29,12 +29,15 @@
 #include "ns3/fso-down-link-scintillation-index-model.h"
 #include "ns3/fso-mean-irradiance-model.h"
 
+#include <ns3/object-factory.h>
+#include "ns3/double.h"
+
 using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE ("FsoChannelExample");
 
 // Sends a single packet from a geo-stationary satellite to an optical ground station
-// A high evelation angle is assumed which corresponds to weak atmospheric turbulence
+// A large elevation angle is assumed which corresponds to weak atmospheric turbulence
 //
 //                                        SATELLITE
 //                                             |
@@ -71,7 +74,7 @@ main (int argc, char *argv[])
 
   LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoPhy", LOG_LEVEL_INFO);
-  LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO); 
   LogComponentEnable ("FsoMeanIrradianceModel", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoDownLinkErrorModel", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoDownLinkScintillationIndexModel", LOG_LEVEL_INFO);
@@ -90,10 +93,13 @@ main (int argc, char *argv[])
   laser->SetTxPower (0.1);//Watts
   laser->SetGain (116.0);//dB
 
-  Ptr<OpticalRxAntennaModel> receiver = CreateObject<OpticalRxAntennaModel> ();
-  receiver->SetApertureDiameter (0.318);//meters
-  receiver->SetRxGain (121.4);//dB
+  ObjectFactory rxPhyFactory;
+  rxPhyFactory.SetTypeId ("ns3::OpticalRxAntennaModel");
+  rxPhyFactory.Set ("ReceiverGain", DoubleValue (121.4));     
+  rxPhyFactory.Set ("ApertureDiameter", DoubleValue (0.318));
+  Ptr<OpticalRxAntennaModel> receiver = (rxPhyFactory.Create ())->GetObject<OpticalRxAntennaModel> ();     
   receiver->SetOrientation (0.0);
+  
 
   //Delay Model
   Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();  
@@ -106,6 +112,9 @@ main (int argc, char *argv[])
   scintIndexModel->SetGndRefractiveIdx (1.7e-14); //From the Hufnagel-Valley 5/7 model
   
   Ptr<FsoMeanIrradianceModel> meanIrradianceModel = CreateObject<FsoMeanIrradianceModel> ();
+
+  freeSpaceLoss->SetNext (scintIndexModel);
+  scintIndexModel->SetNext (meanIrradianceModel);
 
   //Channel
   Ptr<FsoChannel> channel = CreateObject<FsoChannel> ();
@@ -135,8 +144,6 @@ main (int argc, char *argv[])
   //Channel Setup
   channel->SetPropagationDelayModel (delayModel);
   channel->AddFsoPropagationLossModel (freeSpaceLoss);
-  channel->AddFsoPropagationLossModel (scintIndexModel);
-  channel->AddFsoPropagationLossModel (meanIrradianceModel);
   channel->Add(txPhy);
   channel->Add(rxPhy);
 
@@ -146,9 +153,8 @@ main (int argc, char *argv[])
 
   Ptr<FsoSignalParameters> params = Create<FsoSignalParameters> ();
 
-  //Send packet from transmitter Phy
-  txPhy->Transmit (packet, params);
-  
+  Simulator::Stop (Seconds (2.0));
+  Simulator::Schedule (Seconds (1.0), &FsoPhy::Transmit, txPhy, packet, params); //Send packet from transmitter Phy
 
   Simulator::Run ();
   Simulator::Destroy ();

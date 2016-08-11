@@ -48,26 +48,30 @@ FsoChannel::GetTypeId (void)
                    PointerValue (),
                    MakePointerAccessor (&FsoChannel::m_delay),
                    MakePointerChecker<PropagationDelayModel> ())
+    .AddAttribute ("FsoPropagationLossModel", "A pointer to the fso propagation loss model attached to this channel.",
+                   PointerValue (),
+                   MakePointerAccessor (&FsoChannel::m_loss),
+                   MakePointerChecker<FsoPropagationLossModel> ())
   ;
   return tid;
 }
 
 FsoChannel::FsoChannel ()
 {
+  NS_LOG_FUNCTION (this);
 }
 
 FsoChannel::~FsoChannel ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
   m_phyList.clear ();
-  m_lossList.clear ();
 }
 
 void
 FsoChannel::AddFsoPropagationLossModel (Ptr<FsoPropagationLossModel> loss)
 {
   NS_ASSERT (loss != 0);
-  m_lossList.push_back (loss);
+  m_loss = loss;
 }
 
 void
@@ -93,15 +97,12 @@ FsoChannel::Send (Ptr<FsoPhy> sender, Ptr<const Packet> packet,
           Time delay = m_delay->GetDelay (senderMobility, receiverMobility);
           double txPower = fsoSignalParams->power;
 
-          for (LossList::const_iterator u = m_lossList.begin (); u != m_lossList.end (); u++)
-            {
-              (*u)->UpdateSignalParams (fsoSignalParams, senderMobility, receiverMobility);  
-            }
+          m_loss->UpdateSignalParams (fsoSignalParams, senderMobility, receiverMobility);  
 
           NS_LOG_DEBUG ("Signal Channel: txPower=" << txPower << "db, distance=" << senderMobility->GetDistanceFrom (receiverMobility) << "m, delay=" << delay << ", Scint Index=" << fsoSignalParams->scintillationIndex << ", mean irradiance=" << fsoSignalParams->meanIrradiance << "W/m^2, path loss=" << fsoSignalParams->pathLoss <<"db, power after FSPL" << fsoSignalParams->power << "dB");
 
           Ptr<Packet> copy = packet->Copy ();
-          Ptr<Object> dstNetDevice = m_phyList[j]->GetDevice ();
+          Ptr<NetDevice> dstNetDevice = m_phyList[j]->GetDevice ();
           uint32_t dstNode;
           if (dstNetDevice == 0)
             {
@@ -141,10 +142,9 @@ FsoChannel::Add (Ptr<FsoPhy> phy)
 int64_t
 FsoChannel::AssignStreams (int64_t stream) //MDP - for random variables, see header file
 {
-  //int64_t currentStream = stream;
-  //currentStream += m_loss->AssignStreams (stream);
-  //return (currentStream - stream);
-  return stream;
+  int64_t currentStream = stream;
+  currentStream += m_loss->AssignStreams (stream);
+  return (currentStream - stream);
 }
 
 } //namespace ns3

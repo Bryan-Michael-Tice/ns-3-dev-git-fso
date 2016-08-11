@@ -38,15 +38,12 @@ class NetDevice;
 class PropagationDelayModel;
 
 /**
- * \brief A Free space optical channel
+ * \brief A free space optics channel
  * \ingroup fso
- *
- * This fso channel implements the propagation model described in...
- * 
  *
  * This class is expected to be used in tandem with the ns3::FsoPhy
  * class and contains a list of ns3::FsoPropagationLossModel and a single ns3::PropagationDelayModel.
- * By default, no propagation models are set so, it is the caller's responsability
+ * By default, no propagation models are set so, it is the caller's responsibility
  * to set them before using the channel.
  */
 class FsoChannel : public Channel
@@ -100,28 +97,14 @@ public:
    */
   int64_t AssignStreams (int64_t stream);
 
-  //MDP - is this needed? came from copy of FsoChannel
-  /**
-   * TracedCallback signature for path loss calculation events.
-   *
-   * \param [in] txPhy The TX FsoPhy instance.
-   * \param [in] rxPhy The RX FsoPhy instance.
-   * \param [in] lossDb The loss value, in dB.
-   */
-  typedef void (* LossTracedCallback)
-    (Ptr<FsoPhy> txPhy, Ptr<FsoPhy> rxPhy,
-     double lossDb);
-
-
 private:
   /**
-   * A vector of pointers to YansWifiPhy.
+   * A vector of pointers to FsoPhy.
    */
   typedef std::vector<Ptr<FsoPhy> > PhyList; 
-  typedef std::vector<Ptr<FsoPropagationLossModel> > LossList;
 
   PhyList m_phyList;                   //!< List of FsoPhys connected to this FsoChannel
-  LossList m_lossList;    //!< List of propagation loss models
+  Ptr<FsoPropagationLossModel> m_loss; //!< Ptr to fso propagation loss model
   Ptr<PropagationDelayModel> m_delay;  //!< Propagation delay model
 };
 

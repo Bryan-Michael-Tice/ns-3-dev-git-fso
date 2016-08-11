@@ -57,8 +57,14 @@ FsoMeanIrradianceModel::GetTypeId (void)
   return tid;
 }
 
+int64_t 
+FsoMeanIrradianceModel::DoAssignStreams (int64_t stream)
+{
+  return 0.0;
+}
+
 void
-FsoMeanIrradianceModel::UpdateSignalParams(Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
+FsoMeanIrradianceModel::DoUpdateSignalParams(Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
 {
   double distance = a->GetDistanceFrom (b);
   fsoSignalParams->rxPhaseFrontRadius = distance;//The radius of curvature at the RX can be approximated by the distance for long links
@@ -68,9 +74,9 @@ FsoMeanIrradianceModel::UpdateSignalParams(Ptr<FsoSignalParameters> fsoSignalPar
 
   double rxDiffractiveBeamRadius = CalculateDiffractiveBeamRadius(distance, fsoSignalParams->frequency, fsoSignalParams->txBeamwidth, fsoSignalParams->rxPhaseFrontRadius);
 
-fsoSignalParams->meanIrradiance = CalculateMeanIrradiance(fsoSignalParams->txBeamwidth, rxDiffractiveBeamRadius);
+  fsoSignalParams->meanIrradiance = CalculateMeanIrradiance(fsoSignalParams->txBeamwidth, rxDiffractiveBeamRadius);
 
-NS_LOG_DEBUG ("MeanIrradiance: result=" << fsoSignalParams->meanIrradiance);
+  NS_LOG_DEBUG ("MeanIrradiance: result=" << fsoSignalParams->meanIrradiance);
 }
 
 double 

@@ -71,8 +71,14 @@ FsoDownLinkScintillationIndexModel::GetTypeId (void)
   return tid;
 }
 
+int64_t 
+FsoDownLinkScintillationIndexModel::DoAssignStreams (int64_t stream)
+{
+  return 0.0;
+}
+
 void 
-FsoDownLinkScintillationIndexModel::UpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
+FsoDownLinkScintillationIndexModel::DoUpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b)
 {
   NS_LOG_FUNCTION (this);
   NS_ASSERT (a->GetPosition().z >= b->GetPosition().z);

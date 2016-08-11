@@ -51,7 +51,7 @@ double GWIntegralFunction (double x, void *params);
 
 /**
  * \ingroup fso
- * \brief the interface for Fso's error models
+ * \brief The interface for Fso's error models.
  *
  */
 class FsoErrorModel : public Object
@@ -64,15 +64,27 @@ public:
    * This method returns the probability that a packet will be
    * successfully received by the PHY.
    *
-   *
+   * \param packet pointer to the packet
    * \param fsoSignalParams pointer to the optical signal parameters
-   * \param nbits the number of bits in this chunk
    *
    * \return probability of successfully receiving the packet
    */
-  virtual double GetPacketSuccessRate (Ptr<FsoSignalParameters> fsoSignalParams, uint32_t nbits) = 0;
+  virtual double GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams) = 0;
 };
 
+/**
+ * \ingroup fso
+ * \brief Error model computes the bit error rate based on properties of the receiver
+ * and the irradiance at the receiver.
+ *
+ * The error model computes a bit error rate based on the constants of the receiver
+ * and computes the irradiance received based on the scintillation index and mean irradiance.
+ * The received irradiance is a random variable from a log normal distribution.   
+ *
+ * The greenwood time constant (time for which the atmospheric
+ * turbulence can be considered constant) is computed to schedule 
+ * an update for the received irradiance. 
+ */
 class FsoDownLinkErrorModel : public FsoErrorModel
 {
 public:
@@ -97,9 +109,10 @@ public:
   /**
    * \brief Calculate the normalized irradiance at the receiver
    * 
+   * The normalized irradiance is stored in a member variable and is only re-calculated
+   * when the  
    *
    * \param fsoSignalParams the signal parameters
-   * \return the normalized irradiance at the receiver
    */
   void CalculateNormRxIrradiance (Ptr<FsoSignalParameters> fsoSignalParams);
 
@@ -115,7 +128,13 @@ public:
   double CalculateTurbulenceTimeConstant(double hTx, double hRx, double wavelength, double elevation);
   
   //inherited from FsoErrorModel
-  virtual double GetPacketSuccessRate (Ptr<FsoSignalParameters> fsoSignalParams, uint32_t nbits);
+  virtual double GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams);
+  
+  /**
+   * \brief Callback function to set boolean flag to update the irradiance
+   *
+   */
+  void SetIrradianceUpdate ();
 
 private:
   Ptr<LogNormalRandomVariable> m_logNormalDist; //!< Pointer to the log normal random variable

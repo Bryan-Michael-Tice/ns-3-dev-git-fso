@@ -47,14 +47,22 @@ public:
 
 
   // attribute getters/setters
-  void SetApertureDiameter (double apertureDiameter);
-  double GetApertureDiameter () const;
-
-  void SetRxGain (double rxGain);
-  double GetRxGain () const;
-
   void SetOrientation (double orientationDegrees);
   double GetOrientation () const;
+  /**
+   * Get the receiver gain
+   *
+   * \return the receiver gain
+   */
+  double GetRxGain () const;
+
+  /**
+   * Get the diameter of the aperture
+   *
+   * \return the diameter of the aperture
+   */
+  double GetApertureDiameter () const;
+
 
 private:
 

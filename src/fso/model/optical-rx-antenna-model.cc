@@ -23,7 +23,6 @@
 
 #include <ns3/log.h>
 #include <ns3/double.h>
-#include <cmath>
 
 #include "optical-rx-antenna-model.h"
 
@@ -64,32 +63,6 @@ OpticalRxAntennaModel::GetTypeId ()
 }
 
 void 
-OpticalRxAntennaModel::SetApertureDiameter (double apertureDiameter)
-{ 
-  NS_LOG_FUNCTION (this << apertureDiameter);
-  m_apertureDiameter = apertureDiameter;
-}
-
-double
-OpticalRxAntennaModel::GetApertureDiameter () const
-{
-  return m_apertureDiameter;
-}
-
-void 
-OpticalRxAntennaModel::SetRxGain (double rxGain)
-{ 
-  NS_LOG_FUNCTION (this << rxGain);
-  m_rxGain = rxGain;
-}
-
-double
-OpticalRxAntennaModel::GetRxGain () const
-{
-  return m_rxGain;
-}
-
-void 
 OpticalRxAntennaModel::SetOrientation (double orientationDegrees)
 {
   NS_LOG_FUNCTION (this << orientationDegrees);
@@ -100,6 +73,17 @@ double
 OpticalRxAntennaModel::GetOrientation () const
 {
   return RadiansToDegrees (m_orientationRadians);
+}
+
+double
+OpticalRxAntennaModel::GetRxGain () const
+{
+  return m_rxGain;
+}
+
+double OpticalRxAntennaModel::GetApertureDiameter () const
+{
+  return m_apertureDiameter;
 }
 
 

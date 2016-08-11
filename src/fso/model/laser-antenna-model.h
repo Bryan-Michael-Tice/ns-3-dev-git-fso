@@ -30,8 +30,8 @@
 namespace ns3 {
 
 /**
- * 
- * \brief  Laser model based on the parameters needed for the optical signal
+ * \ingroup fso
+ * Laser model based on the parameters needed for the optical signal
  * to be transmitted
  *
  */
@@ -62,7 +62,7 @@ private:
 
   double m_beamwidthMeters; //!< diameter of the beam in meters
 
-  double m_orientationRadians;
+  double m_orientationRadians; //!< orientation of the antenna in radians
 
   double m_txPower; //!< Transmit power in dB
 

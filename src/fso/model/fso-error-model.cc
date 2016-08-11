@@ -33,12 +33,6 @@ NS_OBJECT_ENSURE_REGISTERED (FsoErrorModel);
 NS_OBJECT_ENSURE_REGISTERED (FsoDownLinkErrorModel);
 
 
-void SetIrradianceUpdate (bool &update)
-{
-  NS_LOG_DEBUG ("ErrorModelTimer: Irradiance Update");  
-  update = true;
-}
-
 TypeId FsoErrorModel::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::FsoErrorModel")
@@ -74,8 +68,8 @@ FsoDownLinkErrorModel::FsoDownLinkErrorModel ()
   m_rmsWindSpeed = 21.0;
   m_updateIrradiance = true;
 
-  m_turbulenceTimer.SetFunction (&SetIrradianceUpdate);
-  m_turbulenceTimer.SetArguments (m_updateIrradiance);
+  m_turbulenceTimer.SetFunction (&FsoDownLinkErrorModel::SetIrradianceUpdate, this);
+  //m_turbulenceTimer.SetArguments (m_updateIrradiance);
 }
 
 FsoDownLinkErrorModel::~FsoDownLinkErrorModel ()
@@ -121,9 +115,9 @@ FsoDownLinkErrorModel::CalculateTurbulenceTimeConstant (double hTx, double hRx, 
 }
 
 double 
-FsoDownLinkErrorModel::GetPacketSuccessRate (Ptr<FsoSignalParameters> fsoSignalParams, uint32_t nbits)
+FsoDownLinkErrorModel::GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 {
-  NS_LOG_DEBUG ("ErrorModel: packet size=" << nbits << " bits, scintIndex=" << fsoSignalParams->scintillationIndex << ", meanIrradiance=" << fsoSignalParams->meanIrradiance); 
+  NS_LOG_DEBUG ("ErrorModel: packet size=" << packet->GetSize () << " bits, scintIndex=" << fsoSignalParams->scintillationIndex << ", meanIrradiance=" << fsoSignalParams->meanIrradiance); 
   CalculateNormRxIrradiance(fsoSignalParams);
 
   double rxIrradiance = fsoSignalParams->meanIrradiance*m_normalizedIrradiance;
@@ -147,8 +141,12 @@ FsoDownLinkErrorModel::CalculateNormRxIrradiance (Ptr<FsoSignalParameters> fsoSi
   NS_LOG_DEBUG ("ErrorModel: Normalized Irradiance=" << m_normalizedIrradiance);  
 }
 
+void FsoDownLinkErrorModel::SetIrradianceUpdate ()
+{
+  NS_LOG_DEBUG ("ErrorModelTimer: Irradiance Update");  
+  m_updateIrradiance = true;
+}
 
-#ifdef HAVE_GSL
 double
 GWIntegralFunction (double h, void *params)
 {
@@ -160,6 +158,5 @@ GWIntegralFunction (double h, void *params)
 
   return GWIntegralFunction;
 }
-#endif
 
 } //namespace ns3

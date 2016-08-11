@@ -69,24 +69,46 @@ public:
   static TypeId GetTypeId ();
 
   //Inherited from FsoPropagationLossModel
-  virtual void UpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b);
+  virtual int64_t DoAssignStreams (int64_t stream);
 
   /**
    * Calculate the scintillation index for the channel, valid for
    * downlink scenario under weak turbulent conditions
    *
    * \param f frequency in Hz
-   * \param hTx height of transmitter in km
-   * \param hRx height of receiver in km
+   * \param hTx height of transmitter in meters
+   * \param hRx height of receiver in meters
    * \param zenith elevation in radians
    * \return the scintillation index
    */
   double CalculateScintillationIdx (double f, double hTx, double hRx, double zenith) const;
 
+  /**
+   * Set the RMS wind speed for the atmospheric model
+   *
+   * \param rmsWindSpeed RMS wind speed in m/s
+   */
   void SetRmsWindSpeed (double rmsWindSpeed);
+
+  /**
+   * Retrieve the RMS wind speed
+   *
+   * \return the RMS wind speed in m/s
+   */
   double GetRmsWindSpeed () const;
 
+  /**
+   * Set the index of refraction at ground level for the atmospheric model
+   *
+   * \param gndRefractiveIdx the index of refraction at ground level
+   */
   void SetGndRefractiveIdx (double gndRefractiveIdx);
+
+  /**
+   * Retrieve the index of refraction at ground level
+   *
+   * \return the index of refraction at ground level
+   */
   double GetGndRefractiveIdx () const;
 
 protected:
@@ -97,6 +119,9 @@ protected:
 private:
   double m_rmsWindSpeed;        //!< The RMS wind speed in m/s
   double m_groundRefractiveIdx; //!< The index of refraction at ground level
+
+  //Inherited from FsoPropagationLossModel
+  virtual void DoUpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b);
 
 };
 

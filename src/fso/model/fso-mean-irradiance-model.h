@@ -54,7 +54,7 @@ public:
   static TypeId GetTypeId ();
 
   //Inherited from FsoPropagationLossModel
-  virtual void UpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b);
+  virtual int64_t DoAssignStreams (int64_t stream);
 
   /**
    * \brief Calculate the mean irradiance
@@ -80,7 +80,10 @@ public:
 protected:
   //Inherited from Object
   virtual void DoDispose ();
-  
+
+private:
+  //Inherited from FsoPropagationLossModel
+  virtual void DoUpdateSignalParams (Ptr<FsoSignalParameters> fsoSignalParams, Ptr<const MobilityModel> a, Ptr<const MobilityModel> b);
 
 };
 
