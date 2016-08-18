@@ -120,8 +120,9 @@ FsoDownLinkErrorModel::GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalPa
   NS_LOG_DEBUG ("ErrorModel: packet size=" << packet->GetSize () << " bits, scintIndex=" << fsoSignalParams->scintillationIndex << ", meanIrradiance=" << fsoSignalParams->meanIrradiance); 
   CalculateNormRxIrradiance(fsoSignalParams);
 
-  double rxIrradiance = fsoSignalParams->meanIrradiance*m_normalizedIrradiance;
+  fsoSignalParams->normIrradiance = m_normalizedIrradiance;
 
+  double rxIrradiance = fsoSignalParams->meanIrradiance*m_normalizedIrradiance;
   return rxIrradiance;
 }
 
@@ -133,9 +134,12 @@ FsoDownLinkErrorModel::CalculateNormRxIrradiance (Ptr<FsoSignalParameters> fsoSi
      m_normalizedIrradiance = m_logNormalDist->GetValue(-0.5*fsoSignalParams->scintillationIndex, std::sqrt(fsoSignalParams->scintillationIndex));
 
      double greenwoodTimeConstant = CalculateTurbulenceTimeConstant(fsoSignalParams->txPhy->GetMobility()->GetPosition().z, m_phy->GetMobility()->GetPosition().z, fsoSignalParams->wavelength, (60.0*M_PI)/180.0);
-     NS_LOG_DEBUG ("ErrorModel: Greenwood Time Constant=" << greenwoodTimeConstant << "s");  
-     m_turbulenceTimer.SetDelay (Seconds (greenwoodTimeConstant));
-     m_turbulenceTimer.Schedule ();
+     NS_LOG_DEBUG ("ErrorModel: Greenwood Time Constant=" << greenwoodTimeConstant << "s"); 
+     if (m_turbulenceTimer.IsExpired ())
+      { 
+       m_turbulenceTimer.SetDelay (Seconds (greenwoodTimeConstant));
+       m_turbulenceTimer.Schedule ();
+      }
    }
 
   NS_LOG_DEBUG ("ErrorModel: Normalized Irradiance=" << m_normalizedIrradiance);  

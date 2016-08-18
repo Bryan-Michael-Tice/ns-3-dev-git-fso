@@ -94,6 +94,9 @@ public:
   FsoDownLinkErrorModel ();
   ~FsoDownLinkErrorModel ();
 
+  /**
+   * Set the Phy that references this error model
+   */
   void SetPhy (Ptr<FsoPhy> phy);
 
   /**

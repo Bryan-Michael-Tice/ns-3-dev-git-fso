@@ -102,7 +102,7 @@ FsoPhy::SwitchFromRxEndOk (Ptr<Packet> packet, double snr, Ptr<FsoSignalParamete
   //DoSwitchFromRx ();
 
   if (!m_rxOkCallback.IsNull ())
-    {
+    { 
       m_rxOkCallback (packet, snr, params);
     }
 
@@ -264,6 +264,8 @@ FsoPhy::Receive (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
   NS_LOG_DEBUG ("PhyReceive: mean power=" << rxMeanPower << "dB");
   
   NS_LOG_DEBUG ("PhyReceive: irradiance=" << rxIrradiance << "W/m^2, mean RX=" << rxMeanPowerMilliWatts << "mW, total RX mean power=" << (fsoSignalParams->power + rxMeanPower + rxGain) << "dB");
+
+  SwitchFromRxEndOk(packet, 0.0, fsoSignalParams);
 }
 
 Time 
