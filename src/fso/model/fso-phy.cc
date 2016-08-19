@@ -78,7 +78,6 @@ FsoPhy::DoDispose (void)
   m_device = 0;
   m_mobility = 0;
   m_errorModel = 0;
-  //m_state = 0;
 }
 
 void 
@@ -198,13 +197,13 @@ FsoPhy::GetBitRate () const
 }
 
 void 
-FsoPhy::SwitchToTx (double duration)
+FsoPhy::SwitchToTx (Time duration)
 {
   NS_ASSERT (m_txState == State::IDLE);
-  m_txState = m_txState;
+  m_txState = State::TX;
   
   //Schedule IDLE state change
-  m_txDurationTimer.SetDelay (Seconds (duration));
+  m_txDurationTimer.SetDelay (duration);
   m_txDurationTimer.Schedule ();
 }
 
@@ -224,8 +223,9 @@ void
 FsoPhy::Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 {
 
-  NS_LOG_FUNCTION (this << packet << fsoSignalParams->wavelength << fsoSignalParams->frequency);
-  m_txState = State::TX;
+  NS_ASSERT (m_txState == State::IDLE);
+
+  NS_LOG_FUNCTION (this << packet << fsoSignalParams->wavelength);
   
   Ptr<LaserAntennaModel> laser = GetTxAntenna();
 
@@ -239,7 +239,7 @@ FsoPhy::Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalPa
 
   Time txDuration = CalculateTxDuration (packet->GetSize (), fsoSignalParams);
 
-    //m_state->SwitchToTx (txDuration, packet, GetPowerDbm (txVector.GetTxPowerLevel ()), txVector, preamble);
+  SwitchToTx (txDuration);
   
   NS_LOG_DEBUG ("PhySend: power=" << fsoSignalParams->power << "dB"); 
   m_channel->Send (this, packet, fsoSignalParams, txDuration);
@@ -249,27 +249,25 @@ FsoPhy::Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalPa
 void 
 FsoPhy::Receive (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 {
-  //Error model here, currently just returning the irradiance at the receiver
   NS_ASSERT (m_errorModel != 0);
   double rxIrradiance = m_errorModel->GetPacketSuccessRate(packet, fsoSignalParams);
   double rxApertureDiameter = GetRxAntenna ()->GetApertureDiameter ();
   double rxGain = GetRxAntenna ()->GetRxGain ();
-    
-  double rxMeanPowerMilliWatts = (0.125*M_PI*std::pow(rxApertureDiameter,2.0)*fsoSignalParams->meanIrradiance)*1000.0;
 
-  double rxMeanPower = 10*std::log10(0.125*M_PI*std::pow(rxApertureDiameter,2.0)*fsoSignalParams->meanIrradiance);//rxIrradiance; //This is the mean RX power now, not the instantaneous (dB)
+  //From "Laser Beam Propagation Through Random Media" in Section 11.4
+  double rxMeanPower = 10*std::log10(0.125*M_PI*std::pow(rxApertureDiameter,2.0)*fsoSignalParams->meanIrradiance);//rxIrradiance; //This is the mean RX power, not the instantaneous (dB)
 
   NS_LOG_DEBUG ("PhyReceive: incoming signal power=" << fsoSignalParams->power << "dB"); 
   NS_LOG_DEBUG ("PhyReceive: rx gain=" << rxGain << "dB");
   NS_LOG_DEBUG ("PhyReceive: mean power=" << rxMeanPower << "dB");
   
-  NS_LOG_DEBUG ("PhyReceive: irradiance=" << rxIrradiance << "W/m^2, mean RX=" << rxMeanPowerMilliWatts << "mW, total RX mean power=" << (fsoSignalParams->power + rxMeanPower + rxGain) << "dB");
+  NS_LOG_DEBUG ("PhyReceive: irradiance=" << rxIrradiance << "W/m^2, total RX mean power=" << (fsoSignalParams->power + rxMeanPower + rxGain) << "dB");
 
-  SwitchFromRxEndOk(packet, 0.0, fsoSignalParams);
+  SwitchFromRxEndOk(packet, 0.0, fsoSignalParams);//should provide SNR once the SNR function is implemented, 0.0 placeholder
 }
 
 Time 
-FsoPhy::CalculateTxDuration (uint32_t size, Ptr<FsoSignalParameters> fsoSignalParams)
+FsoPhy::CalculateTxDuration (uint32_t size, Ptr<FsoSignalParameters> fsoSignalParams) const
 {
   NS_LOG_DEBUG ("PhyTransmit: symbol period=" << fsoSignalParams->symbolPeriod << "s"); 
   NS_ASSERT (fsoSignalParams->symbolPeriod > 0.0);

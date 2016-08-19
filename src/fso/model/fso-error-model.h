@@ -70,6 +70,28 @@ public:
    * \return probability of successfully receiving the packet
    */
   virtual double GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams) = 0;
+
+  /**
+   * If the error model uses random variables,
+   * set the stream numbers to the integers starting with the offset
+   * 'stream'.  Return the number of streams (possibly zero) that
+   * have been assigned.
+   *
+   * \param stream 
+   * \return the number of stream indices assigned by this model
+   */
+  int64_t AssignStreams (int64_t stream);
+
+private:
+  /**
+   * Subclasses must implement this; those not using random variables
+   * can return zero
+   */
+  virtual int64_t DoAssignStreams (int64_t stream) = 0;
+
+protected:
+  //Inherited from Object
+  virtual void DoDispose () = 0;
 };
 
 /**
@@ -149,6 +171,13 @@ private:
 
   bool m_updateIrradiance;      //!< Denotes if the irradiance at the receiver should be updated
   Timer m_turbulenceTimer;      //!< Timer related to the greenwood constant for irradiance calculation
+
+  //Inherited from FsoErrorModel
+  virtual int64_t DoAssignStreams (int64_t stream);
+
+protected:
+  //Inherited from Object
+  virtual void DoDispose ();
 };
 
 } //namespace ns3

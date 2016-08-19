@@ -95,6 +95,7 @@ SOURCES = \
 	$(SRC)/wave/doc/wave.rst \
 	$(SRC)/sixlowpan/doc/sixlowpan.rst \
 	$(SRC)/lr-wpan/doc/lr-wpan.rst \
+	$(SRC)/fso/doc/fso.rst \
 
 # list all model library figure files that need to be copied to 
 # $SOURCETEMP/figures.  For each figure to be included in all
@@ -277,7 +278,9 @@ SOURCEFIGS = \
 	$(SRC)/lr-wpan/doc/lr-wpan-primitives.dia \
 	$(SRC)/lr-wpan/doc/802-15-4-ber.eps \
 	$(SRC)/lr-wpan/doc/802-15-4-per-sens.eps \
-	$(SRC)/lr-wpan/doc/802-15-4-psr-distance.eps
+	$(SRC)/lr-wpan/doc/802-15-4-psr-distance.eps \
+	$(SRC)/fso/doc/normalized-irradiance-rx-log-scale.png \
+	$(SRC)/fso/doc/scintillation-index-1060nm.png \
 
 # specify figures from which .png and .pdf figures need to be
 # generated (all dia and eps figures)

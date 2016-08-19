@@ -42,6 +42,12 @@ TypeId FsoErrorModel::GetTypeId (void)
   return tid;
 }
 
+int64_t
+FsoErrorModel::AssignStreams (int64_t stream)
+{
+  return DoAssignStreams (stream);
+}
+
 TypeId 
 FsoDownLinkErrorModel::GetTypeId (void)
 {
@@ -77,6 +83,13 @@ FsoDownLinkErrorModel::~FsoDownLinkErrorModel ()
   NS_LOG_FUNCTION (this);
 }
 
+void
+FsoDownLinkErrorModel::DoDispose (void)
+{
+  NS_LOG_FUNCTION (this);
+  m_phy = 0;
+}
+
 double
 FsoDownLinkErrorModel::CalculateMeanSnr () const
 {
@@ -94,7 +107,6 @@ FsoDownLinkErrorModel::CalculateTurbulenceTimeConstant (double hTx, double hRx, 
 {
   double result;
   double error;
-  double hTurbulence = 20000.0;//Effective height of turbulence in meters (20 km)
 
   GWFunctionParameters params;
   params.A = m_groundRefractiveIdx;
@@ -107,7 +119,7 @@ FsoDownLinkErrorModel::CalculateTurbulenceTimeConstant (double hTx, double hRx, 
   F.function = &GWIntegralFunction;
   F.params = &params;
 
-  gsl_integration_qagiu (&F, hRx, hTurbulence, 1e-7, 1000, w, &result, &error);
+  gsl_integration_qags (&F, hRx, hTx, 1e-10, 1e-10, 10000, w, &result, &error);
    
   gsl_integration_workspace_free (w);
   
@@ -150,6 +162,14 @@ void FsoDownLinkErrorModel::SetIrradianceUpdate ()
   NS_LOG_DEBUG ("ErrorModelTimer: Irradiance Update");  
   m_updateIrradiance = true;
 }
+
+int64_t
+FsoDownLinkErrorModel::DoAssignStreams (int64_t stream)
+{
+  m_logNormalDist->SetStream (stream);
+  return 1;
+}
+
 
 double
 GWIntegralFunction (double h, void *params)

@@ -195,7 +195,7 @@ public:
    * \param size the size of the packet in bits
    * \param fsoSignalParams pointer to the optical signal parameters
    */
-  virtual Time CalculateTxDuration (uint32_t size, Ptr<FsoSignalParameters> fsoSignalParams);
+  virtual Time CalculateTxDuration (uint32_t size, Ptr<FsoSignalParameters> fsoSignalParams) const;
 
   /**
    * Assign the receiver and transmitter antennas to this Phy
@@ -254,7 +254,7 @@ private:
    *
    * \param duration the transmit duration
    */
-  virtual void SwitchToTx (double duration);
+  virtual void SwitchToTx (Time duration);
 
   /**
    * Set Phy state to IDLE

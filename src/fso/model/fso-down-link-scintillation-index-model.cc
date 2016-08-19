@@ -97,27 +97,28 @@ FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double 
 {
   NS_LOG_FUNCTION (this);
 
-  double result;
-  double error;
+  double result = 0.0;
+  double error = 0.0;
 
   HVFunctionParameters params;
   params.A = m_groundRefractiveIdx;
   params.v = m_rmsWindSpeed;
   params.hgs = hRx;
 
-  gsl_integration_workspace * w = gsl_integration_workspace_alloc (1000);
+  gsl_integration_workspace * w = gsl_integration_workspace_alloc (10000);
 
   gsl_function F;
   F.function = &HVIntegralFunction;
   F.params = &params;
-
-  gsl_integration_qagiu (&F, hRx, hTx, 1e-7, 1000, w, &result, &error);
-
-  double k = (2*M_PI)/((3.0e8)/f);//Wave number - 2*pi/wavelength
+ 
+  gsl_integration_qags (&F, hRx, hTx, 1e-18, 1e-10, 10000, w, &result, &error);
+  NS_LOG_DEBUG ("RESULT=" << result);
+  NS_LOG_DEBUG ("ERROR=" << error);
+  double wavelength = 3.0e8/f;
+  double k = (2*M_PI)/wavelength;//Wave number - 2*pi/wavelength
    
   gsl_integration_workspace_free (w);
-  
-  return (2.25*std::pow(k,7.0/6.0)*(1/std::pow(cos(zenith),11.0/6.0)))*result;
+  return (2.25*std::pow(k, 7.0/6.0)*std::pow((1.0/cos(zenith)), 11.0/6.0))*result;
 }
 
 void 
@@ -153,7 +154,7 @@ HVIntegralFunction (double h, void *params)
   double A = ((HVFunctionParameters *) params)->A;
   double v = ((HVFunctionParameters *) params)->v;
   double hgs = ((HVFunctionParameters *) params)->hgs;
-  double IntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/100.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(5.94*std::pow(10,-53.0))*(std::exp(-h/1000.0))+(2.7*std::pow(10,-16.0))*std::exp(-h/1500.0))*(std::pow(h-hgs,5.0/6.0));
+  double IntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/100.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(5.94e-53)*(std::exp(-h/1000.0))+(2.7e-16)*std::exp(-h/1500.0))*(std::pow(h-hgs,5.0/6.0));
 
   return IntegralFunction;
 }

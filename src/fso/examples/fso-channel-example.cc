@@ -68,16 +68,18 @@ main (int argc, char *argv[])
   bool verbose = true;
 
   CommandLine cmd;
-  cmd.AddValue ("verbose", "Tell application to log if true", verbose);//!!!Need to use verbose argument
+  cmd.AddValue ("verbose", "Tell application to log if true", verbose);
 
   cmd.Parse (argc,argv);
-
-  LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
-  LogComponentEnable ("FsoPhy", LOG_LEVEL_INFO);
-  LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO); 
-  LogComponentEnable ("FsoMeanIrradianceModel", LOG_LEVEL_INFO);
-  LogComponentEnable ("FsoDownLinkErrorModel", LOG_LEVEL_INFO);
-  LogComponentEnable ("FsoDownLinkScintillationIndexModel", LOG_LEVEL_INFO);
+  if (verbose)
+   {
+     LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
+     LogComponentEnable ("FsoPhy", LOG_LEVEL_INFO);
+     LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO); 
+     LogComponentEnable ("FsoMeanIrradianceModel", LOG_LEVEL_INFO);
+     LogComponentEnable ("FsoDownLinkErrorModel", LOG_LEVEL_INFO);
+     LogComponentEnable ("FsoDownLinkScintillationIndexModel", LOG_LEVEL_INFO);
+   }
 
   //Mobility Models
   Ptr<MobilityModel> txMobility = CreateObject<ConstantPositionMobilityModel> ();
@@ -92,6 +94,7 @@ main (int argc, char *argv[])
   laser->SetOrientation (0.0);
   laser->SetTxPower (0.1);//Watts
   laser->SetGain (116.0);//dB
+  laser->SetWavelength (847e-9);
 
   ObjectFactory rxPhyFactory;
   rxPhyFactory.SetTypeId ("ns3::OpticalRxAntennaModel");

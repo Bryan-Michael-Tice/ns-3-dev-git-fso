@@ -34,7 +34,7 @@ Propagation Loss Model
 
 The propagation loss is modeled in three separate classes, all deriving from the FsoPropagationLossModel class: FsoMeanIrradianceModel, FsoDownLinkScintillationIndexModel and FsoFreeSpaceLossModel. These classes model the losses incurred due to an optical signal being transmitted at high altitude ( >> 20 km) to a receiver at a lower altitude (i.e. a geosynchronous satellite to a low earth orbit satellite or an optical ground station on Earth). This model would specifically suit the needs of a 'downlink' channel for satellites.
 
-The model provides the irradiance (Watts/meter) at the receiver, which is described by a log-normal distribution [LaserPropagationBook]_. The distribution of the irradiance at the receiver, :math:'p_{I}(I) ,is a function of the scintillation index :math:'\sigma^{2}_{I}' and the mean irradiance :math:'\langle I(\textbf{r}, L) \rangle':
+The model provides the irradiance (Watts/meter) at the receiver, which is described by a log-normal distribution [LaserPropagationBook]_. The distribution of the irradiance at the receiver, :math:`p_{I}(I)` ,is a function of the scintillation index :math:`\sigma^{2}_{I}` and the mean irradiance :math:`\langle I(\textbf{r}, L) \rangle`:
 
 .. math::
    p_{I}(I) = \frac{1}{I\sigma_{I}(\textbf{r}, L)\sqrt(2\pi)}exp\Bigg(-\frac{\bigg[ln\big(\frac{I}{\langle I(\textbf{r}, L) \rangle}\big) + \frac{1}{2}\sigma^{2}_{I}(\textbf{r}, L)\bigg]^{2}}{2\sigma^{2}_{I}(\textbf{r}, L)}\Bigg)
@@ -44,14 +44,14 @@ where :math:'\textbf{r}' is the transverse observation point. The mean irradianc
 .. math::
   \langle I(\textbf{r}, L) \rangle = \frac{W^{2}_{0}}{W^{2}_{LT}}exp\bigg(-\frac{2r^{2}}{W^{2}_{LT}}\bigg)
 
-where :math:'W^{2}_{0}' is the beam radius at the transmitter, :math:'W^{2}_{LT}' is the effective spot size of the beam in the presence of atmospheric turbulence, and :math:'r' is the radial distance from the center of the beam. 
+where :math:'W^{2}_{0}' is the beam radius at the transmitter, `math:'W^{2}_{LT}` is the effective spot size of the beam in the presence of atmospheric turbulence, and :math:`r` is the radial distance from the center of the beam. 
 
 The scintillation index can be simplified in the downlink case, due to the beam effectively appearing as an unbounded plane wave once it enters the atmosphere. The scintillation index used for the downlink model is: 
 
 .. math:: 
    \sigma_{I}^{2}(r, L) = 2.25k^{7/6}\sec^{11/6}(\zeta)\int^{H}_{H_{GS}}C^{2}_{n}(h)[h-h_{GS}]^{5/6}\,dh
 
-where :math:'k = 2\pi/\lambda' and :math:'\lambda' is the wavelength of the optical beam, :math:'H' is the altitude of the transmitter, :math:'\zeta' is the elevation angle, :math:'H_{GS}' is the altitude of the ground station, and :math:'C_{n}^{2}(h)' is the index of refraction of the atmosphere as a function of altitude. The index of refraction can be described by a modified version of the Hufnagel-Valley model [SatOpticalFeederLinks2014]_:
+where :math:`k = 2\pi/\lambda` and :math:`\lambda` is the wavelength of the optical beam, :math:`H` is the altitude of the transmitter, :math:`\zeta` is the elevation angle, :math:`H_{GS}` is the altitude of the ground station, and :math:'C_{n}^{2}(h)' is the index of refraction of the atmosphere as a function of altitude. The index of refraction can be described by a modified version of the Hufnagel-Valley model [SatOpticalFeederLinks2014]_:
 
 .. math::
    C_{n}^{2}(h)  =& Ae^{-H_{GS}/700}e^{-(h-H_{GS})/100}\\ 
@@ -59,14 +59,17 @@ where :math:'k = 2\pi/\lambda' and :math:'\lambda' is the wavelength of the opti
 		    &+ 2.7\times 10^{-16}e^{-h/1500}
    :label: index-refraction
 
-where :math:'A' is the refractive index structure parameter at ground level and :math:'v' is the root-mean-square wind speed.
+where :math:`A` is the refractive index structure parameter at ground level and :math:`v` is the root-mean-square wind speed.
 
-.. figure:: scintillation-index-1060nm.png
+.. figure:: figures/scintillation-index-1060nm.png
    :align: center
 
-.. figure:: normalized-irradiance-rx-log-scale.png
-   :align: center 
+   Illustrates the scintillation index for a 1060nm optical beam as the elevation changes.
 
+.. figure:: figures/normalized-irradiance-rx-log-scale.png
+   :align: center 
+   
+   Probability density function of the normalized irradiance at the receiver.
 
 
 The FsoFreeSpaceLossModel provides the free space path loss in dB according to the following equation for electromagnetic waves:
@@ -78,12 +81,12 @@ The FsoFreeSpaceLossModel provides the free space path loss in dB according to t
 Channel Model
 #############
 
-The FsoChannel class acts as a container object, holding pointers to the the FsoPhy receivers and transmitters, the FsoPropagationLossModel classes, and the PropagationDelayModel. It also provides the transmission of packets from a transmitter to receivers.
+The ``FsoChannel`` class acts as a container object, holding pointers to the the FsoPhy receivers and transmitters, the ``FsoPropagationLossModel`` classes, and the ``PropagationDelayModel``. It also provides the transmission of packets from a transmitter to receivers.
 
 Phy Model
 #########
 
-The FsoPhy class assigns the FsoSignalParameters related to the transmitter (when transmitting), contains an error model to determine the probability of error of a received packet (when receiving), and contains the interface for a NetDevice (not yet implemented).  
+The ``FsoPhy`` class assigns the ``FsoSignalParameters`` related to the transmitter (when transmitting), contains an error model to determine the probability of error of a received packet (when receiving), and contains the interface for a NetDevice (not yet implemented).  
 
 Error Model
 ###########
