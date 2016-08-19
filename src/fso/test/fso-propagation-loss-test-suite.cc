@@ -102,6 +102,30 @@ FsoMeanIrradianceTestCase::DoRun (void)
 
   m_testVectors.Add (testVector);
 
+  double wavelength = 847e-9;//meters
+  double frequency = 3e8/wavelength;//Hertz
+  
+  testVector.m_distance = 36000000;
+  testVector.m_frequency = frequency;
+  testVector.m_txBeamRadius = 0.06;
+  testVector.m_rxPhaseFrontRadius = 36000000;
+  testVector.m_meanIrradiance = 1.37572910e-7;
+  testVector.m_tolerance = 1e-9;  
+
+  m_testVectors.Add (testVector);
+
+  double wavelength = 1060-9;//meters
+  double frequency = 3e8/wavelength;//Hertz
+  
+  testVector.m_distance = 36000000;
+  testVector.m_frequency = frequency;
+  testVector.m_txBeamRadius = 0.06;
+  testVector.m_rxPhaseFrontRadius = 36000000;
+  testVector.m_meanIrradiance = 8.78391e-8;
+  testVector.m_tolerance = 1e-9;  
+
+  m_testVectors.Add (testVector);
+
   // Now, check that the received power values are expected
 
   Ptr<MobilityModel> a = CreateObject<ConstantPositionMobilityModel> ();
@@ -178,9 +202,33 @@ FsoDownLinkScintillationIndexTestCase::DoRun (void)
   testVector.m_txHeight = 707000;
   testVector.m_rxHeight = 0;
   testVector.m_frequency = frequency;
-  testVector.m_zenith = (60.0 * M_PI)/180.0;
+  testVector.m_zenith = (30.0 * M_PI)/180.0;
   testVector.m_tolerance = 1e-6;
   testVector.m_scintIndex = 0.16541409546;
+
+  m_testVectors.Add (testVector);
+
+  wavelength = 847e-9;
+  frequency = 3e8/wavelength;
+
+  testVector.m_txHeight = 36000000;
+  testVector.m_rxHeight = 0;
+  testVector.m_frequency = frequency;
+  testVector.m_zenith = (30.0 * M_PI)/180.0;
+  testVector.m_tolerance = 1e-6;
+  testVector.m_scintIndex = 0.1046360321;
+
+  m_testVectors.Add (testVector);
+
+  wavelength = 1060e-9;
+  frequency = 3e8/wavelength;
+
+  testVector.m_txHeight = 36000000;
+  testVector.m_rxHeight = 0;
+  testVector.m_frequency = frequency;
+  testVector.m_zenith = (15.0 * M_PI)/180.0;
+  testVector.m_tolerance = 1e-6;
+  testVector.m_scintIndex = 0.0659322095;
 
   m_testVectors.Add (testVector);
 
@@ -250,8 +298,22 @@ FsoFreeSpaceLossTestCase::DoRun (void)
 
   testVector.m_distance = 707000;
   testVector.m_wavelength = 847e-9;
-  testVector.m_tolerance = 1e-6;
-  testVector.m_loss = 260.41;
+  testVector.m_tolerance = 1e-4;
+  testVector.m_loss = 260.4149;
+
+  m_testVectors.Add (testVector);
+
+  testVector.m_distance = 36000000;
+  testVector.m_wavelength = 847e-9;
+  testVector.m_tolerance = 1e-4;
+  testVector.m_loss = 294.5526;
+
+  m_testVectors.Add (testVector);
+
+  testVector.m_distance = 36000000;
+  testVector.m_wavelength = 1060e-9;
+  testVector.m_tolerance = 1e-4;
+  testVector.m_loss = 292.6041;
 
   m_testVectors.Add (testVector);
 

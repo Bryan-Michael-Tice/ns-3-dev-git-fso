@@ -44,10 +44,10 @@ LaserAntennaModel::GetTypeId ()
     .AddConstructor<LaserAntennaModel> ()
     .AddAttribute ("Beamwidth",
                    "The beamwidth (meters) at which the field amplitude falls to 1/e of that on the beam axis",
-                   DoubleValue (60),
+                   DoubleValue (0.06),
                    MakeDoubleAccessor (&LaserAntennaModel::SetBeamwidth,
                                        &LaserAntennaModel::GetBeamwidth),
-                   MakeDoubleChecker<double> (0, 180))
+                   MakeDoubleChecker<double> (0, 100.0))
     .AddAttribute ("Orientation",
                    "The angle (degrees) that expresses the orientation of the antenna on the x-y plane relative to the x axis",
                    DoubleValue (0.0),

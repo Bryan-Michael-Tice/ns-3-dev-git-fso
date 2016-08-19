@@ -64,6 +64,11 @@ where :math:'A' is the refractive index structure parameter at ground level and 
 .. figure:: scintillation-index-1060nm.png
    :align: center
 
+.. figure:: normalized-irradiance-rx-log-scale.png
+   :align: center 
+
+
+
 The FsoFreeSpaceLossModel provides the free space path loss in dB according to the following equation for electromagnetic waves:
 
 .. math::
@@ -93,15 +98,12 @@ The FsoSignalParameters struct contains the properties of the optical signal and
 Laser/Optical Receiver Model
 ############################
 
-The LaserAntennaModel class characterizes a laser beam by it's wavelength, beamwidth, transmitter power, transmitter gain, and it's orientation. The orientation is not currently used and is reserved for future development.
+The LaserAntennaModel class characterizes a laser by its transmit wavelength, beamwidth, transmitter power, transmitter gain, and it's orientation. The orientation is not currently used and is reserved for future development.
 
-The OpticalRxAntennaModel class characterizes the receiver by it's gain, aperture size, and orientation.
+The OpticalRxAntennaModel class characterizes the receiver by its gain, aperture size, and orientation.
 
 Scope and Limitations
 =====================
-
-What can the model do?  What can it not do?  Please use this section to
-describe the scope and limitations of the model.
 
 The Fso module currently can provide a model of an atmospheric channel for optical signals. It is designed with the OSS project as the primary application. There is no consideration for interference between signals and it is assumed there is a single transmitter per channel which may service multiple receivers in a concentrated area (i.e. around a ground station). Only the downlink channel is considered, and the FsoDownLinkScintillationIndexModel reflects that, as some simplifications are made which correspond to a downlink channel. Future work may involve creating uplink specific models. 
 
@@ -115,39 +117,50 @@ References
 Usage
 *****
 
-This section is principally concerned with the usage of your model, using
-the public API.  Focus first on most common usage patterns, then go
-into more advanced topics.
+The principle use case of the Fso module is to model free space optical links between satellites and optical ground stations.
+
+ * The Fso module has four base classes: ``FsoChannel``, ``FsoPhy``, ``FsoErrorModel`` (abstract base class), and ``FsoPropagationLossModel`` (abstract base class).
+
+ * Two new classes derived from ``AntennaModel`` are provided: ``LaserAntennaModel`` and ``OpticalRxAntennaModel`` for the transmitter and receiver respectively.
+
+ * The ``FsoSignalParameters`` struct contains all relevant optical signal parameters. 
+
+ * ``FsoChannel`` contains a pointer to a ``FsoPropagationLossModel`` and the loss models are chained together to allow for multiple channel effects (i.e. free space loss, scintillation, etc.). To implement a new loss model you must derive from ``FsoPropagationLossModel``. Each loss model provided by the module acts upon the ``FsoSignalParameters`` struct passed to it. The loss models should not be inter-dependent on each other.
+
+ * The channel model currently assumes only a single transmitter, which may transmit to multiple receivers.  
+
+ * The ``FsoErrorModel`` abstract base class must be derived from to provide an error model to the ``FsoPhy``. The Fso module provides ``FsoDownLinkErrorModel`` as an error model class for the downlink case (satellite to optical ground station unidirectional link) and can be used as reference for the creation of new error models.
+
 
 Building New Module
 ===================
-
-Include this subsection only if there are special build instructions or
-platform limitations.
 
 The Fso module requires the use of the GNU Scientific Library (GSL). The installation instructions for GSL can be found here: https://www.nsnam.org/wiki/Installation
 
 Helpers
 =======
 
-What helper API will users typically use?  Describe it here.
+Helpers are still under development.
 
 Attributes
 ==========
 
 What classes hold attributes, and what are the key ones worth mentioning?
 
+``FsoChannel`` contains attributes for pointers to the ``PropagationDelayModel`` and the ``FsoPropagationLossModel``.
+
+``FsoPhy`` contains an attribute for the bit rate. The default value is 49.3724 Mbits/second.
+
+If a satellite to ground station link is being considered, the ''FsoDownLinkScintillationIndexModel'' loss model contains ``Windspeed`` and ``GroundRefractiveIndex`` attributes which characterize the atmospheric model. The default values for these attributes correspond to the Hufnagel-Valley 5/7 model (clear atmospheric conditions). 
+
+The ``LaserAntennaModel`` and ``OpticalRxAntennaModel`` classes contain attributes for all antenna properties. These should be set by the user. Note that the orientation attribute is currently not used. 
+
+
 Output
 ======
 
 What kind of data does the model generate?  What are the key trace
 sources?   What kind of logging output can be enabled?
-
-Advanced Usage
-==============
-
-Go into further details (such as using the API outside of the helpers)
-in additional sections, as needed.
 
 Examples
 ========
@@ -157,15 +170,13 @@ Currently only one example is available in the 'fso-example.cc' source file. It 
 Troubleshooting
 ===============
 
-Add any tips for avoiding pitfalls, etc.
+Not yet completed.
 
 Validation
 **********
 
-Describe how the model has been tested/validated.  What tests run in the
-test suite?  How much API and code is covered by the tests?  Again, 
-references to outside published work may help here.
-
 Each mathematical model has a corresponding Matlab script provided in the fso/src/test/references folder. The FsoPropagaionLossTestSuite provides validation that each propagation loss model is being correctly calculated according to the provided Matlab scripts. The link parameters chosen for these tests are from published work:
 
-"Preliminary Results of Terabit-per-second Long-Range Free-Space Optical Transmission Experiment THRUST" and "Overview of the Laser Communication System for the NICT Optical Ground Station and Laser Communication Experiments on Ground-to-Satellite Links".   
+"Preliminary Results of Terabit-per-second Long-Range Free-Space Optical Transmission Experiment THRUST" and "Overview of the Laser Communication System for the NICT Optical Ground Station and Laser Communication Experiments on Ground-to-Satellite Links".
+
+An example program provided in "examples/fso-irradiance-curve.cc" stores the normalized irradiance at the receiver for a large number of packets. These values are stored in a data set and saved in a plot file. A Matlab script is provided to compare the data set to a generated probability density function.       
