@@ -110,6 +110,13 @@ FsoDownLinkScintillationIndexModel::CalculateScintillationIdx (double f, double 
   gsl_function F;
   F.function = &HVIntegralFunction;
   F.params = &params;
+
+  //If the transmitter is higher than 20km, limit the integration to 20km
+  //20km is the effective height of the turbulence (constant beyond 20km)
+  if (hTx > 20000.0)
+   {
+     hTx = 20000.0;
+   }
  
   gsl_integration_qags (&F, hRx, hTx, 1e-18, 1e-10, 10000, w, &result, &error);
   NS_LOG_DEBUG ("RESULT=" << result);

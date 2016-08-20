@@ -98,10 +98,10 @@ FsoMeanIrradianceTestCase::DoRun (void)
   testVector.m_txBeamRadius = 0.06;
   testVector.m_rxPhaseFrontRadius = 707000;
   testVector.m_meanIrradiance = 3.56696705922e-4;
-  testVector.m_tolerance = 1e-9;  
+  testVector.m_tolerance = 1e-12;  
 
   m_testVectors.Add (testVector);
-
+  
   wavelength = 847e-9;//meters
   frequency = 3e8/wavelength;//Hertz
   
@@ -110,11 +110,11 @@ FsoMeanIrradianceTestCase::DoRun (void)
   testVector.m_txBeamRadius = 0.06;
   testVector.m_rxPhaseFrontRadius = 36000000;
   testVector.m_meanIrradiance = 1.37572910e-7;
-  testVector.m_tolerance = 1e-9;  
+  testVector.m_tolerance = 1e-12;  
 
   m_testVectors.Add (testVector);
-
-  wavelength = 1060-9;//meters
+  
+  wavelength = 1060e-9;//meters
   frequency = 3e8/wavelength;//Hertz
   
   testVector.m_distance = 36000000;
@@ -122,10 +122,10 @@ FsoMeanIrradianceTestCase::DoRun (void)
   testVector.m_txBeamRadius = 0.06;
   testVector.m_rxPhaseFrontRadius = 36000000;
   testVector.m_meanIrradiance = 8.78391e-8;
-  testVector.m_tolerance = 1e-9;  
+  testVector.m_tolerance = 1e-12;  
 
   m_testVectors.Add (testVector);
-
+  
   // Now, check that the received power values are expected
 
   Ptr<MobilityModel> a = CreateObject<ConstantPositionMobilityModel> ();
@@ -204,7 +204,7 @@ FsoDownLinkScintillationIndexTestCase::DoRun (void)
   testVector.m_frequency = frequency;
   testVector.m_zenith = (30.0 * M_PI)/180.0;
   testVector.m_tolerance = 1e-3;
-  testVector.m_scintIndex = 0.16541409546;
+  testVector.m_scintIndex = 0.1637216;
 
   m_testVectors.Add (testVector);
    
@@ -216,10 +216,10 @@ FsoDownLinkScintillationIndexTestCase::DoRun (void)
   testVector.m_frequency = frequency;
   testVector.m_zenith = (30.0 * M_PI)/180.0;
   testVector.m_tolerance = 1e-3;
-  testVector.m_scintIndex = 0.1046360321;
+  testVector.m_scintIndex = 0.1637216;
 
   m_testVectors.Add (testVector);
-/*
+
   wavelength = 1060e-9;
   frequency = 3e8/wavelength;
 
@@ -228,10 +228,10 @@ FsoDownLinkScintillationIndexTestCase::DoRun (void)
   testVector.m_frequency = frequency;
   testVector.m_zenith = (15.0 * M_PI)/180.0;
   testVector.m_tolerance = 1e-3;
-  testVector.m_scintIndex = 0.0659322095;
+  testVector.m_scintIndex = 0.1031626;
 
   m_testVectors.Add (testVector);
- */
+ 
   Ptr<FsoDownLinkScintillationIndexModel> lossModel = CreateObject<FsoDownLinkScintillationIndexModel> (); 
 
   lossModel->SetRmsWindSpeed (21.0);
@@ -338,9 +338,9 @@ public:
 FsoPropagationLossTestSuite::FsoPropagationLossTestSuite ()
   : TestSuite ("fso-propagation-loss-models", UNIT)
 {
-  //AddTestCase (new FsoMeanIrradianceTestCase, TestCase::QUICK);
+  AddTestCase (new FsoMeanIrradianceTestCase, TestCase::QUICK);
   AddTestCase (new FsoDownLinkScintillationIndexTestCase, TestCase::QUICK);
-  //AddTestCase (new FsoFreeSpaceLossTestCase, TestCase::QUICK);
+  AddTestCase (new FsoFreeSpaceLossTestCase, TestCase::QUICK);
 }
 
 static FsoPropagationLossTestSuite fsoPropagationLossTestSuite;
