@@ -34,24 +34,24 @@ Propagation Loss Model
 
 The propagation loss is modeled in three separate classes, all deriving from the FsoPropagationLossModel class: FsoMeanIrradianceModel, FsoDownLinkScintillationIndexModel and FsoFreeSpaceLossModel. These classes model the losses incurred due to an optical signal being transmitted at high altitude ( >> 20 km) to a receiver at a lower altitude (i.e. a geosynchronous satellite to a low earth orbit satellite or an optical ground station on Earth). This model would specifically suit the needs of a 'downlink' channel for satellites.
 
-The model provides the irradiance (Watts/meter) at the receiver, which is described by a log-normal distribution [LaserPropagationBook]_. The distribution of the irradiance at the receiver, :math:`p_{I}(I)` ,is a function of the scintillation index :math:`\sigma^{2}_{I}` and the mean irradiance :math:`\langle I(\textbf{r}, L) \rangle`:
+The model provides the irradiance (Watts/meter) at the receiver, which is described by a log-normal distribution [LaserPropagationBook]_. The distribution of the irradiance at the receiver, :math:`p_{I}(I)`, is a function of the scintillation index :math:`\sigma^{2}_{I}` and the mean irradiance :math:`\langle I(\textbf{r}, L) \rangle`:
 
 .. math::
    p_{I}(I) = \frac{1}{I\sigma_{I}(\textbf{r}, L)\sqrt(2\pi)}exp\Bigg(-\frac{\bigg[ln\big(\frac{I}{\langle I(\textbf{r}, L) \rangle}\big) + \frac{1}{2}\sigma^{2}_{I}(\textbf{r}, L)\bigg]^{2}}{2\sigma^{2}_{I}(\textbf{r}, L)}\Bigg)
 
-where :math:'\textbf{r}' is the transverse observation point. The mean irradiance and can be expressed as follows:
+where :math:`\textbf{r}` is the transverse observation point. The mean irradiance and can be expressed as follows:
 
 .. math::
   \langle I(\textbf{r}, L) \rangle = \frac{W^{2}_{0}}{W^{2}_{LT}}exp\bigg(-\frac{2r^{2}}{W^{2}_{LT}}\bigg)
 
-where :math:'W^{2}_{0}' is the beam radius at the transmitter, `math:'W^{2}_{LT}` is the effective spot size of the beam in the presence of atmospheric turbulence, and :math:`r` is the radial distance from the center of the beam. 
+where :math:`W^{2}_{0}` is the beam radius at the transmitter, :math:`W^{2}_{LT}` is the effective spot size of the beam in the presence of atmospheric turbulence, and :math:`r` is the radial distance from the center of the beam. 
 
 The scintillation index can be simplified in the downlink case, due to the beam effectively appearing as an unbounded plane wave once it enters the atmosphere. The scintillation index used for the downlink model is: 
 
 .. math:: 
    \sigma_{I}^{2}(r, L) = 2.25k^{7/6}\sec^{11/6}(\zeta)\int^{H}_{H_{GS}}C^{2}_{n}(h)[h-h_{GS}]^{5/6}\,dh
 
-where :math:`k = 2\pi/\lambda` and :math:`\lambda` is the wavelength of the optical beam, :math:`H` is the altitude of the transmitter, :math:`\zeta` is the elevation angle, :math:`H_{GS}` is the altitude of the ground station, and :math:'C_{n}^{2}(h)' is the index of refraction of the atmosphere as a function of altitude. The index of refraction can be described by a modified version of the Hufnagel-Valley model [SatOpticalFeederLinks2014]_:
+where :math:`k = 2\pi/\lambda` and :math:`\lambda` is the wavelength of the optical beam, :math:`H` is the altitude of the transmitter, :math:`\zeta` is the elevation angle, :math:`H_{GS}` is the altitude of the ground station, and :math:`C_{n}^{2}(h)` is the index of refraction of the atmosphere as a function of altitude. The index of refraction can be described by a modified version of the Hufnagel-Valley model [SatOpticalFeederLinks2014]_:
 
 .. math::
    C_{n}^{2}(h)  =& Ae^{-H_{GS}/700}e^{-(h-H_{GS})/100}\\ 
@@ -75,13 +75,15 @@ where :math:`A` is the refractive index structure parameter at ground level and 
 The FsoFreeSpaceLossModel provides the free space path loss in dB according to the following equation for electromagnetic waves:
 
 .. math::
-   FSPL  =& 20\log_{10}\big(\frac{4\pi d}{\lambda}
+   FSPL  =& 20\log_{10}\big(\frac{4\pi d}{\lambda})
    :label: free-space-path-loss
 
 Channel Model
 #############
 
 The ``FsoChannel`` class acts as a container object, holding pointers to the the FsoPhy receivers and transmitters, the ``FsoPropagationLossModel`` classes, and the ``PropagationDelayModel``. It also provides the transmission of packets from a transmitter to receivers.
+
+``FsoPropagationLossModel`` classes may be chained together, such that the path loss, irradiance, and scintillation index can be applied in series (these models are commutative).  The design follows the ns-3 base class ``PropagationLossModel``, which could not be reused as a base class here because ``PropagationLossModel`` operates on signal power alone, while these models operate on a collection of optical signal parameters (``struct FsoSignalParameters``, described below).
 
 Phy Model
 #########
@@ -108,7 +110,7 @@ The OpticalRxAntennaModel class characterizes the receiver by its gain, aperture
 Scope and Limitations
 =====================
 
-The Fso module currently can provide a model of an atmospheric channel for optical signals. It is designed with the OSS project as the primary application. There is no consideration for interference between signals and it is assumed there is a single transmitter per channel which may service multiple receivers in a concentrated area (i.e. around a ground station). Only the downlink channel is considered, and the FsoDownLinkScintillationIndexModel reflects that, as some simplifications are made which correspond to a downlink channel. Future work may involve creating uplink specific models. 
+The Fso module currently can provide a model of an atmospheric channel for optical signals. It is designed with the OSS project as the primary application. There is no consideration for interference between signals and it is assumed there is a single transmitter per channel which may service multiple receivers in a concentrated area (i.e. around a ground station). Only the downlink channel is considered, and the FsoDownLinkScintillationIndexModel class name reflects that, as some simplifications are made which correspond to a downlink channel. Future work may involve creating uplink specific models. 
 
 References
 ==========
@@ -132,7 +134,7 @@ The principle use case of the Fso module is to model free space optical links be
 
  * The channel model currently assumes only a single transmitter, which may transmit to multiple receivers.  
 
- * The ``FsoErrorModel`` abstract base class must be derived from to provide an error model to the ``FsoPhy``. The Fso module provides ``FsoDownLinkErrorModel`` as an error model class for the downlink case (satellite to optical ground station unidirectional link) and can be used as reference for the creation of new error models.
+ * The ``FsoErrorModel`` abstract base class must be subclassed to provide an error model to the ``FsoPhy``. The Fso module provides ``FsoDownLinkErrorModel`` as an error model class for the downlink case (satellite to optical ground station unidirectional link) and can be used as reference for the creation of new error models.
 
 
 Building New Module
@@ -148,8 +150,6 @@ Helpers are still under development.
 Attributes
 ==========
 
-What classes hold attributes, and what are the key ones worth mentioning?
-
 ``FsoChannel`` contains attributes for pointers to the ``PropagationDelayModel`` and the ``FsoPropagationLossModel``.
 
 ``FsoPhy`` contains an attribute for the bit rate. The default value is 49.3724 Mbits/second.
@@ -158,17 +158,33 @@ If a satellite to ground station link is being considered, the ''FsoDownLinkScin
 
 The ``LaserAntennaModel`` and ``OpticalRxAntennaModel`` classes contain attributes for all antenna properties. These should be set by the user. Note that the orientation attribute is currently not used. 
 
-
 Output
 ======
 
-What kind of data does the model generate?  What are the key trace
-sources?   What kind of logging output can be enabled?
+The current models do not have any trace sources; the user-visible behavior
+is to observe that some packets are dropped by the error model, depending
+on the configuration.
+
+The following log components may be enabled:
+
+* FsoChannel
+* FsoDownLinkScintillationIndexModel
+* FsoDownLinkErrorModel
+* FsoFreeSpaceLossModel
+* FsoMeanIrradianceModel
+* FsoPhy
+* FsoSignalParameters
+* LaserAntennaModel
+* OpticalRxAntennaModel
 
 Examples
 ========
 
-Currently only one example is available in the 'fso-example.cc' source file. It considers a geo-synchronous satellite and an optical ground station downlink channel (satellite transmitter to ground station receiver). No helpers are available at this time, therefore the example illustrates how to setup the various components required for the link.   
+Currently two examples are available in the ``examples`` directory:
+
+* 'fso-example.cc' considers a geo-synchronous satellite and an optical ground station downlink channel (satellite transmitter to ground station receiver). No helpers are available at this time, therefore the example illustrates how to setup the various components required for the link.   
+
+* 'fso-irradiance-curve.cc' plots the normalized irradiance values experienced by a stream of packets, and produces a gnuplot that can be compared with published sources.
 
 Troubleshooting
 ===============
@@ -178,7 +194,9 @@ Not yet completed.
 Validation
 **********
 
-Each mathematical model has a corresponding Matlab script provided in the fso/src/test/references folder. The FsoPropagaionLossTestSuite provides validation that each propagation loss model is being correctly calculated according to the provided Matlab scripts. The link parameters chosen for these tests are from published work:
+The models have been verified to produce results in accordance with Matlab programs, but have not yet been validated to show accuracy of the model's representation of real systems (e.g., comparison against experimental data).
+
+Each mathematical model has a corresponding Matlab script provided in the fso/src/test/references folder. The FsoPropagationLossTestSuite provides verification that each propagation loss model is being correctly calculated according to the provided Matlab scripts. The link parameters chosen for these tests are from published work:
 
 "Preliminary Results of Terabit-per-second Long-Range Free-Space Optical Transmission Experiment THRUST" and "Overview of the Laser Communication System for the NICT Optical Ground Station and Laser Communication Experiments on Ground-to-Satellite Links".
 

@@ -38,8 +38,8 @@ SOURCES = \
 	$(SRC)/mpi/doc/distributed.rst \
 	$(SRC)/energy/doc/energy.rst \
 	$(SRC)/fd-net-device/doc/fd-net-device.rst \
-	$(SRC)/fso/doc/fso.rst \
 	$(SRC)/tap-bridge/doc/tap.rst \
+	$(SRC)/fso/doc/fso.rst \
 	$(SRC)/mesh/doc/source/mesh.rst \
 	$(SRC)/mesh/doc/source/mesh-user.rst \
 	$(SRC)/mesh/doc/source/mesh-design.rst \
@@ -95,7 +95,6 @@ SOURCES = \
 	$(SRC)/wave/doc/wave.rst \
 	$(SRC)/sixlowpan/doc/sixlowpan.rst \
 	$(SRC)/lr-wpan/doc/lr-wpan.rst \
-	$(SRC)/fso/doc/fso.rst \
 
 # list all model library figure files that need to be copied to 
 # $SOURCETEMP/figures.  For each figure to be included in all
