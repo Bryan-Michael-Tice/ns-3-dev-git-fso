@@ -2,8 +2,6 @@
 #ifndef FSO_HELPER_H
 #define FSO_HELPER_H
 
-#include "ns3/fso.h"
-
 namespace ns3 {
 
 /* ... */

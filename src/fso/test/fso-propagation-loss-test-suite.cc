@@ -203,7 +203,7 @@ FsoDownLinkScintillationIndexTestCase::DoRun (void)
   testVector.m_rxHeight = 0;
   testVector.m_frequency = frequency;
   testVector.m_zenith = (30.0 * M_PI)/180.0;
-  testVector.m_tolerance = 1e-3;
+  testVector.m_tolerance = 1e-6;
   testVector.m_scintIndex = 0.1637216;
 
   m_testVectors.Add (testVector);
@@ -215,7 +215,7 @@ FsoDownLinkScintillationIndexTestCase::DoRun (void)
   testVector.m_rxHeight = 0;
   testVector.m_frequency = frequency;
   testVector.m_zenith = (30.0 * M_PI)/180.0;
-  testVector.m_tolerance = 1e-3;
+  testVector.m_tolerance = 1e-6;
   testVector.m_scintIndex = 0.1637216;
 
   m_testVectors.Add (testVector);
@@ -227,7 +227,7 @@ FsoDownLinkScintillationIndexTestCase::DoRun (void)
   testVector.m_rxHeight = 0;
   testVector.m_frequency = frequency;
   testVector.m_zenith = (15.0 * M_PI)/180.0;
-  testVector.m_tolerance = 1e-3;
+  testVector.m_tolerance = 1e-6;
   testVector.m_scintIndex = 0.1031626;
 
   m_testVectors.Add (testVector);

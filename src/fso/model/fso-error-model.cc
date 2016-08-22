@@ -113,7 +113,7 @@ FsoDownLinkErrorModel::CalculateTurbulenceTimeConstant (double hTx, double hRx, 
   params.v = m_rmsWindSpeed;
   params.hgs = hRx;
 
-  gsl_integration_workspace * w = gsl_integration_workspace_alloc (1000);
+  gsl_integration_workspace * w = gsl_integration_workspace_alloc (10000);
 
   gsl_function F;
   F.function = &GWIntegralFunction;
