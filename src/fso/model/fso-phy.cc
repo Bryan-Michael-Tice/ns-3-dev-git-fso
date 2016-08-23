@@ -250,18 +250,11 @@ void
 FsoPhy::Receive (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 {
   NS_ASSERT (m_errorModel != 0);
-  double rxIrradiance = m_errorModel->GetPacketSuccessRate(packet, fsoSignalParams);
-  double rxApertureDiameter = GetRxAntenna ()->GetApertureDiameter ();
-  double rxGain = GetRxAntenna ()->GetRxGain ();
+  //double rxGain = GetRxAntenna ()->GetRxGain ();
 
-  //From "Laser Beam Propagation Through Random Media" in Section 11.4
-  double rxMeanPower = 10*std::log10(0.125*M_PI*std::pow(rxApertureDiameter,2.0)*fsoSignalParams->meanIrradiance);//rxIrradiance; //This is the mean RX power, not the instantaneous (dB)
 
-  NS_LOG_DEBUG ("PhyReceive: incoming signal power=" << fsoSignalParams->power << "dB"); 
-  NS_LOG_DEBUG ("PhyReceive: rx gain=" << rxGain << "dB");
-  NS_LOG_DEBUG ("PhyReceive: mean power=" << rxMeanPower << "dB");
-  
-  NS_LOG_DEBUG ("PhyReceive: irradiance=" << rxIrradiance << "W/m^2, total RX mean power=" << (fsoSignalParams->power + rxMeanPower + rxGain) << "dB");
+  double packetSuccessRate = m_errorModel->GetPacketSuccessRate(packet, fsoSignalParams);
+  NS_LOG_DEBUG ("PhyReceive: packet success rate=" << packetSuccessRate);
 
   SwitchFromRxEndOk(packet, 0.0, fsoSignalParams);//should provide SNR once the SNR function is implemented, 0.0 placeholder
 }

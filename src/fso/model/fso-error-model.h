@@ -46,6 +46,7 @@ typedef struct GWFunctionParameterType
   double hgs;
 } GWFunctionParameters;
 
+double ErrorFunction (double t, void *params);
 double GWIntegralFunction (double x, void *params);
 #endif
 
@@ -122,14 +123,10 @@ public:
   void SetPhy (Ptr<FsoPhy> phy);
 
   /**
-   * \return the snr
+   * \param rxPower the received power
+   * \return the bit error rate
    */
-  double CalculateMeanSnr () const;
-
-  /**
-   * \return the ber
-   */
-  double CalculateMeanBer () const;
+  double CalculateBer (double rxPower) const;
   
   /**
    * \brief Calculate the normalized irradiance at the receiver

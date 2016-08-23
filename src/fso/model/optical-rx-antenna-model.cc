@@ -58,6 +58,17 @@ OpticalRxAntennaModel::GetTypeId ()
                    DoubleValue (0.25),
                    MakeDoubleAccessor (&OpticalRxAntennaModel::m_apertureDiameter),
                    MakeDoubleChecker<double> (0,1000))
+    .AddAttribute ("CharacteristicPower",
+                   "The characteristic power (Watts) of the receiver.",
+                   DoubleValue (5e-9),
+                   MakeDoubleAccessor (&OpticalRxAntennaModel::m_characteristicPower),
+                   MakeDoubleChecker<double> (0.0,1.0))
+     
+    .AddAttribute ("FormFactor",
+                   "The form factor of the receiver.",
+                   DoubleValue (0.75),
+                   MakeDoubleAccessor (&OpticalRxAntennaModel::m_formFactor),
+                   MakeDoubleChecker<double> (0.0,1.0))
   ;
   return tid;
 }
@@ -81,11 +92,24 @@ OpticalRxAntennaModel::GetRxGain () const
   return m_rxGain;
 }
 
-double OpticalRxAntennaModel::GetApertureDiameter () const
+double 
+OpticalRxAntennaModel::GetApertureDiameter () const
 {
   return m_apertureDiameter;
 }
 
+double 
+OpticalRxAntennaModel::GetCharacteristicPower () const
+{
+  return m_characteristicPower;
+}
+
+
+double 
+OpticalRxAntennaModel::GetFormFactor () const
+{
+  return m_formFactor;
+}
 
 double 
 OpticalRxAntennaModel::GetGainDb (Angles a)

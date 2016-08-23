@@ -63,6 +63,20 @@ public:
    */
   double GetApertureDiameter () const;
 
+  /**
+   * Get the characteristic power of the receiver
+   *
+   * \return the characteristic power
+   */
+  double GetCharacteristicPower () const;
+
+  /**
+   * Get the form factor of the receivere
+   *
+   * \return the form factor
+   */
+  double GetFormFactor () const;
+
 
 private:
 
@@ -71,6 +85,10 @@ private:
   double m_orientationRadians;  //!< The orientation of the receiver in radians
 
   double m_rxGain;              //!< The receiver gain in dB
+
+  double m_characteristicPower; //!< The characteristic power in Watts 
+
+  double m_formFactor;          //!< Form factor of the optical receiver
 };
 
 

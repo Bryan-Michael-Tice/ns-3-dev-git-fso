@@ -75,7 +75,6 @@ FsoDownLinkErrorModel::FsoDownLinkErrorModel ()
   m_updateIrradiance = true;
 
   m_turbulenceTimer.SetFunction (&FsoDownLinkErrorModel::SetIrradianceUpdate, this);
-  //m_turbulenceTimer.SetArguments (m_updateIrradiance);
 }
 
 FsoDownLinkErrorModel::~FsoDownLinkErrorModel ()
@@ -91,27 +90,45 @@ FsoDownLinkErrorModel::DoDispose (void)
 }
 
 double
-FsoDownLinkErrorModel::CalculateMeanSnr () const
+FsoDownLinkErrorModel::CalculateBer (double rxPower) const
 {
-  return 0.0;
-}
+  double charPower = m_phy->GetRxAntenna ()->GetCharacteristicPower ();
+  double formFactor = m_phy->GetRxAntenna ()->GetFormFactor ();
+  
+  double errorFunctionParam = (rxPower/charPower)/(1 + std::sqrt(1 + formFactor*(rxPower/charPower)));
 
-double
-FsoDownLinkErrorModel::CalculateMeanBer () const
-{
-  return 0.0;
+  double result = 0.0;
+  double error = 0.0;
+
+  gsl_integration_workspace * w = gsl_integration_workspace_alloc (100000);
+
+  gsl_function F;
+  F.function = &ErrorFunction;
+  F.params = 0;//no parameters passed
+  
+  gsl_integration_qagiu (&F, errorFunctionParam, 1e-15, 1e-10, 100000, w, &result, &error);
+   
+  gsl_integration_workspace_free (w);
+
+  return (result/std::sqrt(2.0*M_PI));
 }
 
 double
 FsoDownLinkErrorModel::CalculateTurbulenceTimeConstant (double hTx, double hRx, double wavelength, double elevation)
 {
-  double result;
-  double error;
+  double result = 0.0;
+  double error = 0.0;
 
   GWFunctionParameters params;
   params.A = m_groundRefractiveIdx;
   params.v = m_rmsWindSpeed;
   params.hgs = hRx;
+
+  //Bound for integration limit, ~20km represents max height of atmospheric turbulence
+  if (hTx > 20000.0)
+   {
+     hTx = 20000.0;
+   }
 
   gsl_integration_workspace * w = gsl_integration_workspace_alloc (10000);
 
@@ -129,13 +146,24 @@ FsoDownLinkErrorModel::CalculateTurbulenceTimeConstant (double hTx, double hRx, 
 double 
 FsoDownLinkErrorModel::GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 {
-  NS_LOG_DEBUG ("ErrorModel: packet size=" << packet->GetSize () << " bits, scintIndex=" << fsoSignalParams->scintillationIndex << ", meanIrradiance=" << fsoSignalParams->meanIrradiance); 
   CalculateNormRxIrradiance(fsoSignalParams);
 
   fsoSignalParams->normIrradiance = m_normalizedIrradiance;
 
+  double rxApertureDiameter = m_phy->GetRxAntenna ()->GetApertureDiameter ();
   double rxIrradiance = fsoSignalParams->meanIrradiance*m_normalizedIrradiance;
-  return rxIrradiance;
+
+  //From "Laser Beam Propagation Through Random Media" in Section 11.4.1
+  double rxInstantPowerWatts = 0.125*M_PI*std::pow(rxApertureDiameter,2.0)*rxIrradiance;
+  NS_LOG_DEBUG ("ErrorModel: rxPower=" << rxInstantPowerWatts);
+
+  double ber = CalculateBer(rxInstantPowerWatts);
+  NS_LOG_DEBUG ("ErrorModel: BER=" << ber);
+  
+  double packetLossProbability = 1.0 - std::pow(1 - ber, 8*packet->GetSize ()); 
+  NS_LOG_DEBUG ("ErrorModel: PLP=" << packetLossProbability);
+
+  return (1.0 - packetLossProbability);
 }
 
 void 
@@ -178,9 +206,17 @@ GWIntegralFunction (double h, void *params)
   double v = ((GWFunctionParameters *) params)->v;
   double hgs = ((GWFunctionParameters *) params)->hgs;
 
-  double GWIntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/100.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(5.94*std::pow(10.0,-53.0))*(std::exp(-h/1000.0))+(2.7*std::pow(10.0,-16.0))*std::exp(-h/1500.0))*(std::pow((2.8 + 30*std::exp(-1*std::pow((h - 9400.0)/4800.0,2.0))),5.0/3.0));
+  double gwIntegralFunction = (A*std::exp(-hgs/700.0)*std::exp(-(h-hgs)/100.0) + (1.0/(27.0*27.0))*std::pow(v,2.0)*(std::pow(h,10.0))*(5.94*std::pow(10.0,-53.0))*(std::exp(-h/1000.0))+(2.7*std::pow(10.0,-16.0))*std::exp(-h/1500.0))*(std::pow((2.8 + 30*std::exp(-1*std::pow((h - 9400.0)/4800.0,2.0))),5.0/3.0));
 
-  return GWIntegralFunction;
+  return gwIntegralFunction;
+}
+
+double
+ErrorFunction (double t, void *params)
+{
+  double errorFunction = std::exp(-1*(std::pow(t,2.0)/2.0));
+
+  return errorFunction;
 }
 
 } //namespace ns3

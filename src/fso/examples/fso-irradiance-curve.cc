@@ -134,7 +134,7 @@ main (int argc, char *argv[])
   Ptr<LaserAntennaModel> laser = CreateObject<LaserAntennaModel> ();
   laser->SetBeamwidth (0.06); //meters
   laser->SetOrientation (0.0);
-  laser->SetTxPower (0.1);//Watts
+  laser->SetTxPower (-1.0);//dB
   laser->SetGain (116.0);//dB
 
   ObjectFactory rxPhyFactory;
