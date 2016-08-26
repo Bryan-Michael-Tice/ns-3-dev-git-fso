@@ -83,7 +83,7 @@ main (int argc, char *argv[])
 
   //Mobility Models
   Ptr<MobilityModel> txMobility = CreateObject<ConstantPositionMobilityModel> ();
-  txMobility->SetPosition (Vector (0.0, 0.0, 707000));//Satellite at 707,000 meters above the Earth
+  txMobility->SetPosition (Vector (0.0, 0.0, 707000));//Satellite at 707,000 meters above the surface of the Earth
 
   Ptr<MobilityModel> rxMobility = CreateObject<ConstantPositionMobilityModel> ();
   rxMobility->SetPosition (Vector (0.0, 0.0, 0.0));// Ground station at 0 meters 
@@ -92,7 +92,7 @@ main (int argc, char *argv[])
   Ptr<LaserAntennaModel> laser = CreateObject<LaserAntennaModel> ();
   laser->SetBeamwidth (0.06); //meters
   laser->SetOrientation (0.0);
-  laser->SetTxPower (0.1);//Watts
+  laser->SetTxPower (-10.0);//dB
   laser->SetGain (116.0);//dB
   laser->SetWavelength (847e-9);
 

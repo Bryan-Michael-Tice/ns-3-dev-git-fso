@@ -95,7 +95,7 @@ FsoDownLinkErrorModel::CalculateBer (double rxPower) const
   double charPower = m_phy->GetRxAntenna ()->GetCharacteristicPower ();
   double formFactor = m_phy->GetRxAntenna ()->GetFormFactor ();
   
-  double errorFunctionParam = (rxPower/charPower)/(1 + std::sqrt(1 + formFactor*(rxPower/charPower)));
+  double errorFunctionParam = (rxPower/charPower)/(1 + std::sqrt(1 + formFactor*(rxPower/charPower)))/std::sqrt(2.0);
 
   double result = 0.0;
   double error = 0.0;
@@ -106,11 +106,11 @@ FsoDownLinkErrorModel::CalculateBer (double rxPower) const
   F.function = &ErrorFunction;
   F.params = 0;//no parameters passed
   
-  gsl_integration_qagiu (&F, errorFunctionParam, 1e-15, 1e-10, 100000, w, &result, &error);
+  gsl_integration_qagiu (&F, errorFunctionParam, 1e-20, 1e-10, 100000, w, &result, &error);
    
   gsl_integration_workspace_free (w);
 
-  return (result/std::sqrt(2.0*M_PI));
+  return (result/(2.0*std::sqrt(2.0*M_PI)));
 }
 
 double
@@ -153,11 +153,14 @@ FsoDownLinkErrorModel::GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalPa
   double rxApertureDiameter = m_phy->GetRxAntenna ()->GetApertureDiameter ();
   double rxIrradiance = fsoSignalParams->meanIrradiance*m_normalizedIrradiance;
 
+  NS_LOG_DEBUG ("ErrorModel: rxPowerdB=" << fsoSignalParams->power);
+
   //From "Laser Beam Propagation Through Random Media" in Section 11.4.1
   double rxInstantPowerWatts = 0.125*M_PI*std::pow(rxApertureDiameter,2.0)*rxIrradiance;
   NS_LOG_DEBUG ("ErrorModel: rxPower=" << rxInstantPowerWatts);
 
-  double ber = CalculateBer(rxInstantPowerWatts);
+
+  double ber = CalculateBer(rxInstantPowerWatts*0.01);
   NS_LOG_DEBUG ("ErrorModel: BER=" << ber);
   
   double packetLossProbability = 1.0 - std::pow(1 - ber, 8*packet->GetSize ()); 

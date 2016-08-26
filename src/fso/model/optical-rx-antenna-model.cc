@@ -60,13 +60,13 @@ OpticalRxAntennaModel::GetTypeId ()
                    MakeDoubleChecker<double> (0,1000))
     .AddAttribute ("CharacteristicPower",
                    "The characteristic power (Watts) of the receiver.",
-                   DoubleValue (5e-9),
+                   DoubleValue (4.19e-9),
                    MakeDoubleAccessor (&OpticalRxAntennaModel::m_characteristicPower),
                    MakeDoubleChecker<double> (0.0,1.0))
      
     .AddAttribute ("FormFactor",
                    "The form factor of the receiver.",
-                   DoubleValue (0.75),
+                   DoubleValue (0.46),
                    MakeDoubleAccessor (&OpticalRxAntennaModel::m_formFactor),
                    MakeDoubleChecker<double> (0.0,1.0))
   ;
@@ -87,7 +87,7 @@ OpticalRxAntennaModel::GetOrientation () const
 }
 
 double
-OpticalRxAntennaModel::GetRxGain () const
+OpticalRxAntennaModel::GetGain () const
 {
   return m_rxGain;
 }

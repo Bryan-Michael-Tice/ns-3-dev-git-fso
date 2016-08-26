@@ -54,7 +54,7 @@ public:
    *
    * \return the receiver gain
    */
-  double GetRxGain () const;
+  double GetGain () const;
 
   /**
    * Get the diameter of the aperture

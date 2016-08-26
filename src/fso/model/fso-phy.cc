@@ -222,20 +222,16 @@ FsoPhy::GetTxState ()
 void 
 FsoPhy::Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 {
-
+  NS_LOG_FUNCTION (this);
   NS_ASSERT (m_txState == State::IDLE);
 
-  NS_LOG_FUNCTION (this << packet << fsoSignalParams->wavelength);
-  
-  Ptr<LaserAntennaModel> laser = GetTxAntenna();
-
-  fsoSignalParams->power                = laser->GetTxPower () + laser->GetGain ();  
-  fsoSignalParams->txBeamwidth          = laser->GetBeamwidth ();
+  fsoSignalParams->power                = m_txAntenna->GetTxPower () + m_txAntenna->GetGain ();  
+  fsoSignalParams->txBeamwidth          = m_txAntenna->GetBeamwidth ();
   fsoSignalParams->txPhy                = this;
-  fsoSignalParams->txAntenna            = laser;
+  fsoSignalParams->txAntenna            = m_txAntenna;
   fsoSignalParams->symbolPeriod         = 1/m_bitRate;
-  fsoSignalParams->wavelength           = laser->GetWavelength ();
-  fsoSignalParams->frequency            = 3e8/(laser->GetWavelength ());
+  fsoSignalParams->wavelength           = m_txAntenna->GetWavelength ();
+  fsoSignalParams->frequency            = 3e8/(m_txAntenna->GetWavelength ());
 
   Time txDuration = CalculateTxDuration (packet->GetSize (), fsoSignalParams);
 
@@ -249,9 +245,10 @@ FsoPhy::Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalPa
 void 
 FsoPhy::Receive (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 {
+  NS_LOG_FUNCTION (this);
   NS_ASSERT (m_errorModel != 0);
-  //double rxGain = GetRxAntenna ()->GetRxGain ();
 
+  fsoSignalParams->power += m_rxAntenna->GetGain ();
 
   double packetSuccessRate = m_errorModel->GetPacketSuccessRate(packet, fsoSignalParams);
   NS_LOG_DEBUG ("PhyReceive: packet success rate=" << packetSuccessRate);
