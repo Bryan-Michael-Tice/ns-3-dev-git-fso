@@ -19,6 +19,8 @@ def build(bld):
         'model/fso-free-space-loss-model.cc',
         'model/laser-antenna-model.cc',
         'model/optical-rx-antenna-model.cc',
+        'model/fso-net-device.cc',
+        'model/fso-mac.cc',
         'helper/fso-helper.cc',
         ]
 
@@ -40,6 +42,8 @@ def build(bld):
         'model/fso-free-space-loss-model.h',
         'model/laser-antenna-model.h',
         'model/optical-rx-antenna-model.h',
+        'model/fso-net-device.h',
+        'model/fso-mac.h',
         'helper/fso-helper.h',
         ]
 
