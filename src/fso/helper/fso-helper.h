@@ -16,6 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
+ *
+ * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
 #ifndef FSO_HELPER_H
@@ -136,6 +138,7 @@ public:
    * Every PHY created by a call to Install is associated to this channel.
    */
   void SetChannel (Ptr<FsoChannel> channel);
+
   /**
    * \param channelName The name of the channel to associate to this helper
    *

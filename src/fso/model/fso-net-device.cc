@@ -16,10 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
+ *
+ * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
 #include "fso-net-device.h"
-//#include "fso-mac.h"
+#include "fso-mac.h"
 #include "fso-phy.h"
 #include "fso-channel.h"
 #include "ns3/llc-snap-header.h"

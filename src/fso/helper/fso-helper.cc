@@ -17,6 +17,8 @@
  *
  * Authors: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  *          Sébastien Deronne <sebastien.deronne@gmail.com>
+ *
+ * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
 #include "fso-helper.h"
@@ -58,23 +60,17 @@ FsoHelper::Install (const FsoPhyHelper &phyHelper,
 {
   NetDeviceContainer devices;
   for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
-    {
-      /*
+    {  
       Ptr<Node> node = *i;
-      Ptr<WifiNetDevice> device = CreateObject<WifiNetDevice> ();
-      Ptr<WifiRemoteStationManager> manager = m_stationManager.Create<WifiRemoteStationManager> ();
-      Ptr<WifiMac> mac = macHelper.Create ();
-      Ptr<WifiPhy> phy = phyHelper.Create (node, device);
-      mac->SetAddress (Mac48Address::Allocate ());
-      mac->ConfigureStandard (m_standard);
-      phy->ConfigureStandard (m_standard);
-      device->SetMac (mac);
+      Ptr<FsoNetDevice> device = CreateObject<WifiNetDevice> ();
+      //Ptr<FsoMac> mac = macHelper.Create ();
+      Ptr<FsoPhy> phy = phyHelper.Create (node, device);
+      //mac->SetAddress (Mac48Address::Allocate ());
+      //device->SetMac (mac);
       device->SetPhy (phy);
-      device->SetRemoteStationManager (manager);
       node->AddDevice (device);
       devices.Add (device);
       NS_LOG_DEBUG ("node=" << node << ", mob=" << node->GetObject<MobilityModel> ());
-      */
     }
   return devices;
 }
@@ -195,6 +191,8 @@ FsoChannelHelper::Default (void)
   FsoChannelHelper helper;
   helper.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
   helper.AddPropagationLoss ("ns3::FsoFreeSpaceLossModel");
+  helper.AddPropagationLoss ("ns3::FsoMeanIrradianceModel");
+  helper.AddPropagationLoss ("ns3::FsoDownLinkScintillationIndexModel");
   return helper;
 }
 
