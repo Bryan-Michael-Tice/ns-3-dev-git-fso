@@ -83,6 +83,12 @@ public:
    */
   int64_t AssignStreams (int64_t stream);
 
+  /**
+   * Set the Phy that references this error model
+   */
+  void SetPhy (Ptr<FsoPhy> phy);
+
+
 private:
   /**
    * Subclasses must implement this; those not using random variables
@@ -93,6 +99,8 @@ private:
 protected:
   //Inherited from Object
   virtual void DoDispose () = 0;
+
+  Ptr<FsoPhy> m_phy; //!< Pointer to the Phy
 };
 
 /**
@@ -116,11 +124,6 @@ public:
 
   FsoDownLinkErrorModel ();
   ~FsoDownLinkErrorModel ();
-
-  /**
-   * Set the Phy that references this error model
-   */
-  void SetPhy (Ptr<FsoPhy> phy);
 
   /**
    * \param rxPower the received power
@@ -160,7 +163,6 @@ public:
 
 private:
   Ptr<LogNormalRandomVariable> m_logNormalDist; //!< Pointer to the log normal random variable
-  Ptr<FsoPhy> m_phy; //!< Pointer to the Phy
 
   double m_groundRefractiveIdx; //!< Index of refraction at ground level
   double m_rmsWindSpeed;        //!< The RMS wind speed in m/s

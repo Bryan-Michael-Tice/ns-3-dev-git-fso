@@ -18,6 +18,8 @@
  * Author: Michael Di Perna <diperna.michael@gmail.com>
  */
 #include "ns3/core-module.h"
+#include "ns3/mobility-helper.h"
+#include "ns3/node-container.h"
 #include "ns3/constant-position-mobility-model.h"
 #include "ns3/laser-antenna-model.h"
 #include "ns3/optical-rx-antenna-model.h"
@@ -28,13 +30,15 @@
 #include "ns3/fso-free-space-loss-model.h"
 #include "ns3/fso-down-link-scintillation-index-model.h"
 #include "ns3/fso-mean-irradiance-model.h"
+#include "ns3/fso-helper.h"
+#include "ns3/fso-net-device.h"
 
 #include <ns3/object-factory.h>
 #include "ns3/double.h"
 
 using namespace ns3;
 
-NS_LOG_COMPONENT_DEFINE ("FsoChannelExample");
+NS_LOG_COMPONENT_DEFINE ("FsoChannelHelperExample");
 
 // Sends a single packet from a geo-stationary satellite to an optical ground station
 // A large elevation angle is assumed which corresponds to weak atmospheric turbulence
@@ -65,12 +69,15 @@ NS_LOG_COMPONENT_DEFINE ("FsoChannelExample");
 int 
 main (int argc, char *argv[])
 {
+  LogComponentEnable ("FsoChannelHelperExample", LOG_LEVEL_INFO);
+
   bool verbose = true;
 
   CommandLine cmd;
   cmd.AddValue ("verbose", "Tell application to log if true", verbose);
 
   cmd.Parse (argc,argv);
+  /*
   if (verbose)
    {
      LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
@@ -80,6 +87,15 @@ main (int argc, char *argv[])
      LogComponentEnable ("FsoDownLinkErrorModel", LOG_LEVEL_INFO);
      LogComponentEnable ("FsoDownLinkScintillationIndexModel", LOG_LEVEL_INFO);
    }
+  */
+
+  Config::SetDefault ("ns3::LaserAntennaModel::Beamwidth", DoubleValue (0.06));
+  Config::SetDefault ("ns3::LaserAntennaModel::Wavelength", DoubleValue (847e-9));
+  Config::SetDefault ("ns3::LaserAntennaModel::TxPower", DoubleValue (-10.0));
+  Config::SetDefault ("ns3::LaserAntennaModel::Gain", DoubleValue (116.0));
+
+  Config::SetDefault ("ns3::OpticalRxAntennaModel::ReceiverGain", DoubleValue (121.4));
+  Config::SetDefault ("ns3::OpticalRxAntennaModel::ApertureDiameter", DoubleValue (0.318));
 
 
   NodeContainer nodes;
@@ -95,119 +111,38 @@ main (int argc, char *argv[])
 
   mobility.Install (nodes);
 
-
-  FsoChannelHelper fsoChannelHelper = FsoChannelHelper::Default (); 
+  FsoChannelHelper fsoChannelHelper = FsoChannelHelper::Default ();
   Ptr<FsoChannel> channel = fsoChannelHelper.Create ();
 
   FsoPhyHelper fsoPhyHelper = FsoPhyHelper::Default ();
   fsoPhyHelper.Set ("BitRate", DoubleValue (49.3724e6));
   fsoPhyHelper.SetChannel (channel);
 
-  Ptr<FsoChannel> fsoChannel = CreateObject<FsoChannel> ();
-  Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
-  wifiChannel->SetPropagationDelayModel (delayModel);
-  Ptr<FixedRssLossModel> rssLossModel = CreateObject<FixedRssLossModel> ();
-  wifiChannel->SetPropagationLossModel (rssLossModel);
-  rxPhy.SetChannel (wifiChannel);
+  NetDeviceContainer devices;
+  FsoHelper fsoHelper;
+  FsoMacHelper fsoMacHelper;//Placeholder helper, to be implemented in future work
 
+  if (verbose)
+   {
+     fsoHelper.EnableLogComponents ();
+   }
+
+  devices = fsoHelper.Install (fsoPhyHelper, fsoMacHelper, nodes);
+
+  Ptr<NetDevice> txNetDevice = devices.Get (0);
+  Ptr<NetDevice> rxNetDevice = devices.Get (1);
+
+  Ptr<FsoNetDevice> txDevice = txNetDevice->GetObject<FsoNetDevice> ();
+  Ptr<FsoNetDevice> rxDevice = rxNetDevice->GetObject<FsoNetDevice> ();
+
+  Ptr<FsoPhy> txPhy = txDevice->GetPhy ();
+  Ptr<FsoPhy> rxPhy = rxDevice->GetPhy ();
   
-
-  // Use Adhoc so we don't get into association issues
-  NetDeviceContainer serverDevice;
-  NetDeviceContainer clientDevice;
-
-  WifiMacHelper wifiMac;
-  wifiMac.SetType ("ns3::AdhocWifiMac");
-  serverDevice = wifi.Install (rxPhy, wifiMac, serverNode);
-  clientDevice = wifi.Install (rxPhy, wifiMac, clientNode);
-
-  Config::ConnectWithoutContext ("/NodeList/0/DeviceList/*/$ns3::WifiNetDevice/RemoteStationManager/$ns3::IdealWifiManager/Rate", MakeCallback(&RateChange)); 
-  // Configure the mobility.
-  MobilityHelper mobility;
- Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-  //Initial position of AP and STA
-  positionAlloc->Add (Vector (ap1_x, ap1_y, 0.0));
-  NS_LOG_INFO ("Setting initial AP position to " << Vector (ap1_x, ap1_y, 0.0));
-  positionAlloc->Add (Vector (sta1_x, sta1_y, 0.0));
-  NS_LOG_INFO ("Setting initial STA position to " << Vector (sta1_x, sta1_y, 0.0));
-  mobility.SetPositionAllocator (positionAlloc);
-  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-  mobility.Install (clientNode);
-  mobility.Install (serverNode);
-
-
-
-
-
-
-  //Mobility Models
-  Ptr<MobilityModel> txMobility = CreateObject<ConstantPositionMobilityModel> ();
-  txMobility->SetPosition (Vector (0.0, 0.0, 707000));//Satellite at 707,000 meters above the surface of the Earth
-
-  Ptr<MobilityModel> rxMobility = CreateObject<ConstantPositionMobilityModel> ();
-  rxMobility->SetPosition (Vector (0.0, 0.0, 0.0));// Ground station at 0 meters 
-
-  //Antennas
   Ptr<LaserAntennaModel> laser = CreateObject<LaserAntennaModel> ();
-  laser->SetBeamwidth (0.06); //meters
-  laser->SetOrientation (0.0);
-  laser->SetTxPower (-10.0);//dB
-  laser->SetGain (116.0);//dB
-  laser->SetWavelength (847e-9);
+  Ptr<OpticalRxAntennaModel> opticalRx = CreateObject<OpticalRxAntennaModel> ();
 
-  ObjectFactory rxPhyFactory;
-  rxPhyFactory.SetTypeId ("ns3::OpticalRxAntennaModel");
-  rxPhyFactory.Set ("ReceiverGain", DoubleValue (121.4));     
-  rxPhyFactory.Set ("ApertureDiameter", DoubleValue (0.318));
-  Ptr<OpticalRxAntennaModel> receiver = (rxPhyFactory.Create ())->GetObject<OpticalRxAntennaModel> ();     
-  receiver->SetOrientation (0.0);
-  
-
-  //Delay Model
-  Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();  
-
-  //Propagation Loss Models
-  Ptr<FsoFreeSpaceLossModel> freeSpaceLoss = CreateObject<FsoFreeSpaceLossModel> ();
-
-  Ptr<FsoDownLinkScintillationIndexModel> scintIndexModel = CreateObject<FsoDownLinkScintillationIndexModel> ();
-  scintIndexModel->SetRmsWindSpeed (21.0); //From the Hufnagel-Valley 5/7 model
-  scintIndexModel->SetGndRefractiveIdx (1.7e-14); //From the Hufnagel-Valley 5/7 model
-  
-  Ptr<FsoMeanIrradianceModel> meanIrradianceModel = CreateObject<FsoMeanIrradianceModel> ();
-
-  freeSpaceLoss->SetNext (scintIndexModel);
-  scintIndexModel->SetNext (meanIrradianceModel);
-
-  //Channel
-  Ptr<FsoChannel> channel = CreateObject<FsoChannel> ();
-  channel->SetPropagationDelayModel(delayModel);
-
-  //Error Model
-  Ptr<FsoDownLinkErrorModel> errorModel = CreateObject<FsoDownLinkErrorModel> ();
-
-  //Phy
-  double bitRate = 49.3724e6;
-  Ptr<FsoPhy> txPhy = CreateObject<FsoPhy> ();
-  txPhy->SetMobility (txMobility);
-  txPhy->SetChannel (channel);
   txPhy->SetAntennas (laser, 0);
-  txPhy->SetDevice (0);
-  txPhy->SetBitRate (bitRate);
- 
-  Ptr<FsoPhy> rxPhy = CreateObject<FsoPhy> ();
-  rxPhy->SetMobility (rxMobility);
-  rxPhy->SetChannel (channel);
-  rxPhy->SetAntennas (0, receiver);
-  rxPhy->SetDevice (0);
-  rxPhy->SetErrorModel (errorModel);
-  rxPhy->SetBitRate (bitRate);
-  errorModel->SetPhy (rxPhy);
-  
-  //Channel Setup
-  channel->SetPropagationDelayModel (delayModel);
-  channel->AddFsoPropagationLossModel (freeSpaceLoss);
-  channel->Add(txPhy);
-  channel->Add(rxPhy);
+  rxPhy->SetAntennas (0, opticalRx);
 
   //Setup Packet and Signal Params
   uint32_t size = 1024;//Packet size in bytes

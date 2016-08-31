@@ -48,6 +48,12 @@ FsoErrorModel::AssignStreams (int64_t stream)
   return DoAssignStreams (stream);
 }
 
+void 
+FsoErrorModel::SetPhy (Ptr<FsoPhy> phy)
+{
+  m_phy = phy;
+}
+
 TypeId 
 FsoDownLinkErrorModel::GetTypeId (void)
 {
@@ -57,12 +63,6 @@ FsoDownLinkErrorModel::GetTypeId (void)
     .AddConstructor<FsoDownLinkErrorModel> ()
   ;
   return tid;
-}
-
-void 
-FsoDownLinkErrorModel::SetPhy (Ptr<FsoPhy> phy)
-{
-  m_phy = phy;
 }
 
 FsoDownLinkErrorModel::FsoDownLinkErrorModel ()

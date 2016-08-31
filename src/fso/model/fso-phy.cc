@@ -229,7 +229,7 @@ FsoPhy::Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalPa
   fsoSignalParams->txBeamwidth          = m_txAntenna->GetBeamwidth ();
   fsoSignalParams->txPhy                = this;
   fsoSignalParams->txAntenna            = m_txAntenna;
-  fsoSignalParams->symbolPeriod         = 1/m_bitRate;
+  fsoSignalParams->symbolPeriod         = 1.0/m_bitRate;
   fsoSignalParams->wavelength           = m_txAntenna->GetWavelength ();
   fsoSignalParams->frequency            = 3e8/(m_txAntenna->GetWavelength ());
 

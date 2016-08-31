@@ -26,6 +26,7 @@
 #include "ns3/trace-helper.h"
 #include "ns3/fso-channel.h"
 #include "ns3/fso-phy.h"
+#include "ns3/fso-net-device.h"
 
 namespace ns3 {
 
@@ -183,7 +184,6 @@ public:
                           std::string n6 = "", const AttributeValue &v6 = EmptyAttributeValue (),
                           std::string n7 = "", const AttributeValue &v7 = EmptyAttributeValue ());
 
-private:
   /**
    * \param node the node on which we wish to create a wifi PHY
    * \param device the device within which this PHY will be created
@@ -193,6 +193,7 @@ private:
    */
   virtual Ptr<FsoPhy> Create (Ptr<Node> node, Ptr<NetDevice> device) const;
 
+private:
 
   ObjectFactory m_phy;
   ObjectFactory m_errorRateModel;
@@ -318,6 +319,20 @@ private:
   std::vector<ObjectFactory> m_propagationLoss;
   ObjectFactory m_propagationDelay;
 };
+
+/**
+ * \brief manage and create wifi channel objects for the yans model.
+ *
+ * The intent of this class is to make it easy to create a channel object
+ * which implements the yans channel model. The yans channel model is described
+ * in "Yet Another Network Simulator", http://cutebugs.net/files/wns2-yans.pdf
+ */
+class FsoMacHelper
+{
+public:
+  FsoMacHelper () { };
+};
+
 
 } //namespace ns3
 

@@ -62,7 +62,7 @@ FsoHelper::Install (const FsoPhyHelper &phyHelper,
   for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
     {  
       Ptr<Node> node = *i;
-      Ptr<FsoNetDevice> device = CreateObject<WifiNetDevice> ();
+      Ptr<FsoNetDevice> device = CreateObject<FsoNetDevice> ();
       //Ptr<FsoMac> mac = macHelper.Create ();
       Ptr<FsoPhy> phy = phyHelper.Create (node, device);
       //mac->SetAddress (Mac48Address::Allocate ());
@@ -70,6 +70,7 @@ FsoHelper::Install (const FsoPhyHelper &phyHelper,
       device->SetPhy (phy);
       node->AddDevice (device);
       devices.Add (device);
+      phy->SetMobility (node->GetObject<MobilityModel> ());
       NS_LOG_DEBUG ("node=" << node << ", mob=" << node->GetObject<MobilityModel> ());
     }
   return devices;
@@ -93,38 +94,13 @@ FsoHelper::Install (const FsoPhyHelper &phy,
 void
 FsoHelper::EnableLogComponents (void)
 {
-/*
-  LogComponentEnable ("Aarfcd", LOG_LEVEL_ALL);
-  LogComponentEnable ("AdhocWifiMac", LOG_LEVEL_ALL);
-  LogComponentEnable ("AmrrWifiRemoteStation", LOG_LEVEL_ALL);
-  LogComponentEnable ("ApWifiMac", LOG_LEVEL_ALL);
-  LogComponentEnable ("ArfWifiManager", LOG_LEVEL_ALL);
-  LogComponentEnable ("Cara", LOG_LEVEL_ALL);
-  LogComponentEnable ("DcaTxop", LOG_LEVEL_ALL);
-  LogComponentEnable ("DcfManager", LOG_LEVEL_ALL);
-  LogComponentEnable ("DsssErrorRateModel", LOG_LEVEL_ALL);
-  LogComponentEnable ("EdcaTxopN", LOG_LEVEL_ALL);
-  LogComponentEnable ("InterferenceHelper", LOG_LEVEL_ALL);
-  LogComponentEnable ("Jakes", LOG_LEVEL_ALL);
-  LogComponentEnable ("MacLow", LOG_LEVEL_ALL);
-  LogComponentEnable ("MacRxMiddle", LOG_LEVEL_ALL);
-  LogComponentEnable ("MsduAggregator", LOG_LEVEL_ALL);
-  LogComponentEnable ("MsduStandardAggregator", LOG_LEVEL_ALL);
-  LogComponentEnable ("NistErrorRateModel", LOG_LEVEL_ALL);
-  LogComponentEnable ("OnoeWifiRemoteStation", LOG_LEVEL_ALL);
-  LogComponentEnable ("PropagationLossModel", LOG_LEVEL_ALL);
-  LogComponentEnable ("RegularWifiMac", LOG_LEVEL_ALL);
-  LogComponentEnable ("RraaWifiManager", LOG_LEVEL_ALL);
-  LogComponentEnable ("StaWifiMac", LOG_LEVEL_ALL);
-  LogComponentEnable ("SupportedRates", LOG_LEVEL_ALL);
-  LogComponentEnable ("WifiChannel", LOG_LEVEL_ALL);
-  LogComponentEnable ("WifiPhyStateHelper", LOG_LEVEL_ALL);
-  LogComponentEnable ("WifiPhy", LOG_LEVEL_ALL);
-  LogComponentEnable ("WifiRemoteStationManager", LOG_LEVEL_ALL);
-  LogComponentEnable ("YansErrorRateModel", LOG_LEVEL_ALL);
-  LogComponentEnable ("YansWifiChannel", LOG_LEVEL_ALL);
-  LogComponentEnable ("YansWifiPhy", LOG_LEVEL_ALL);
-*/
+  LogComponentEnable ("FsoHelper", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoPhy", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO); 
+  LogComponentEnable ("FsoMeanIrradianceModel", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoDownLinkErrorModel", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoDownLinkScintillationIndexModel", LOG_LEVEL_INFO);
 }
 
 int64_t
@@ -335,8 +311,10 @@ FsoPhyHelper::Create (Ptr<Node> node, Ptr<NetDevice> device) const
   Ptr<FsoPhy> phy = m_phy.Create<FsoPhy> ();
   Ptr<FsoErrorModel> error = m_errorRateModel.Create<FsoErrorModel> ();
   phy->SetErrorModel (error);
+  error->SetPhy (phy);
   phy->SetChannel (m_channel);
   phy->SetDevice (device);
+  m_channel->Add (phy);
   return phy;
 }
 
