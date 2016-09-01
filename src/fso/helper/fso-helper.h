@@ -40,7 +40,7 @@ public:
   virtual ~FsoHelper ();
 
   /**
-   * Create a Wifi helper in an empty state: all its parameters
+   * Create a Fso helper in an empty state: all its parameters
    * must be set before calling ns3::FsoHelper::Install
    *
    * The default state is defined as being an Adhoc MAC layer with an ARF rate control algorithm
@@ -50,7 +50,7 @@ public:
   FsoHelper ();
 
   /**
-   * \returns a new WifiHelper in a default state
+   * \returns a new FsoHelper in a default state
    *
    * The default state is defined as being an Adhoc MAC layer with an ARF rate control algorithm
    * and both objects using their default attribute values. By default, configure MAC and PHY
@@ -87,21 +87,21 @@ public:
                                       const FsoMacHelper &mac, std::string nodeName) const;
 
   /**
-   * Helper to enable all WifiNetDevice log components with one statement
+   * Helper to enable all FsoNetDevice log components with one statement
    */
   static void EnableLogComponents (void);
 
   /**
   * Assign a fixed random variable stream number to the random variables
-  * used by the Phy and Mac aspects of the Wifi models.  Each device in
+  * used by the Phy and Mac aspects of the Fso models.  Each device in
   * container c has fixed stream numbers assigned to its random variables.
-  * The Wifi channel (e.g. propagation loss model) is excluded.
+  * The Fso channel (e.g. propagation loss model) is excluded.
   * Return the number of streams (possibly zero) that
   * have been assigned. The Install() method should have previously been
   * called by the user.
   *
   * \param c NetDeviceContainer of the set of net devices for which the
-  *          WifiNetDevice should be modified to use fixed streams
+  *          FsoNetDevice should be modified to use fixed streams
   * \param stream first stream index to use
   * \return the number of stream indices assigned by this helper
   */
@@ -307,7 +307,7 @@ public:
   * (possibly zero) that have been assigned.
   *
   * \param c NetDeviceContainer of the set of net devices for which the
-  *          WifiNetDevice should be modified to use fixed streams
+  *          FsoNetDevice should be modified to use fixed streams
   * \param stream first stream index to use
   *
   * \return the number of stream indices assigned by this helper
@@ -321,18 +321,75 @@ private:
 };
 
 /**
- * \brief manage and create wifi channel objects for the yans model.
- *
- * The intent of this class is to make it easy to create a channel object
- * which implements the yans channel model. The yans channel model is described
- * in "Yet Another Network Simulator", http://cutebugs.net/files/wns2-yans.pdf
+ * \brief create MAC layers for a ns3::FsoNetDevice.
  */
 class FsoMacHelper
 {
 public:
-  FsoMacHelper () { };
-};
+  /**
+   * Create a FsoMacHelper to make life easier for people who want to
+   * work with Fso MAC layers.
+   */
+  FsoMacHelper ();
+  /**
+   * Destroy a FsoMacHelper.
+   */
+  virtual ~FsoMacHelper ();
 
+  /**
+   * \param type the type of ns3::FsoMac to create.
+   * Valid values of the type field must be a type subclassed from FsoMac.
+   *
+   * \param n0 the name of the attribute to set
+   * \param v0 the value of the attribute to set
+   * \param n1 the name of the attribute to set
+   * \param v1 the value of the attribute to set
+   * \param n2 the name of the attribute to set
+   * \param v2 the value of the attribute to set
+   * \param n3 the name of the attribute to set
+   * \param v3 the value of the attribute to set
+   * \param n4 the name of the attribute to set
+   * \param v4 the value of the attribute to set
+   * \param n5 the name of the attribute to set
+   * \param v5 the value of the attribute to set
+   * \param n6 the name of the attribute to set
+   * \param v6 the value of the attribute to set
+   * \param n7 the name of the attribute to set
+   * \param v7 the value of the attribute to set
+   * \param n8 the name of the attribute to set
+   * \param v8 the value of the attribute to set
+   * \param n9 the name of the attribute to set
+   * \param v9 the value of the attribute to set
+   * \param n10 the name of the attribute to set
+   * \param v10 the value of the attribute to set
+   *
+   * All the attributes specified in this method should exist
+   * in the requested mac.
+   */
+  virtual void SetType (std::string type,
+                        std::string n0 = "", const AttributeValue &v0 = EmptyAttributeValue (),
+                        std::string n1 = "", const AttributeValue &v1 = EmptyAttributeValue (),
+                        std::string n2 = "", const AttributeValue &v2 = EmptyAttributeValue (),
+                        std::string n3 = "", const AttributeValue &v3 = EmptyAttributeValue (),
+                        std::string n4 = "", const AttributeValue &v4 = EmptyAttributeValue (),
+                        std::string n5 = "", const AttributeValue &v5 = EmptyAttributeValue (),
+                        std::string n6 = "", const AttributeValue &v6 = EmptyAttributeValue (),
+                        std::string n7 = "", const AttributeValue &v7 = EmptyAttributeValue (),
+                        std::string n8 = "", const AttributeValue &v8 = EmptyAttributeValue (),
+                        std::string n9 = "", const AttributeValue &v9 = EmptyAttributeValue (),
+                        std::string n10 = "", const AttributeValue &v10 = EmptyAttributeValue ());
+
+  /**
+   * \returns a new MAC object.
+   *
+   * This allows the ns3::FsoHelper class to create MAC objects from ns3::FsoHelper::Install.
+   */
+  virtual Ptr<FsoMac> Create (void) const;
+
+
+protected:
+  ObjectFactory m_mac;
+};
 
 } //namespace ns3
 

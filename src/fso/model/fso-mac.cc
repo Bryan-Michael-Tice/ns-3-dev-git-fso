@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2016
+ * Copyright (c) 2008 INRIA
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,12 +15,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Michael Di Perna <diperna.michael@gmail.com>
+ * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
+ *
+ * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
 #include "fso-mac.h"
+#include "ns3/uinteger.h"
+#include "ns3/boolean.h"
+#include "ns3/trace-source-accessor.h"
+#include "ns3/log.h"
 
 namespace ns3 {
+
+NS_LOG_COMPONENT_DEFINE ("FsoMac");
+NS_OBJECT_ENSURE_REGISTERED (FsoMac);
 
 FsoMac::FsoMac ()
 {
@@ -40,6 +49,112 @@ FsoMac::GetTypeId (void)
   ;
   return tid;
 }
+
+void
+FsoMac::SetAddress (Mac48Address address)
+{
+  NS_LOG_FUNCTION (this << address);
+  m_address = address;
+}
+
+Mac48Address
+FsoMac::GetAddress (void) const
+{
+  return m_address;
+}
+
+void
+FsoMac::SetFsoPhy (Ptr<FsoPhy> phy)
+{
+  NS_LOG_FUNCTION (this << phy);
+  m_phy = phy;
+}
+
+Ptr<FsoPhy>
+FsoMac::GetFsoPhy (void) const
+{
+  NS_LOG_FUNCTION (this);
+  return m_phy;
+}
+
+void
+FsoMac::SetPromisc (void)
+{
+  
+}
+
+void
+FsoMac::SetForwardUpCallback (ForwardUpCallback upCallback)
+{
+  NS_LOG_FUNCTION (this);
+  m_forwardUp = upCallback;
+}
+
+void
+FsoMac::SetLinkUpCallback (Callback<void> linkUp)
+{
+  NS_LOG_FUNCTION (this);
+  m_linkUp = linkUp;
+}
+
+void
+FsoMac::SetLinkDownCallback (Callback<void> linkDown)
+{
+  NS_LOG_FUNCTION (this);
+  m_linkDown = linkDown;
+}
+
+void
+FsoMac::Enqueue (Ptr<const Packet> packet, Mac48Address to, Mac48Address from)
+{
+  NS_LOG_FUNCTION (this << packet << to << from);
+  if (to.IsBroadcast ())
+    {
+      //Send packet down
+      //ForwardDown (packet, from, to); //ap-wifi-mac
+    }
+}
+
+void
+FsoMac::Enqueue (Ptr<const Packet> packet, Mac48Address to)
+{
+  NS_LOG_FUNCTION (this << packet << to);
+  //We're sending this packet with a from address that is our own. We
+  //get that address from the lower MAC and make use of the
+  //from-spoofing Enqueue() method to avoid duplicated code.
+  Enqueue (packet, to, m_address);
+}
+
+void
+FsoMac::NotifyTx (Ptr<const Packet> packet)
+{
+  m_macTxTrace (packet);
+}
+
+void
+FsoMac::NotifyTxDrop (Ptr<const Packet> packet)
+{
+  m_macTxDropTrace (packet);
+}
+
+void
+FsoMac::NotifyRx (Ptr<const Packet> packet)
+{
+  m_macRxTrace (packet);
+}
+
+void
+FsoMac::NotifyPromiscRx (Ptr<const Packet> packet)
+{
+  m_macPromiscRxTrace (packet);
+}
+
+void
+FsoMac::NotifyRxDrop (Ptr<const Packet> packet)
+{
+  m_macRxDropTrace (packet);
+}
+
 
 } // namespace ns3
 

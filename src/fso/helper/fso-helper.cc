@@ -50,7 +50,6 @@ FsoHelper
 FsoHelper::Default (void)
 {
   FsoHelper helper;
-  //helper.SetRemoteStationManager ("ns3::ArfWifiManager");
   return helper;
 }
 
@@ -63,10 +62,10 @@ FsoHelper::Install (const FsoPhyHelper &phyHelper,
     {  
       Ptr<Node> node = *i;
       Ptr<FsoNetDevice> device = CreateObject<FsoNetDevice> ();
-      //Ptr<FsoMac> mac = macHelper.Create ();
+      Ptr<FsoMac> mac = macHelper.Create ();
       Ptr<FsoPhy> phy = phyHelper.Create (node, device);
-      //mac->SetAddress (Mac48Address::Allocate ());
-      //device->SetMac (mac);
+      mac->SetAddress (Mac48Address::Allocate ());
+      device->SetMac (mac);
       device->SetPhy (phy);
       node->AddDevice (device);
       devices.Add (device);
@@ -119,8 +118,8 @@ FsoHelper::AssignStreams (NetDeviceContainer c, int64_t stream)
           currentStream += wifi->GetPhy ()->AssignStreams (currentStream);
 
           //Handle any random numbers in the MAC objects.
-          Ptr<WifiMac> mac = wifi->GetMac ();
-          Ptr<RegularWifiMac> rmac = DynamicCast<RegularWifiMac> (mac);
+          Ptr<FsoMac> mac = wifi->GetMac ();
+          Ptr<RegularFsoMac> rmac = DynamicCast<RegularFsoMac> (mac);
           if (rmac)
             {
               PointerValue ptr;
@@ -145,7 +144,7 @@ FsoHelper::AssignStreams (NetDeviceContainer c, int64_t stream)
               currentStream += bk_edcaTxopN->AssignStreams (currentStream);
 
               //if an AP, handle any beacon jitter
-              Ptr<ApWifiMac> apmac = DynamicCast<ApWifiMac> (rmac);
+              Ptr<ApFsoMac> apmac = DynamicCast<ApFsoMac> (rmac);
               if (apmac)
                 {
                   currentStream += apmac->AssignStreams (currentStream);
@@ -316,6 +315,50 @@ FsoPhyHelper::Create (Ptr<Node> node, Ptr<NetDevice> device) const
   phy->SetDevice (device);
   m_channel->Add (phy);
   return phy;
+}
+
+FsoMacHelper::FsoMacHelper ()
+{
+  m_mac.SetTypeId ("ns3::FsoMac");
+}
+
+FsoMacHelper::~FsoMacHelper ()
+{
+}
+
+void
+FsoMacHelper::SetType (std::string type,
+                        std::string n0, const AttributeValue &v0,
+                        std::string n1, const AttributeValue &v1,
+                        std::string n2, const AttributeValue &v2,
+                        std::string n3, const AttributeValue &v3,
+                        std::string n4, const AttributeValue &v4,
+                        std::string n5, const AttributeValue &v5,
+                        std::string n6, const AttributeValue &v6,
+                        std::string n7, const AttributeValue &v7,
+                        std::string n8, const AttributeValue &v8,
+                        std::string n9, const AttributeValue &v9,
+                        std::string n10, const AttributeValue &v10)
+{
+  m_mac.SetTypeId (type);
+  m_mac.Set (n0, v0);
+  m_mac.Set (n1, v1);
+  m_mac.Set (n2, v2);
+  m_mac.Set (n3, v3);
+  m_mac.Set (n4, v4);
+  m_mac.Set (n5, v5);
+  m_mac.Set (n6, v6);
+  m_mac.Set (n7, v7);
+  m_mac.Set (n8, v8);
+  m_mac.Set (n9, v9);
+  m_mac.Set (n10, v10);
+}
+
+Ptr<FsoMac>
+FsoMacHelper::Create (void) const
+{
+  Ptr<FsoMac> mac = m_mac.Create<FsoMac> ();
+  return mac;
 }
 
 

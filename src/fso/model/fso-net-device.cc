@@ -59,11 +59,11 @@ FsoNetDevice::GetTypeId (void)
                    MakePointerAccessor (&FsoNetDevice::GetPhy,
                                         &FsoNetDevice::SetPhy),
                    MakePointerChecker<FsoPhy> ())
-    /*.AddAttribute ("Mac", "The MAC layer attached to this device.",
+    .AddAttribute ("Mac", "The MAC layer attached to this device.",
                    PointerValue (),
                    MakePointerAccessor (&FsoNetDevice::GetMac,
                                         &FsoNetDevice::SetMac),
-                   MakePointerChecker<FsoMac> ())*/
+                   MakePointerChecker<FsoMac> ())
   ;
   return tid;
 }
@@ -84,9 +84,9 @@ FsoNetDevice::DoDispose (void)
 {
   NS_LOG_FUNCTION_NOARGS ();
   m_node = 0;
-  //m_mac->Dispose ();
+  m_mac->Dispose ();
   m_phy->Dispose ();
-  //m_mac = 0;
+  m_mac = 0;
   m_phy = 0;
   NetDevice::DoDispose ();
 }
@@ -95,30 +95,26 @@ void
 FsoNetDevice::DoInitialize (void)
 {
   m_phy->Initialize ();
-  //m_mac->Initialize ();
+  m_mac->Initialize ();
   NetDevice::DoInitialize ();
 }
 
 void
 FsoNetDevice::CompleteConfig (void)
 {
-  if (/*m_mac == 0
-      ||*/ m_phy == 0
+  if (m_mac == 0
+      || m_phy == 0
       || m_node == 0
       || m_configComplete)
     {
       return;
     }
-  /*
-  m_mac->SetWifiRemoteStationManager (m_stationManager);
-  m_mac->SetWifiPhy (m_phy);
+
+  m_mac->SetFsoPhy (m_phy);
   m_mac->SetForwardUpCallback (MakeCallback (&FsoNetDevice::ForwardUp, this));
   m_mac->SetLinkUpCallback (MakeCallback (&FsoNetDevice::LinkUp, this));
   m_mac->SetLinkDownCallback (MakeCallback (&FsoNetDevice::LinkDown, this));
-  m_stationManager->SetupPhy (m_phy);
-  m_stationManager->SetupMac (m_mac);
   m_configComplete = true;
-  */
 }
 
 void
@@ -174,14 +170,13 @@ FsoNetDevice::DoGetChannel (void) const
 void
 FsoNetDevice::SetAddress (Address address)
 {
-  //m_mac->SetAddress (Mac48Address::ConvertFrom (address));
+  m_mac->SetAddress (Mac48Address::ConvertFrom (address));
 }
 
 Address
 FsoNetDevice::GetAddress (void) const
 {
-  Address ad;//MDP - Temp
-  return ad; //m_mac->GetAddress ();
+  return m_mac->GetAddress ();
 }
 
 bool
@@ -257,7 +252,7 @@ FsoNetDevice::IsBridge (void) const
 bool
 FsoNetDevice::Send (Ptr<Packet> packet, const Address& dest, uint16_t protocolNumber)
 {
-  /*
+  
   NS_ASSERT (Mac48Address::IsMatchingType (dest));
 
   Mac48Address realTo = Mac48Address::ConvertFrom (dest);
@@ -268,7 +263,7 @@ FsoNetDevice::Send (Ptr<Packet> packet, const Address& dest, uint16_t protocolNu
 
   m_mac->NotifyTx (packet);
   m_mac->Enqueue (packet, realTo);
-  */
+  
   return true;
 }
 
@@ -300,7 +295,7 @@ FsoNetDevice::SetReceiveCallback (NetDevice::ReceiveCallback cb)
 void
 FsoNetDevice::ForwardUp (Ptr<Packet> packet, Mac48Address from, Mac48Address to)
 {
-  /*
+  
   LlcSnapHeader llc;
   enum NetDevice::PacketType type;
   if (to.IsBroadcast ())
@@ -336,7 +331,7 @@ FsoNetDevice::ForwardUp (Ptr<Packet> packet, Mac48Address from, Mac48Address to)
       m_mac->NotifyPromiscRx (packet);
       m_promiscRx (this, packet, llc.GetType (), from, to, type);
     }
-  */
+  
 }
 
 void
@@ -376,10 +371,8 @@ FsoNetDevice::SendFrom (Ptr<Packet> packet, const Address& source, const Address
 void
 FsoNetDevice::SetPromiscReceiveCallback (PromiscReceiveCallback cb)
 {
-  /*
   m_promiscRx = cb;
   m_mac->SetPromisc ();
-  */
 }
 
 bool

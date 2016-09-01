@@ -32,6 +32,7 @@
 #include "ns3/fso-mean-irradiance-model.h"
 #include "ns3/fso-helper.h"
 #include "ns3/fso-net-device.h"
+#include "ns3/internet-stack-helper.h"
 
 #include <ns3/object-factory.h>
 #include "ns3/double.h"
@@ -120,7 +121,7 @@ main (int argc, char *argv[])
 
   NetDeviceContainer devices;
   FsoHelper fsoHelper;
-  FsoMacHelper fsoMacHelper;//Placeholder helper, to be implemented in future work
+  FsoMacHelper fsoMacHelper;
 
   if (verbose)
    {
@@ -143,6 +144,9 @@ main (int argc, char *argv[])
 
   txPhy->SetAntennas (laser, 0);
   rxPhy->SetAntennas (0, opticalRx);
+
+  InternetStackHelper stack;
+  stack.Install (nodes);
 
   //Setup Packet and Signal Params
   uint32_t size = 1024;//Packet size in bytes

@@ -35,12 +35,6 @@ namespace ns3 {
 class FsoChannel;
 class FsoPhy;
 
-/**
- * \defgroup wifi Wifi Models
- *
- * This section documents the API of the ns-3 Wifi module. For a generic functional description, please refer to the ns-3 manual.
- */
-
 
 /**
  * \brief Hold together all fso related objects.
@@ -105,7 +99,6 @@ public:
   virtual void SetPromiscReceiveCallback (PromiscReceiveCallback cb);
   virtual bool SupportsSendFrom (void) const;
 
-
 protected:
   virtual void DoDispose (void);
   virtual void DoInitialize (void);
@@ -126,13 +119,12 @@ private:
   static const uint16_t MAX_MSDU_SIZE = 2304;
 
   /**
-   * Set that the link is up. A link is always up in ad-hoc mode.
-   * For a STA, a link is up when the STA is associated with an AP.
+   * Set that the link is up.
    */
   void LinkUp (void);
 
   /**
-   * Set that the link is down (i.e. STA is not associated).
+   * Set that the link is down.
    */
   void LinkDown (void);
 
