@@ -62,6 +62,7 @@ FsoPhy::FsoPhy () : m_txState (State::IDLE)
 {
   NS_LOG_FUNCTION (this);
   m_txDurationTimer.SetFunction (&FsoPhy::SwitchToIdle, this);
+  m_packetRequestTimer.SetFunction (&FsoPhy::PacketRequest, this);
   
 }
 
@@ -207,10 +208,29 @@ FsoPhy::SwitchToTx (Time duration)
   m_txDurationTimer.Schedule ();
 }
 
+void
+FsoPhy::RequestPacket ()
+{
+  NS_ASSERT (m_txState == State::IDLE);
+  Ptr<FsoMac> mac = m_device->GetMac ();
+  Ptr<Packet> packet = mac->ForwardDown ();
+  
+  if (packet != 0)
+   {
+     Transmit (packet);
+   }
+  else
+   {
+     m_packetRequestTimer.SetDelay (m_packetRequestDuration);
+     m_packetRequestTimer.Schedule ();
+   }
+}
+
 void 
 FsoPhy::SwitchToIdle ()
 {
   m_txState = State::IDLE;
+  RequestPacket ();//Request next packet from MAC layer
 }
 
 FsoPhy::State
@@ -220,10 +240,14 @@ FsoPhy::GetTxState ()
 }
 
 void 
-FsoPhy::Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
+FsoPhy::Transmit (Ptr<const Packet> packet)
 {
   NS_LOG_FUNCTION (this);
   NS_ASSERT (m_txState == State::IDLE);
+
+  //Is this going to cause memory problems if we create a new FsoSignalParameters each transmit?
+  //Should they be released upon reception? Or should we re-use the same fso params?***
+  Ptr<FsoSignalParameters> fsoSignalParams = Create<FsoSignalParameters> ();
 
   fsoSignalParams->power                = m_txAntenna->GetTxPower () + m_txAntenna->GetGain ();  
   fsoSignalParams->txBeamwidth          = m_txAntenna->GetBeamwidth ();

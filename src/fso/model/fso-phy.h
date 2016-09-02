@@ -175,9 +175,8 @@ public:
 
   /**
    * \param packet the packet to send
-   * \param fsoSignalParams pointer to the optical signal parameters
    */
-  virtual void Transmit (Ptr<const Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams);
+  virtual void Transmit (Ptr<const Packet> packet);
 
 
   /**
@@ -229,6 +228,12 @@ public:
   virtual double GetBitRate () const;
 
 
+  /**
+   * Request a packet from MAC layer
+   */
+  virtual void RequestPacket ();
+
+
 protected:
   //Inherited from Object
   virtual void DoDispose ();
@@ -243,11 +248,13 @@ private:
   
   State                         m_txState;        //!< transmit state of the Phy
   Timer                         m_txDurationTimer;//!< Timer for transmit transmit duration
+  Timer                         m_packetRequestTimer;//!< Timer for transmit transmit duration
 
   RxOkCallback                  m_rxOkCallback;   //!< Callback for received packet
   RxErrorCallback               m_rxErrorCallback;//!< Callback for received packet with packet error
   
   double                        m_bitRate;        //!< bit rate associated with the Phy
+  double                        m_packetRequestDuration;  //!< time duration to back-off between packet requests
 
   /**
    * Set Phy state to TX and schedule switch back to IDLE

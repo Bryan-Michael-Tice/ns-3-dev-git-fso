@@ -35,6 +35,7 @@
 #include "ns3/internet-stack-helper.h"
 
 #include <ns3/object-factory.h>
+#include "ns3/network-module.h"
 #include "ns3/double.h"
 
 using namespace ns3;
@@ -125,6 +126,10 @@ main (int argc, char *argv[])
 
   if (verbose)
    {
+     LogComponentEnable ("PacketSocketServer", LOG_LEVEL_ALL);
+     LogComponentEnable ("PacketSocket", LOG_LEVEL_ALL);
+     LogComponentEnable ("PacketSocketClient", LOG_LEVEL_ALL);
+     LogComponentEnable ("SimpleNetDevice", LOG_LEVEL_ALL);
      fsoHelper.EnableLogComponents ();
    }
 
@@ -145,8 +150,29 @@ main (int argc, char *argv[])
   txPhy->SetAntennas (laser, 0);
   rxPhy->SetAntennas (0, opticalRx);
 
-  InternetStackHelper stack;
-  stack.Install (nodes);
+  //InternetStackHelper stack;
+  //stack.Install (nodes);
+
+  PacketSocketHelper packetSocket;
+  // give packet socket powers to nodes.
+  packetSocket.Install (nodes);
+
+  PacketSocketAddress socketAddr;
+  socketAddr.SetSingleDevice (txDevice->GetIfIndex ());
+  socketAddr.SetPhysicalAddress (rxDevice->GetAddress ());
+  // Arbitrary protocol type.
+  // Note: PacketSocket doesn't have any L4 multiplexing or demultiplexing
+  //       The only mux/demux is based on the protocol field
+  socketAddr.SetProtocol (1);
+
+  Ptr<PacketSocketClient> client = CreateObject<PacketSocketClient> ();
+  client->SetRemote (socketAddr);
+  nodes.Get (0)->AddApplication (client);
+
+  Ptr<PacketSocketServer> server = CreateObject<PacketSocketServer> ();
+  server->SetLocal (socketAddr);
+  nodes.Get (1)->AddApplication (server);
+
 
   //Setup Packet and Signal Params
   uint32_t size = 1024;//Packet size in bytes
@@ -154,8 +180,8 @@ main (int argc, char *argv[])
 
   Ptr<FsoSignalParameters> params = Create<FsoSignalParameters> ();
 
-  Simulator::Stop (Seconds (2.0));
-  Simulator::Schedule (Seconds (1.0), &FsoPhy::Transmit, txPhy, packet, params); //Send packet from transmitter Phy
+  Simulator::Stop (Seconds (10.0));
+  //Simulator::Schedule (Seconds (1.0), &FsoPhy::Transmit, txPhy, packet, params); //Send packet from transmitter Phy
 
   Simulator::Run ();
   Simulator::Destroy ();

@@ -25,6 +25,7 @@
 #include "ns3/boolean.h"
 #include "ns3/trace-source-accessor.h"
 #include "ns3/log.h"
+#include "ns3/drop-tail-queue.h"
 
 namespace ns3 {
 
@@ -33,6 +34,9 @@ NS_OBJECT_ENSURE_REGISTERED (FsoMac);
 
 FsoMac::FsoMac ()
 {
+  //Create queue objects
+  m_rxQueue = CreateObject<DropTailQueue> ();
+  m_txQueue = CreateObject<DropTailQueue> ();
 }
 
 FsoMac::~FsoMac ()
@@ -108,11 +112,7 @@ void
 FsoMac::Enqueue (Ptr<const Packet> packet, Mac48Address to, Mac48Address from)
 {
   NS_LOG_FUNCTION (this << packet << to << from);
-  if (to.IsBroadcast ())
-    {
-      //Send packet down
-      //ForwardDown (packet, from, to); //ap-wifi-mac
-    }
+  m_txQueue->Enqueue (Create<QueueItem> (packet));
 }
 
 void
@@ -153,6 +153,17 @@ void
 FsoMac::NotifyRxDrop (Ptr<const Packet> packet)
 {
   m_macRxDropTrace (packet);
+}
+
+Ptr<Packet> 
+FsoMac::ForwardDown ()
+{
+  if (!(m_txQueue.IsEmpty ()))
+   {
+     return (m_txQueue->Dequeue ())->GetPacket ();
+   }
+
+  return 0;
 }
 
 

@@ -158,8 +158,14 @@ public:
    */
   void NotifyRxDrop (Ptr<const Packet> packet);
 
+  /**
+   * return next packet in queue, if queue is empty return 0
+   */
+  Ptr<Packet> ForwardDown ();
+
 protected:
   Mac48Address m_address;        //!< Address of MAC
+  Ptr<DropTailQueue> m_txQueue;  //!< Queue for outgoing packets
 
   Callback<void> m_linkUp;       
   Callback<void> m_linkDown;     

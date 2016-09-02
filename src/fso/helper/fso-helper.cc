@@ -94,6 +94,7 @@ void
 FsoHelper::EnableLogComponents (void)
 {
   LogComponentEnable ("FsoHelper", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoNetDevice", LOG_LEVEL_ALL);
   LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoPhy", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO); 
