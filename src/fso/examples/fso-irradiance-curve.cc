@@ -173,14 +173,14 @@ main (int argc, char *argv[])
   txPhy->SetMobility (txMobility);
   txPhy->SetChannel (channel);
   txPhy->SetAntennas (laser, 0);
-  txPhy->SetDevice (0);
+  txPhy->SetFsoDevice (0);
   txPhy->SetBitRate (bitRate);
  
   Ptr<FsoPhy> rxPhy = CreateObject<FsoPhy> ();
   rxPhy->SetMobility (rxMobility);
   rxPhy->SetChannel (channel);
   rxPhy->SetAntennas (0, receiver);
-  rxPhy->SetDevice (0);
+  rxPhy->SetFsoDevice (0);
   rxPhy->SetErrorModel (errorModel);
   rxPhy->SetBitRate (bitRate);
   rxPhy->SetReceiveOkCallback ( MakeCallback (&PlotPacketRx));
@@ -197,8 +197,6 @@ main (int argc, char *argv[])
   uint32_t size = 1024;//Packet size in bytes
   Ptr<Packet> packet = Create<Packet> (size);
 
-  Ptr<FsoSignalParameters> params = Create<FsoSignalParameters> ();
-
   double packetDelay = 8.0*(22e-6); //seconds between packets to be sent
   double numPackets = 100;
   double simTime = numPackets*packetDelay + 1.0;
@@ -207,7 +205,7 @@ main (int argc, char *argv[])
 
   for (int i = 0; i < numPackets; i++)
    {
-     Simulator::Schedule (Seconds (0.1 + ((double)(i))*packetDelay), &FsoPhy::Transmit, txPhy, packet, params); //Send packet from transmitter Phy
+     Simulator::Schedule (Seconds (0.1 + ((double)(i))*packetDelay), &FsoPhy::Transmit, txPhy, packet); //Send packet from transmitter Phy
    }   
 
   

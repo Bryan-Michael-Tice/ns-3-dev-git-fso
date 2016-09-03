@@ -34,8 +34,6 @@ NS_OBJECT_ENSURE_REGISTERED (FsoMac);
 
 FsoMac::FsoMac ()
 {
-  //Create queue objects
-  m_rxQueue = CreateObject<DropTailQueue> ();
   m_txQueue = CreateObject<DropTailQueue> ();
 }
 
@@ -74,7 +72,7 @@ FsoMac::SetFsoPhy (Ptr<FsoPhy> phy)
   m_phy = phy;
 }
 
-Ptr<FsoPhy>
+Ptr<FsoPhy> 
 FsoMac::GetFsoPhy (void) const
 {
   NS_LOG_FUNCTION (this);
@@ -109,14 +107,14 @@ FsoMac::SetLinkDownCallback (Callback<void> linkDown)
 }
 
 void
-FsoMac::Enqueue (Ptr<const Packet> packet, Mac48Address to, Mac48Address from)
+FsoMac::Enqueue (Ptr</*const*/ Packet> packet, Mac48Address to, Mac48Address from)
 {
   NS_LOG_FUNCTION (this << packet << to << from);
   m_txQueue->Enqueue (Create<QueueItem> (packet));
 }
 
 void
-FsoMac::Enqueue (Ptr<const Packet> packet, Mac48Address to)
+FsoMac::Enqueue (Ptr</*const*/ Packet> packet, Mac48Address to)
 {
   NS_LOG_FUNCTION (this << packet << to);
   //We're sending this packet with a from address that is our own. We
@@ -158,7 +156,7 @@ FsoMac::NotifyRxDrop (Ptr<const Packet> packet)
 Ptr<Packet> 
 FsoMac::ForwardDown ()
 {
-  if (!(m_txQueue.IsEmpty ()))
+  if (!(m_txQueue->IsEmpty ()))
    {
      return (m_txQueue->Dequeue ())->GetPacket ();
    }

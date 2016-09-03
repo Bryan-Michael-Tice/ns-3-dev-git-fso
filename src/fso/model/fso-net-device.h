@@ -34,6 +34,7 @@ namespace ns3 {
 
 class FsoChannel;
 class FsoPhy;
+class FsoMac;
 
 
 /**

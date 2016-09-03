@@ -191,7 +191,7 @@ public:
    *
    * This method implements the pure virtual method defined in \ref ns3::FsoPhyHelper.
    */
-  virtual Ptr<FsoPhy> Create (Ptr<Node> node, Ptr<NetDevice> device) const;
+  virtual Ptr<FsoPhy> Create (Ptr<Node> node, Ptr<FsoNetDevice> device) const;
 
 private:
 

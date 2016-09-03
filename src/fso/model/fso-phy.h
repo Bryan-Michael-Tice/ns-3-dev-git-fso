@@ -28,7 +28,7 @@
 #include <ns3/nstime.h>
 #include "ns3/timer.h"
 #include <ns3/packet.h>
-#include <ns3/net-device.h>
+#include "fso-net-device.h"
 
 #include "fso-error-model.h"
 #include "fso-signal-parameters.h"
@@ -41,7 +41,7 @@ namespace ns3 {
 class FsoChannel;
 class MobilityModel;
 class FsoErrorModel;
-class NetDevice;
+class FsoNetDevice;
 
 /**
  * \ingroup fso
@@ -122,14 +122,14 @@ public:
    *
    * \param d the NetDevice instance
    */
-  virtual void SetDevice (Ptr<NetDevice> d);
+  virtual void SetFsoDevice (Ptr<FsoNetDevice> d);
 
   /**
    * Get the associated NetDevice instance
    *
    * \return a Ptr to the associated NetDevice instance
    */
-  virtual Ptr<NetDevice> GetDevice () const;
+  virtual Ptr<FsoNetDevice> GetFsoDevice () const;
 
   /**
    * Set the mobility model associated with this device.
@@ -240,7 +240,7 @@ protected:
 
 private:
   Ptr<FsoChannel>               m_channel;        //!< FsoChannel that this FsoPhy is connected to
-  Ptr<NetDevice>                m_device;         //!< Pointer to the device
+  Ptr<FsoNetDevice>             m_device;         //!< Pointer to the device
   Ptr<MobilityModel>            m_mobility;       //!< Pointer to the mobility model
   Ptr<LaserAntennaModel>        m_txAntenna;      //!< Pointer to the TX antenna model
   Ptr<OpticalRxAntennaModel>    m_rxAntenna;      //!< Pointer to the RX antenna model

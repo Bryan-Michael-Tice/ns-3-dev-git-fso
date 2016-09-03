@@ -132,14 +132,14 @@ main (int argc, char *argv[])
   txPhy->SetMobility (txMobility);
   txPhy->SetChannel (channel);
   txPhy->SetAntennas (laser, 0);
-  txPhy->SetDevice (0);
+  txPhy->SetFsoDevice (0);
   txPhy->SetBitRate (bitRate);
  
   Ptr<FsoPhy> rxPhy = CreateObject<FsoPhy> ();
   rxPhy->SetMobility (rxMobility);
   rxPhy->SetChannel (channel);
   rxPhy->SetAntennas (0, receiver);
-  rxPhy->SetDevice (0);
+  rxPhy->SetFsoDevice (0);
   rxPhy->SetErrorModel (errorModel);
   rxPhy->SetBitRate (bitRate);
   errorModel->SetPhy (rxPhy);
@@ -154,10 +154,8 @@ main (int argc, char *argv[])
   uint32_t size = 1024;//Packet size in bytes
   Ptr<Packet> packet = Create<Packet> (size);
 
-  Ptr<FsoSignalParameters> params = Create<FsoSignalParameters> ();
-
   Simulator::Stop (Seconds (2.0));
-  Simulator::Schedule (Seconds (1.0), &FsoPhy::Transmit, txPhy, packet, params); //Send packet from transmitter Phy
+  Simulator::Schedule (Seconds (1.0), &FsoPhy::Transmit, txPhy, packet); //Send packet from transmitter Phy
 
   Simulator::Run ();
   Simulator::Destroy ();

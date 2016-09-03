@@ -26,14 +26,15 @@
 #include <ns3/object.h>
 #include "ns3/packet.h"
 #include "ns3/mac48-address.h"
-#include "ns3/mac-low.h"
+#include "ns3/drop-tail-queue.h"
+//#include "ns3/mac-low.h"
 #include "fso-phy.h"
-#include "ns3/ssid.h"
-#include "ns3/qos-utils.h"
+//#include "ns3/ssid.h"
+//#include "ns3/qos-utils.h"
 
 namespace ns3 {
 
-class MacLow;
+class FsoPhy;
 
 class FsoMac  : public Object
 {
@@ -70,7 +71,7 @@ public:
    * this device to operate in a bridged mode, forwarding received
    * frames without altering the source address.
    */
-  virtual void Enqueue (Ptr<const Packet> packet, Mac48Address to, Mac48Address from);
+  virtual void Enqueue (Ptr</*const*/ Packet> packet, Mac48Address to, Mac48Address from);
 
   /**
    * \param packet the packet to send.
@@ -80,7 +81,7 @@ public:
    * dequeued as soon as the channel access function determines that
    * access is granted to this MAC.
    */
-  virtual void Enqueue (Ptr<const Packet> packet, Mac48Address to);
+  virtual void Enqueue (Ptr</*const*/ Packet> packet, Mac48Address to);
 
   /**
    * \param phy the physical layer attached to this MAC.

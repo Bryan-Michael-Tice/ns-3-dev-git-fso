@@ -306,14 +306,14 @@ FsoPhyHelper::SetErrorRateModel (std::string name,
 }
 
 Ptr<FsoPhy>
-FsoPhyHelper::Create (Ptr<Node> node, Ptr<NetDevice> device) const
+FsoPhyHelper::Create (Ptr<Node> node, Ptr<FsoNetDevice> device) const
 {
   Ptr<FsoPhy> phy = m_phy.Create<FsoPhy> ();
   Ptr<FsoErrorModel> error = m_errorRateModel.Create<FsoErrorModel> ();
   phy->SetErrorModel (error);
   error->SetPhy (phy);
   phy->SetChannel (m_channel);
-  phy->SetDevice (device);
+  phy->SetFsoDevice (device);
   m_channel->Add (phy);
   return phy;
 }

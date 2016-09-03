@@ -21,6 +21,7 @@
  */
 
 #include "fso-phy.h"
+#include "fso-mac.h"
 #include "ns3/simulator.h"
 #include "ns3/packet.h"
 #include "ns3/assert.h"
@@ -62,7 +63,7 @@ FsoPhy::FsoPhy () : m_txState (State::IDLE)
 {
   NS_LOG_FUNCTION (this);
   m_txDurationTimer.SetFunction (&FsoPhy::SwitchToIdle, this);
-  m_packetRequestTimer.SetFunction (&FsoPhy::PacketRequest, this);
+  m_packetRequestTimer.SetFunction (&FsoPhy::RequestPacket, this);
   
 }
 
@@ -123,14 +124,14 @@ FsoPhy::SwitchFromRxEndError (Ptr<Packet> packet, double snr)
 }
 
 void 
-FsoPhy::SetDevice (Ptr<NetDevice> d)
+FsoPhy::SetFsoDevice (Ptr<FsoNetDevice> d)
 {
   //NS_ASSERT (d != 0);
   m_device = d;
 }
 
-Ptr<NetDevice> 
-FsoPhy::GetDevice () const
+Ptr<FsoNetDevice> 
+FsoPhy::GetFsoDevice () const
 {
   return m_device;
 }
@@ -221,7 +222,7 @@ FsoPhy::RequestPacket ()
    }
   else
    {
-     m_packetRequestTimer.SetDelay (m_packetRequestDuration);
+     m_packetRequestTimer.SetDelay (Seconds (m_packetRequestDuration));
      m_packetRequestTimer.Schedule ();
    }
 }
