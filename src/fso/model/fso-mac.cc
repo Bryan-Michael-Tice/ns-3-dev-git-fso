@@ -111,15 +111,13 @@ FsoMac::Enqueue (Ptr</*const*/ Packet> packet, Mac48Address to, Mac48Address fro
 {
   NS_LOG_FUNCTION (this << packet << to << from);
   m_txQueue->Enqueue (Create<QueueItem> (packet));
+  m_phy->AvailablePacket ();
 }
 
 void
 FsoMac::Enqueue (Ptr</*const*/ Packet> packet, Mac48Address to)
 {
   NS_LOG_FUNCTION (this << packet << to);
-  //We're sending this packet with a from address that is our own. We
-  //get that address from the lower MAC and make use of the
-  //from-spoofing Enqueue() method to avoid duplicated code.
   Enqueue (packet, to, m_address);
 }
 

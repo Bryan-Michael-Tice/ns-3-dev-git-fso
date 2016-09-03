@@ -126,10 +126,9 @@ main (int argc, char *argv[])
 
   if (verbose)
    {
-     LogComponentEnable ("PacketSocketServer", LOG_LEVEL_ALL);
-     LogComponentEnable ("PacketSocket", LOG_LEVEL_ALL);
-     LogComponentEnable ("PacketSocketClient", LOG_LEVEL_ALL);
-     LogComponentEnable ("SimpleNetDevice", LOG_LEVEL_ALL);
+     //LogComponentEnable ("PacketSocketServer", LOG_LEVEL_ALL);
+     //LogComponentEnable ("PacketSocket", LOG_LEVEL_ALL);
+     //LogComponentEnable ("PacketSocketClient", LOG_LEVEL_ALL);
      fsoHelper.EnableLogComponents ();
    }
 

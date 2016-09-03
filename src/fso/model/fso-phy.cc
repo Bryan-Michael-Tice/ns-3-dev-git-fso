@@ -63,8 +63,6 @@ FsoPhy::FsoPhy () : m_txState (State::IDLE)
 {
   NS_LOG_FUNCTION (this);
   m_txDurationTimer.SetFunction (&FsoPhy::SwitchToIdle, this);
-  m_packetRequestTimer.SetFunction (&FsoPhy::RequestPacket, this);
-  
 }
 
 FsoPhy::~FsoPhy ()
@@ -106,7 +104,6 @@ FsoPhy::SwitchFromRxEndOk (Ptr<Packet> packet, double snr, Ptr<FsoSignalParamete
     { 
       m_rxOkCallback (packet, snr, params);
     }
-
 }
 
 void
@@ -201,6 +198,7 @@ FsoPhy::GetBitRate () const
 void 
 FsoPhy::SwitchToTx (Time duration)
 {
+  NS_LOG_FUNCTION (this);
   NS_ASSERT (m_txState == State::IDLE);
   m_txState = State::TX;
   
@@ -212,6 +210,7 @@ FsoPhy::SwitchToTx (Time duration)
 void
 FsoPhy::RequestPacket ()
 {
+  NS_LOG_FUNCTION (this);
   NS_ASSERT (m_txState == State::IDLE);
   Ptr<FsoMac> mac = m_device->GetMac ();
   Ptr<Packet> packet = mac->ForwardDown ();
@@ -220,16 +219,21 @@ FsoPhy::RequestPacket ()
    {
      Transmit (packet);
    }
-  else
+}
+
+void 
+FsoPhy::AvailablePacket ()
+{
+  if (m_txState == State::IDLE)
    {
-     m_packetRequestTimer.SetDelay (Seconds (m_packetRequestDuration));
-     m_packetRequestTimer.Schedule ();
+     RequestPacket ();
    }
 }
 
 void 
 FsoPhy::SwitchToIdle ()
 {
+  NS_LOG_FUNCTION (this);
   m_txState = State::IDLE;
   RequestPacket ();//Request next packet from MAC layer
 }
@@ -284,6 +288,7 @@ FsoPhy::Receive (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 Time 
 FsoPhy::CalculateTxDuration (uint32_t size, Ptr<FsoSignalParameters> fsoSignalParams) const
 {
+  NS_LOG_FUNCTION (this);
   NS_LOG_DEBUG ("PhyTransmit: symbol period=" << fsoSignalParams->symbolPeriod << "s"); 
   NS_ASSERT (fsoSignalParams->symbolPeriod > 0.0);
   return NanoSeconds (size * 8 * fsoSignalParams->symbolPeriod);
