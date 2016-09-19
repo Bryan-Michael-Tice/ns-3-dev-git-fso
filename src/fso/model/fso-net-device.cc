@@ -64,16 +64,14 @@ FsoNetDevice::GetTypeId (void)
 }
 
 FsoNetDevice::FsoNetDevice ()
-  : m_configComplete (false)
+  : m_mtu (1024), m_configComplete (false)
 {
   NS_LOG_FUNCTION (this);
-  NS_LOG_FUNCTION_NOARGS ();
 }
 
 FsoNetDevice::~FsoNetDevice ()
 {
   NS_LOG_FUNCTION (this);
-  NS_LOG_FUNCTION_NOARGS ();
 }
 
 void
@@ -396,15 +394,16 @@ FsoNetDevice::SupportsSendFrom (void) const
 bool 
 FsoNetDevice::SetMtu (const uint16_t mtu)
 {
-  //Not implemented yet
-  return false;
+  NS_LOG_FUNCTION (this);
+  m_mtu = mtu;
+  return true;
 }
 
 uint16_t 
 FsoNetDevice::GetMtu (void) const
 {
-  //Not implemented yet
-  return 0;
+  NS_LOG_FUNCTION (this);
+  return m_mtu;
 }
 
 } //namespace ns3

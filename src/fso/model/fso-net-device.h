@@ -151,7 +151,7 @@ private:
   uint32_t m_ifIndex;
   bool m_linkUp;
   TracedCallback<> m_linkChanges;
-  mutable uint16_t m_mtu;
+  uint16_t m_mtu;
   bool m_configComplete;
 };
 

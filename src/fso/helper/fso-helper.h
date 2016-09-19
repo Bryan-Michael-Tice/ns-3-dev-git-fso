@@ -51,7 +51,7 @@ public:
   /**
    * Creates a default FsoHelper.
    */
-  virtual FsoHelper Default (void);
+  static FsoHelper Default (void);
 
   /**
    * \param phy the PHY helper to create PHY objects
