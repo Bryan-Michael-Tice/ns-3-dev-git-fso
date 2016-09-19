@@ -45,11 +45,6 @@ FsoNetDevice::GetTypeId (void)
     .SetParent<NetDevice> ()
     .AddConstructor<FsoNetDevice> ()
     .SetGroupName ("Fso")
-    .AddAttribute ("Mtu", "The MAC-level Maximum Transmission Unit",
-                   UintegerValue (MAX_MSDU_SIZE - LLC_SNAP_HEADER_LENGTH),
-                   MakeUintegerAccessor (&FsoNetDevice::SetMtu,
-                                         &FsoNetDevice::GetMtu),
-                   MakeUintegerChecker<uint16_t> (1,MAX_MSDU_SIZE - LLC_SNAP_HEADER_LENGTH))
     .AddAttribute ("Channel", "The channel attached to this device",
                    PointerValue (),
                    MakePointerAccessor (&FsoNetDevice::DoGetChannel),
@@ -71,11 +66,13 @@ FsoNetDevice::GetTypeId (void)
 FsoNetDevice::FsoNetDevice ()
   : m_configComplete (false)
 {
+  NS_LOG_FUNCTION (this);
   NS_LOG_FUNCTION_NOARGS ();
 }
 
 FsoNetDevice::~FsoNetDevice ()
 {
+  NS_LOG_FUNCTION (this);
   NS_LOG_FUNCTION_NOARGS ();
 }
 
@@ -94,6 +91,7 @@ FsoNetDevice::DoDispose (void)
 void
 FsoNetDevice::DoInitialize (void)
 {
+  NS_LOG_FUNCTION (this);
   m_phy->Initialize ();
   m_mac->Initialize ();
   NetDevice::DoInitialize ();
@@ -102,6 +100,8 @@ FsoNetDevice::DoInitialize (void)
 void
 FsoNetDevice::CompleteConfig (void)
 {
+  NS_LOG_FUNCTION (this);
+
   if (m_mac == 0
       || m_phy == 0
       || m_node == 0
@@ -120,6 +120,7 @@ FsoNetDevice::CompleteConfig (void)
 void
 FsoNetDevice::SetMac (Ptr<FsoMac> mac)
 {
+  NS_LOG_FUNCTION (this);
   m_mac = mac;
   CompleteConfig ();
 }
@@ -127,6 +128,7 @@ FsoNetDevice::SetMac (Ptr<FsoMac> mac)
 void
 FsoNetDevice::SetPhy (Ptr<FsoPhy> phy)
 {
+  NS_LOG_FUNCTION (this);
   m_phy = phy;
   CompleteConfig ();
 }
@@ -134,118 +136,118 @@ FsoNetDevice::SetPhy (Ptr<FsoPhy> phy)
 Ptr<FsoMac>
 FsoNetDevice::GetMac (void) const
 {
+  NS_LOG_FUNCTION (this);
   return m_mac;
 }
 
 Ptr<FsoPhy>
 FsoNetDevice::GetPhy (void) const
 {
+  NS_LOG_FUNCTION (this);
   return m_phy;
 }
 
 void
 FsoNetDevice::SetIfIndex (const uint32_t index)
 {
+  NS_LOG_FUNCTION (this);
   m_ifIndex = index;
 }
 
 uint32_t
 FsoNetDevice::GetIfIndex (void) const
 {
+  NS_LOG_FUNCTION (this);
   return m_ifIndex;
 }
 
 Ptr<Channel>
 FsoNetDevice::GetChannel (void) const
 {
+  NS_LOG_FUNCTION (this);
   return m_phy->GetChannel ();
 }
 
 Ptr<FsoChannel>
 FsoNetDevice::DoGetChannel (void) const
 {
+  NS_LOG_FUNCTION (this);
   return m_phy->GetChannel ();
 }
 
 void
 FsoNetDevice::SetAddress (Address address)
 {
+  NS_LOG_FUNCTION (this);
   m_mac->SetAddress (Mac48Address::ConvertFrom (address));
 }
 
 Address
 FsoNetDevice::GetAddress (void) const
 {
+  NS_LOG_FUNCTION (this);
   return m_mac->GetAddress ();
-}
-
-bool
-FsoNetDevice::SetMtu (const uint16_t mtu)
-{
-  if (mtu > MAX_MSDU_SIZE - LLC_SNAP_HEADER_LENGTH)
-    {
-      return false;
-    }
-  m_mtu = mtu;
-  return true;
-}
-
-uint16_t
-FsoNetDevice::GetMtu (void) const
-{
-  return m_mtu;
 }
 
 bool
 FsoNetDevice::IsLinkUp (void) const
 {
+  NS_LOG_FUNCTION (this);
   return m_phy != 0 && m_linkUp;
 }
 
 void
 FsoNetDevice::AddLinkChangeCallback (Callback<void> callback)
 {
+  NS_LOG_FUNCTION (this);
   m_linkChanges.ConnectWithoutContext (callback);
 }
 
 bool
 FsoNetDevice::IsBroadcast (void) const
 {
+  NS_LOG_FUNCTION (this);
   return true;
 }
 
 Address
 FsoNetDevice::GetBroadcast (void) const
 {
+  NS_LOG_FUNCTION (this);
   return Mac48Address::GetBroadcast ();
 }
 
 bool
 FsoNetDevice::IsMulticast (void) const
 {
+  NS_LOG_FUNCTION (this);
   return true;
 }
 
 Address
 FsoNetDevice::GetMulticast (Ipv4Address multicastGroup) const
 {
+  NS_LOG_FUNCTION (this);
   return Mac48Address::GetMulticast (multicastGroup);
 }
 
 Address FsoNetDevice::GetMulticast (Ipv6Address addr) const
 {
+  NS_LOG_FUNCTION (this);
   return Mac48Address::GetMulticast (addr);
 }
 
 bool
 FsoNetDevice::IsPointToPoint (void) const
 {
+  NS_LOG_FUNCTION (this);
   return false;
 }
 
 bool
 FsoNetDevice::IsBridge (void) const
 {
+  NS_LOG_FUNCTION (this);
   return false;
 }
 
@@ -270,12 +272,14 @@ FsoNetDevice::Send (Ptr<Packet> packet, const Address& dest, uint16_t protocolNu
 Ptr<Node>
 FsoNetDevice::GetNode (void) const
 {
+  NS_LOG_FUNCTION (this);
   return m_node;
 }
 
 void
 FsoNetDevice::SetNode (Ptr<Node> node)
 {
+  NS_LOG_FUNCTION (this);
   m_node = node;
   CompleteConfig ();
 }
@@ -283,18 +287,21 @@ FsoNetDevice::SetNode (Ptr<Node> node)
 bool
 FsoNetDevice::NeedsArp (void) const
 {
+  NS_LOG_FUNCTION (this);
   return true;
 }
 
 void
 FsoNetDevice::SetReceiveCallback (NetDevice::ReceiveCallback cb)
 {
+  NS_LOG_FUNCTION (this);
   m_forwardUp = cb;
 }
 
 void
 FsoNetDevice::ForwardUp (Ptr<Packet> packet, Mac48Address from, Mac48Address to)
 {
+  NS_LOG_FUNCTION (this);
   
   LlcSnapHeader llc;
   enum NetDevice::PacketType type;
@@ -337,6 +344,7 @@ FsoNetDevice::ForwardUp (Ptr<Packet> packet, Mac48Address from, Mac48Address to)
 void
 FsoNetDevice::LinkUp (void)
 {
+  NS_LOG_FUNCTION (this);
   m_linkUp = true;
   m_linkChanges ();
 }
@@ -344,6 +352,7 @@ FsoNetDevice::LinkUp (void)
 void
 FsoNetDevice::LinkDown (void)
 {
+  NS_LOG_FUNCTION (this);
   m_linkUp = false;
   m_linkChanges ();
 }
@@ -351,6 +360,7 @@ FsoNetDevice::LinkDown (void)
 bool
 FsoNetDevice::SendFrom (Ptr<Packet> packet, const Address& source, const Address& dest, uint16_t protocolNumber)
 {
+  NS_LOG_FUNCTION (this);
   
   NS_ASSERT (Mac48Address::IsMatchingType (dest));
   NS_ASSERT (Mac48Address::IsMatchingType (source));
@@ -371,6 +381,7 @@ FsoNetDevice::SendFrom (Ptr<Packet> packet, const Address& source, const Address
 void
 FsoNetDevice::SetPromiscReceiveCallback (PromiscReceiveCallback cb)
 {
+  NS_LOG_FUNCTION (this);
   m_promiscRx = cb;
   m_mac->SetPromisc ();
 }
@@ -378,7 +389,22 @@ FsoNetDevice::SetPromiscReceiveCallback (PromiscReceiveCallback cb)
 bool
 FsoNetDevice::SupportsSendFrom (void) const
 {
+  NS_LOG_FUNCTION (this);
   return false; //m_mac->SupportsSendFrom ();
+}
+
+bool 
+FsoNetDevice::SetMtu (const uint16_t mtu)
+{
+  //Not implemented yet
+  return false;
+}
+
+uint16_t 
+FsoNetDevice::GetMtu (void) const
+{
+  //Not implemented yet
+  return 0;
 }
 
 } //namespace ns3

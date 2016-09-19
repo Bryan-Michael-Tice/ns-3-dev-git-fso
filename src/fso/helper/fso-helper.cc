@@ -40,15 +40,19 @@ NS_LOG_COMPONENT_DEFINE ("FsoHelper");
 
 FsoHelper::~FsoHelper ()
 {
+  NS_LOG_FUNCTION (this);
 }
 
 FsoHelper::FsoHelper ()
 {
+  NS_LOG_FUNCTION (this);
 }
 
 FsoHelper
 FsoHelper::Default (void)
 {
+  NS_LOG_FUNCTION_NOARGS ();
+
   FsoHelper helper;
   return helper;
 }
@@ -57,6 +61,8 @@ NetDeviceContainer
 FsoHelper::Install (const FsoPhyHelper &phyHelper,
                      const FsoMacHelper &macHelper, NodeContainer c) const
 {
+  NS_LOG_FUNCTION (this);
+
   NetDeviceContainer devices;
   for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
     {  
@@ -79,6 +85,8 @@ NetDeviceContainer
 FsoHelper::Install (const FsoPhyHelper &phy,
                      const FsoMacHelper &mac, Ptr<Node> node) const
 {
+  NS_LOG_FUNCTION (this);
+
   return Install (phy, mac, NodeContainer (node));
 }
 
@@ -86,6 +94,8 @@ NetDeviceContainer
 FsoHelper::Install (const FsoPhyHelper &phy,
                      const FsoMacHelper &mac, std::string nodeName) const
 {
+  NS_LOG_FUNCTION (this);
+
   Ptr<Node> node = Names::Find<Node> (nodeName);
   return Install (phy, mac, NodeContainer (node));
 }
@@ -93,6 +103,8 @@ FsoHelper::Install (const FsoPhyHelper &phy,
 void
 FsoHelper::EnableLogComponents (void)
 {
+  NS_LOG_FUNCTION_NOARGS ();
+
   LogComponentEnable ("FsoHelper", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoNetDevice", LOG_LEVEL_ALL);
   LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
@@ -100,13 +112,15 @@ FsoHelper::EnableLogComponents (void)
   LogComponentEnable ("FsoMac", LOG_LEVEL_ALL);
   LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO); 
   LogComponentEnable ("FsoMeanIrradianceModel", LOG_LEVEL_INFO);
-  LogComponentEnable ("FsoDownLinkErrorModel", LOG_LEVEL_INFO);
+  LogComponentEnable ("FsoErrorModel", LOG_LEVEL_INFO);
   LogComponentEnable ("FsoDownLinkScintillationIndexModel", LOG_LEVEL_INFO);
 }
 
 int64_t
 FsoHelper::AssignStreams (NetDeviceContainer c, int64_t stream)
 {
+  NS_LOG_FUNCTION (this);
+
   int64_t currentStream = stream;
   Ptr<NetDevice> netDevice;
   for (NetDeviceContainer::Iterator i = c.Begin (); i != c.End (); ++i)
@@ -160,11 +174,14 @@ FsoHelper::AssignStreams (NetDeviceContainer c, int64_t stream)
 
 FsoChannelHelper::FsoChannelHelper ()
 {
+  NS_LOG_FUNCTION (this);
 }
 
 FsoChannelHelper
 FsoChannelHelper::Default (void)
 {
+  NS_LOG_FUNCTION_NOARGS ();
+
   FsoChannelHelper helper;
   helper.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
   helper.AddPropagationLoss ("ns3::FsoFreeSpaceLossModel");
@@ -184,6 +201,8 @@ FsoChannelHelper::AddPropagationLoss (std::string type,
                                            std::string n6, const AttributeValue &v6,
                                            std::string n7, const AttributeValue &v7)
 {
+  NS_LOG_FUNCTION (this);
+
   ObjectFactory factory;
   factory.SetTypeId (type);
   factory.Set (n0, v0);
@@ -208,6 +227,8 @@ FsoChannelHelper::SetPropagationDelay (std::string type,
                                             std::string n6, const AttributeValue &v6,
                                             std::string n7, const AttributeValue &v7)
 {
+  NS_LOG_FUNCTION (this);
+
   ObjectFactory factory;
   factory.SetTypeId (type);
   factory.Set (n0, v0);
@@ -224,6 +245,8 @@ FsoChannelHelper::SetPropagationDelay (std::string type,
 Ptr<FsoChannel>
 FsoChannelHelper::Create (void) const
 {
+  NS_LOG_FUNCTION (this);
+
   Ptr<FsoChannel> channel = CreateObject<FsoChannel> ();
   Ptr<FsoPropagationLossModel> prev = 0;
   for (std::vector<ObjectFactory>::const_iterator i = m_propagationLoss.begin (); i != m_propagationLoss.end (); ++i)
@@ -247,18 +270,24 @@ FsoChannelHelper::Create (void) const
 int64_t
 FsoChannelHelper::AssignStreams (Ptr<FsoChannel> channel, int64_t stream)
 {
+  NS_LOG_FUNCTION (this);
+
   return channel->AssignStreams (stream);
 }
 
 FsoPhyHelper::FsoPhyHelper ()
   : m_channel (0)
 {
+  NS_LOG_FUNCTION (this);
+
   m_phy.SetTypeId ("ns3::FsoPhy");
 }
 
 FsoPhyHelper
 FsoPhyHelper::Default (void)
 {
+  NS_LOG_FUNCTION_NOARGS ();
+
   FsoPhyHelper helper;
   helper.SetErrorRateModel ("ns3::FsoDownLinkErrorModel");
   return helper;
@@ -267,12 +296,16 @@ FsoPhyHelper::Default (void)
 void
 FsoPhyHelper::SetChannel (Ptr<FsoChannel> channel)
 {
+  NS_LOG_FUNCTION (this);
+
   m_channel = channel;
 }
 
 void
 FsoPhyHelper::SetChannel (std::string channelName)
 {
+  NS_LOG_FUNCTION (this);
+
   Ptr<FsoChannel> channel = Names::Find<FsoChannel> (channelName);
   m_channel = channel;
 }
@@ -280,6 +313,8 @@ FsoPhyHelper::SetChannel (std::string channelName)
 void
 FsoPhyHelper::Set (std::string name, const AttributeValue &v)
 {
+  NS_LOG_FUNCTION (this);
+
   m_phy.Set (name, v);
 }
 
@@ -294,6 +329,8 @@ FsoPhyHelper::SetErrorRateModel (std::string name,
                                       std::string n6, const AttributeValue &v6,
                                       std::string n7, const AttributeValue &v7)
 {
+  NS_LOG_FUNCTION (this);
+
   m_errorRateModel = ObjectFactory ();
   m_errorRateModel.SetTypeId (name);
   m_errorRateModel.Set (n0, v0);
@@ -309,6 +346,8 @@ FsoPhyHelper::SetErrorRateModel (std::string name,
 Ptr<FsoPhy>
 FsoPhyHelper::Create (Ptr<Node> node, Ptr<FsoNetDevice> device) const
 {
+  NS_LOG_FUNCTION (this);
+
   Ptr<FsoPhy> phy = m_phy.Create<FsoPhy> ();
   Ptr<FsoErrorModel> error = m_errorRateModel.Create<FsoErrorModel> ();
   phy->SetErrorModel (error);
@@ -321,11 +360,14 @@ FsoPhyHelper::Create (Ptr<Node> node, Ptr<FsoNetDevice> device) const
 
 FsoMacHelper::FsoMacHelper ()
 {
+  NS_LOG_FUNCTION (this);
+
   m_mac.SetTypeId ("ns3::FsoMac");
 }
 
 FsoMacHelper::~FsoMacHelper ()
 {
+  NS_LOG_FUNCTION (this);
 }
 
 void
@@ -342,6 +384,8 @@ FsoMacHelper::SetType (std::string type,
                         std::string n9, const AttributeValue &v9,
                         std::string n10, const AttributeValue &v10)
 {
+  NS_LOG_FUNCTION (this);
+
   m_mac.SetTypeId (type);
   m_mac.Set (n0, v0);
   m_mac.Set (n1, v1);
@@ -359,6 +403,8 @@ FsoMacHelper::SetType (std::string type,
 Ptr<FsoMac>
 FsoMacHelper::Create (void) const
 {
+  NS_LOG_FUNCTION (this);
+
   Ptr<FsoMac> mac = m_mac.Create<FsoMac> ();
   return mac;
 }

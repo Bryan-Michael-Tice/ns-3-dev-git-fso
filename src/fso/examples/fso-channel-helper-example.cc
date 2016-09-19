@@ -79,17 +79,6 @@ main (int argc, char *argv[])
   cmd.AddValue ("verbose", "Tell application to log if true", verbose);
 
   cmd.Parse (argc,argv);
-  /*
-  if (verbose)
-   {
-     LogComponentEnable ("FsoChannel", LOG_LEVEL_INFO);
-     LogComponentEnable ("FsoPhy", LOG_LEVEL_INFO);
-     LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO); 
-     LogComponentEnable ("FsoMeanIrradianceModel", LOG_LEVEL_INFO);
-     LogComponentEnable ("FsoDownLinkErrorModel", LOG_LEVEL_INFO);
-     LogComponentEnable ("FsoDownLinkScintillationIndexModel", LOG_LEVEL_INFO);
-   }
-  */
 
   Config::SetDefault ("ns3::LaserAntennaModel::Beamwidth", DoubleValue (0.06));
   Config::SetDefault ("ns3::LaserAntennaModel::Wavelength", DoubleValue (847e-9));
@@ -98,7 +87,6 @@ main (int argc, char *argv[])
 
   Config::SetDefault ("ns3::OpticalRxAntennaModel::ReceiverGain", DoubleValue (121.4));
   Config::SetDefault ("ns3::OpticalRxAntennaModel::ApertureDiameter", DoubleValue (0.318));
-
 
   NodeContainer nodes;
   nodes.Create (2);
@@ -126,9 +114,6 @@ main (int argc, char *argv[])
 
   if (verbose)
    {
-     //LogComponentEnable ("PacketSocketServer", LOG_LEVEL_ALL);
-     //LogComponentEnable ("PacketSocket", LOG_LEVEL_ALL);
-     //LogComponentEnable ("PacketSocketClient", LOG_LEVEL_ALL);
      fsoHelper.EnableLogComponents ();
    }
 
@@ -172,15 +157,7 @@ main (int argc, char *argv[])
   server->SetLocal (socketAddr);
   nodes.Get (1)->AddApplication (server);
 
-
-  //Setup Packet and Signal Params
-  uint32_t size = 1024;//Packet size in bytes
-  Ptr<Packet> packet = Create<Packet> (size);
-
-  Ptr<FsoSignalParameters> params = Create<FsoSignalParameters> ();
-
   Simulator::Stop (Seconds (10.0));
-  //Simulator::Schedule (Seconds (1.0), &FsoPhy::Transmit, txPhy, packet, params); //Send packet from transmitter Phy
 
   Simulator::Run ();
   Simulator::Destroy ();

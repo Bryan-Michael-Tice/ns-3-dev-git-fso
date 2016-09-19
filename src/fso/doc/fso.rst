@@ -38,6 +38,7 @@ The model provides the irradiance (Watts/meter) at the receiver, which is descri
 
 .. math::
    p_{I}(I) = \frac{1}{I\sigma_{I}(\textbf{r}, L)\sqrt(2\pi)}exp\Bigg(-\frac{\bigg[ln\big(\frac{I}{\langle I(\textbf{r}, L) \rangle}\big) + \frac{1}{2}\sigma^{2}_{I}(\textbf{r}, L)\bigg]^{2}}{2\sigma^{2}_{I}(\textbf{r}, L)}\Bigg)
+   :label: ln-irradiance
 
 where :math:`\textbf{r}` is the transverse observation point. The mean irradiance and can be expressed as follows:
 
@@ -93,7 +94,29 @@ The ``FsoPhy`` class assigns the ``FsoSignalParameters`` related to the transmit
 Error Model
 ###########
 
-The error model currently computes the signal irradiance at the receiver based on the log normal distribution presented in the Propagation Loss Model section above. This will be changed in the future to provide the probability of packet error through the calculation of a bit error rate (BER) based on the signal irradiance at the receiver and properties of the optical receiver.  
+The error model provides the packet success rate to the attached ``FsoPhy``. ``FsoErrorModel`` is an abstract base class to be extended.
+
+``FsoDownLinkErrorModel`` assumes a GEO satellite to optical ground station link using on-off keying (OOK) modulation without coding. The error model is based on the work in [SimpChannelModelFso]_ and [ScintillationLossDD]_. Consider an optical receiver with characteristic power :math: `P_{0}` and form factor :math: `\eta`, then the BER is calculated as follows
+
+.. math:: 
+   BER(P_{Rx}) = frac{1}{2}erfc\bigg[ \frac{Q(P_{Rx})}{\sqrt{2}} \bigg]
+
+where :math:`P_{Rx}` is the received power, `Q(P_{Rx})' is
+
+.. math:: 
+   Q(P_{Rx}) = \frac{P_{Rx}/ P_{0}}{1 + \sqrt{1 + \eta P_{Rx}/ P_{0}}}
+
+and the error function :math: `erfc` is is the standard Gaussian tail integral:
+
+.. math:: 
+   erfc(x) = \int^{x}_{\infty}e^{-t^{2}/2}\,dt
+
+The received power is determined according to Chapter 11 in [LaserPropagationBook]_, based on the log-normal distribution of the irradiance at the receiver (\ref{ln-irradiance}). The coherence time of the turbulence is determined by the greenwood time constant [LaserPropagationBook]_. A new value from the log-normal distribution is requested based on a timer which uses the greenwood time constant as the timer length. The greenwood time constant is generally on the order of 10s of milliseconds.
+
+The packet success rate is then determined as follows for a packet of :math: `n` bits:
+ 
+.. math:: 
+   Packet Success Rate = [1 - BER(P_{Rx})]^{n}
 
 Signal Parameters
 #################
@@ -105,7 +128,7 @@ Laser/Optical Receiver Model
 
 The LaserAntennaModel class characterizes a laser by its transmit wavelength, beamwidth, transmitter power, transmitter gain, and it's orientation. The orientation is not currently used and is reserved for future development.
 
-The OpticalRxAntennaModel class characterizes the receiver by its gain, aperture size, and orientation.
+The OpticalRxAntennaModel class characterizes the receiver by its gain, aperture size, and orientation. 
 
 Scope and Limitations
 =====================
@@ -118,6 +141,10 @@ References
 .. [LaserPropagationBook] L.C. Andrews and R.L. Philips, "Laser Satellite Communication Systems" in Laser Beam Propagation through Random Media, 2nd ed. Bellingham, Washington; SPIE, 2005, ch. 12 
 
 .. [SatOpticalFeederLinks2014] S. Dimitrov et al. "Digital Modulation and Coding for Satellite Optical Feeder Links", ASMS/SPSC 2014
+
+.. [SimpChannelModelFso] B. Epple, "Simplified Channel Model for Simulation of Free-Space Optical Communications", vol 2, no. 5, Journal of Optical Communication Networks, 2010
+
+.. [ScintillationLossDD] N. Perlot, "Evaluation of the scintillation loss for optical communication systems with direct detection", Optical Engineering, 2007
 
 Usage
 *****

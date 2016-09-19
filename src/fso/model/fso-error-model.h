@@ -20,8 +20,8 @@
  * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
-#ifndef ERROR_RATE_MODEL_H
-#define ERROR_RATE_MODEL_H
+#ifndef FSO_ERROR_MODEL_H
+#define FSO_ERROR_MODEL_H
 
 #include <stdint.h>
 #include "fso-phy.h"
@@ -150,13 +150,15 @@ public:
    * \param elevation the elevation in radians
    * \return the time constant of the turbulence
    */
-  double CalculateTurbulenceTimeConstant(double hTx, double hRx, double wavelength, double elevation);
+  double CalculateTurbulenceTimeConstant (double hTx, double hRx, double wavelength, double elevation);
   
   //inherited from FsoErrorModel
   virtual double GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams);
   
   /**
-   * \brief Callback function to set boolean flag to update the irradiance
+   * \brief When called, the error model will update the irradiance parameters upon the 
+   * next usage of GetPacketSuccessRate (). Typically this is used internally by the 
+   * model and scheduled by a timer corresponding to the Greenwood time constant.
    *
    */
   void SetIrradianceUpdate ();
@@ -181,5 +183,5 @@ protected:
 
 } //namespace ns3
 
-#endif /* ERROR_RATE_MODEL_H */
+#endif /* FSO_ERROR_MODEL_H */
 

@@ -20,8 +20,8 @@
  * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
  */
 
-#ifndef WIFI_NET_DEVICE_H
-#define WIFI_NET_DEVICE_H
+#ifndef FSO_NET_DEVICE_H
+#define FSO_NET_DEVICE_H
 
 #include "ns3/net-device.h"
 #include "ns3/packet.h"
@@ -116,8 +116,6 @@ protected:
 
 
 private:
-  //This value conforms to the 802.11 specification
-  static const uint16_t MAX_MSDU_SIZE = 2304;
 
   /**
    * Set that the link is up.
@@ -136,8 +134,8 @@ private:
    */
   Ptr<FsoChannel> DoGetChannel (void) const;
   /**
-   * Complete the configuration of this Wi-Fi device by
-   * connecting all lower components (e.g. MAC, WifiRemoteStation) together.
+   * Complete the configuration of this fso device by
+   * connecting all lower components (e.g. MAC) together.
    */
   void CompleteConfig (void);
 
@@ -159,4 +157,4 @@ private:
 
 } //namespace ns3
 
-#endif /* WIFI_NET_DEVICE_H */
+#endif /* FSO_NET_DEVICE_H */

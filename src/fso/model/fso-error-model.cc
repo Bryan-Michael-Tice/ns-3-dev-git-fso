@@ -27,7 +27,7 @@
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("FsoDownLinkErrorModel");
+NS_LOG_COMPONENT_DEFINE ("FsoErrorModel");
 
 NS_OBJECT_ENSURE_REGISTERED (FsoErrorModel);
 NS_OBJECT_ENSURE_REGISTERED (FsoDownLinkErrorModel);
@@ -61,6 +61,17 @@ FsoDownLinkErrorModel::GetTypeId (void)
     .SetParent<FsoErrorModel> ()
     .SetGroupName ("Fso")
     .AddConstructor<FsoDownLinkErrorModel> ()
+    .AddAttribute ("WindSpeed",
+                   "The rms windspeed (meters/second)",
+                   DoubleValue (21),
+                   MakeDoubleAccessor (&FsoDownLinkErrorModel::m_rmsWindSpeed),
+                   MakeDoubleChecker<double> (0, 250))
+
+    .AddAttribute ("GroundRefractiveIndex",
+                   "The nominal value of Hufnagel-Valley index of refraction (m^-2/3) on the ground",
+                   DoubleValue (1.7e-14),
+                   MakeDoubleAccessor (&FsoDownLinkErrorModel::m_groundRefractiveIdx),
+                   MakeDoubleChecker<double> (0, 1))
   ;
   return tid;
 }
@@ -92,6 +103,8 @@ FsoDownLinkErrorModel::DoDispose (void)
 double
 FsoDownLinkErrorModel::CalculateBer (double rxPower) const
 {
+  NS_LOG_FUNCTION (this);
+
   double charPower = m_phy->GetRxAntenna ()->GetCharacteristicPower ();
   double formFactor = m_phy->GetRxAntenna ()->GetFormFactor ();
   
@@ -116,6 +129,8 @@ FsoDownLinkErrorModel::CalculateBer (double rxPower) const
 double
 FsoDownLinkErrorModel::CalculateTurbulenceTimeConstant (double hTx, double hRx, double wavelength, double elevation)
 {
+  NS_LOG_FUNCTION (this);
+
   double result = 0.0;
   double error = 0.0;
 
@@ -146,6 +161,8 @@ FsoDownLinkErrorModel::CalculateTurbulenceTimeConstant (double hTx, double hRx, 
 double 
 FsoDownLinkErrorModel::GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams)
 {
+  NS_LOG_FUNCTION (this);
+
   CalculateNormRxIrradiance(fsoSignalParams);
 
   fsoSignalParams->normIrradiance = m_normalizedIrradiance;
@@ -172,6 +189,8 @@ FsoDownLinkErrorModel::GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalPa
 void 
 FsoDownLinkErrorModel::CalculateNormRxIrradiance (Ptr<FsoSignalParameters> fsoSignalParams)
 {
+  NS_LOG_FUNCTION (this);
+
   if (m_updateIrradiance)
    {
      m_normalizedIrradiance = m_logNormalDist->GetValue(-0.5*fsoSignalParams->scintillationIndex, std::sqrt(fsoSignalParams->scintillationIndex));
@@ -190,6 +209,8 @@ FsoDownLinkErrorModel::CalculateNormRxIrradiance (Ptr<FsoSignalParameters> fsoSi
 
 void FsoDownLinkErrorModel::SetIrradianceUpdate ()
 {
+  NS_LOG_FUNCTION (this);
+
   NS_LOG_DEBUG ("ErrorModelTimer: Irradiance Update");  
   m_updateIrradiance = true;
 }
@@ -197,6 +218,8 @@ void FsoDownLinkErrorModel::SetIrradianceUpdate ()
 int64_t
 FsoDownLinkErrorModel::DoAssignStreams (int64_t stream)
 {
+  NS_LOG_FUNCTION (this);
+
   m_logNormalDist->SetStream (stream);
   return 1;
 }
