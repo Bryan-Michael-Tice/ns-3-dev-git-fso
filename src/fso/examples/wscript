@@ -10,3 +10,6 @@ def build(bld):
     obj = bld.create_ns3_program('fso-channel-helper-example', ['fso'])
     obj.source = 'fso-channel-helper-example.cc'
 
+    obj = bld.create_ns3_program('fso-error-model-example', ['fso'])
+    obj.source = 'fso-error-model-example.cc'
+

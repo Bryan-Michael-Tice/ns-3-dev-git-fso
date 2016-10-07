@@ -123,7 +123,7 @@ FsoPhy::SwitchFromRxEndError (Ptr<Packet> packet, double snr)
 void 
 FsoPhy::SetFsoDevice (Ptr<FsoNetDevice> d)
 {
-  //NS_ASSERT (d != 0);
+  NS_ASSERT (d != 0);
   m_device = d;
 }
 
@@ -292,6 +292,14 @@ FsoPhy::CalculateTxDuration (uint32_t size, Ptr<FsoSignalParameters> fsoSignalPa
   NS_LOG_DEBUG ("PhyTransmit: symbol period=" << fsoSignalParams->symbolPeriod << "s"); 
   NS_ASSERT (fsoSignalParams->symbolPeriod > 0.0);
   return NanoSeconds (size * 8 * fsoSignalParams->symbolPeriod);
+}
+
+int64_t
+FsoPhy::AssignStreams (int64_t stream)
+{
+  int64_t currentStream = stream;
+  currentStream += m_errorModel->AssignStreams (stream);
+  return (currentStream - stream);
 }
 
 

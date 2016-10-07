@@ -140,7 +140,7 @@ FsoChannel::Add (Ptr<FsoPhy> phy)
 }
 
 int64_t
-FsoChannel::AssignStreams (int64_t stream) //MDP - for random variables, see header file
+FsoChannel::AssignStreams (int64_t stream)
 {
   int64_t currentStream = stream;
   currentStream += m_loss->AssignStreams (stream);

@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2005,2006 INRIA
+ * Copyright (c) 2016 Michael Di Perna
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,9 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
- *
- * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
+ * Author: Michael Di Perna <diperna.michael@gmail.com>
  */
 
 #include "fso-error-model.h"
@@ -180,7 +178,7 @@ FsoDownLinkErrorModel::GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalPa
   double ber = CalculateBer(rxInstantPowerWatts*0.01);
   NS_LOG_DEBUG ("ErrorModel: BER=" << ber);
   
-  double packetLossProbability = 1.0 - std::pow(1 - ber, 8*packet->GetSize ()); 
+  double packetLossProbability = CalculatePacketLossProbability (ber, packet->GetSize ()); 
   NS_LOG_DEBUG ("ErrorModel: PLP=" << packetLossProbability);
 
   return (1.0 - packetLossProbability);
@@ -222,6 +220,12 @@ FsoDownLinkErrorModel::DoAssignStreams (int64_t stream)
 
   m_logNormalDist->SetStream (stream);
   return 1;
+}
+
+double 
+FsoDownLinkErrorModel::CalculatePacketLossProbability (double ber, int packetSize)
+{
+  return 1.0 - std::pow(1 - ber, 8*packetSize);
 }
 
 

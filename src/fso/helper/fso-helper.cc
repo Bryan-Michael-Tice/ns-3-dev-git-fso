@@ -125,49 +125,15 @@ FsoHelper::AssignStreams (NetDeviceContainer c, int64_t stream)
   Ptr<NetDevice> netDevice;
   for (NetDeviceContainer::Iterator i = c.Begin (); i != c.End (); ++i)
     {
-      /*
+      
       netDevice = (*i);
-      Ptr<WifiNetDevice> wifi = DynamicCast<WifiNetDevice> (netDevice);
-      if (wifi)
+      Ptr<FsoNetDevice> fsoDevice = DynamicCast<FsoNetDevice> (netDevice);
+      if (fsoDevice)
         {
           //Handle any random numbers in the PHY objects.
-          currentStream += wifi->GetPhy ()->AssignStreams (currentStream);
-
-          //Handle any random numbers in the MAC objects.
-          Ptr<FsoMac> mac = wifi->GetMac ();
-          Ptr<RegularFsoMac> rmac = DynamicCast<RegularFsoMac> (mac);
-          if (rmac)
-            {
-              PointerValue ptr;
-              rmac->GetAttribute ("DcaTxop", ptr);
-              Ptr<DcaTxop> dcaTxop = ptr.Get<DcaTxop> ();
-              currentStream += dcaTxop->AssignStreams (currentStream);
-
-              rmac->GetAttribute ("VO_EdcaTxopN", ptr);
-              Ptr<EdcaTxopN> vo_edcaTxopN = ptr.Get<EdcaTxopN> ();
-              currentStream += vo_edcaTxopN->AssignStreams (currentStream);
-
-              rmac->GetAttribute ("VI_EdcaTxopN", ptr);
-              Ptr<EdcaTxopN> vi_edcaTxopN = ptr.Get<EdcaTxopN> ();
-              currentStream += vi_edcaTxopN->AssignStreams (currentStream);
-
-              rmac->GetAttribute ("BE_EdcaTxopN", ptr);
-              Ptr<EdcaTxopN> be_edcaTxopN = ptr.Get<EdcaTxopN> ();
-              currentStream += be_edcaTxopN->AssignStreams (currentStream);
-
-              rmac->GetAttribute ("BK_EdcaTxopN", ptr);
-              Ptr<EdcaTxopN> bk_edcaTxopN = ptr.Get<EdcaTxopN> ();
-              currentStream += bk_edcaTxopN->AssignStreams (currentStream);
-
-              //if an AP, handle any beacon jitter
-              Ptr<ApFsoMac> apmac = DynamicCast<ApFsoMac> (rmac);
-              if (apmac)
-                {
-                  currentStream += apmac->AssignStreams (currentStream);
-                }
-            }
+          currentStream += fsoDevice->GetPhy ()->AssignStreams (currentStream);
         }
-        */
+        
     }
   return (currentStream - stream);
 }

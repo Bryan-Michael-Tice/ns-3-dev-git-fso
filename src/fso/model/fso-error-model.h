@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2005,2006 INRIA
+ * Copyright (c) 2016 Michael Di Perna
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,9 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
- *
- * Modified by: Michael Di Perna <diperna.michael@gmail.com> 2016
+ * Author: Michael Di Perna <diperna.michael@gmail.com>
  */
 
 #ifndef FSO_ERROR_MODEL_H
@@ -151,6 +149,15 @@ public:
    * \return the time constant of the turbulence
    */
   double CalculateTurbulenceTimeConstant (double hTx, double hRx, double wavelength, double elevation);
+
+  /**
+   * \brief Calculate the probability that the packet is in error
+   *
+   * \param ber bit error rate for the packet
+   * \param packetSize size of the packet in bytes
+   * \return the packet loss probability
+   */
+  double CalculatePacketLossProbability (double ber, int packetSize);
   
   //inherited from FsoErrorModel
   virtual double GetPacketSuccessRate (Ptr<Packet> packet, Ptr<FsoSignalParameters> fsoSignalParams);
