@@ -77,7 +77,7 @@ main (int argc, char *argv[])
      LogComponentEnable ("FsoPhy", LOG_LEVEL_INFO);
      LogComponentEnable ("FsoFreeSpaceLossModel", LOG_LEVEL_INFO); 
      LogComponentEnable ("FsoMeanIrradianceModel", LOG_LEVEL_INFO);
-     LogComponentEnable ("FsoDownLinkErrorModel", LOG_LEVEL_INFO);
+     LogComponentEnable ("FsoErrorModel", LOG_LEVEL_INFO);
      LogComponentEnable ("FsoDownLinkScintillationIndexModel", LOG_LEVEL_INFO);
    }
 
