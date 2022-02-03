@@ -121,14 +121,14 @@ FsoChannel::Send (Ptr<FsoPhy> sender, Ptr<const Packet> packet,
     }
 }
 
-uint32_t
+std::size_t
 FsoChannel::GetNDevices (void) const
 {
   return m_phyList.size ();
 }
 
 Ptr<NetDevice>
-FsoChannel::GetDevice (uint32_t i) const
+FsoChannel::GetDevice std::size_t i) const
 {
   return m_phyList[i]->GetFsoDevice ()->GetObject<NetDevice> ();
 }
