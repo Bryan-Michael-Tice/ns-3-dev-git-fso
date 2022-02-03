@@ -166,7 +166,7 @@ public:
 
 protected:
   Mac48Address m_address;        //!< Address of MAC
-  Ptr<DropTailQueue> m_txQueue;  //!< Queue for outgoing packets
+  Ptr<DropTailQueue<Packet>>  m_txQueue;  //!< Queue for outgoing packets
 
   Callback<void> m_linkUp;       
   Callback<void> m_linkDown;     
