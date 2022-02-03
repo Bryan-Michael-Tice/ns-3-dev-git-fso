@@ -26,6 +26,7 @@
 #include "ns3/trace-source-accessor.h"
 #include "ns3/log.h"
 #include "ns3/drop-tail-queue.h"
+#include "ns3/object.h"
 
 namespace ns3 {
 
@@ -34,7 +35,7 @@ NS_OBJECT_ENSURE_REGISTERED (FsoMac);
 
 FsoMac::FsoMac ()
 {
-  m_txQueue = CreateObject<DropTailQueue> ();
+  m_txQueue = CreateObject<DropTailQueue<Packet>> ();
 }
 
 FsoMac::~FsoMac ()
@@ -110,7 +111,7 @@ void
 FsoMac::Enqueue (Ptr</*const*/ Packet> packet, Mac48Address to, Mac48Address from)
 {
   NS_LOG_FUNCTION (this << packet << to << from);
-  m_txQueue->Enqueue (Create<QueueItem> (packet));
+  m_txQueue->Enqueue (packet);
   m_phy->AvailablePacket ();
 }
 
@@ -156,7 +157,7 @@ FsoMac::ForwardDown ()
 {
   if (!(m_txQueue->IsEmpty ()))
    {
-     return (m_txQueue->Dequeue ())->GetPacket ();
+     return (m_txQueue->Dequeue ());
    }
 
   return 0;
